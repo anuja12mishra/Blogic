@@ -5,9 +5,10 @@ import { Link } from 'react-router-dom'
 import { PiSignOutBold } from "react-icons/pi";
 import { Input } from './ui/input';
 import SearchBox from './SearchBox';
+import { RouteSignIn } from '@/helpers/RouteName';
 function Topbar() {
   return (
-    <div className='flex justify-between gap-2.5 items-center w-full fixed bg-white h-16 z-20 px-10'>
+    <div className='flex justify-between gap-2.5 items-center w-full fixed bg-white h-16 z-20 px-10 border-b-2 border-gray-200'>
       <div className='pt-3.5'>
         <img src={name} alt="logo-image" width={150} className="bg-transparent"/>
       </div>
@@ -16,7 +17,7 @@ function Topbar() {
       </div>
       <div>
         <Button asChild>
-          <Link to='/'>
+          <Link to={RouteSignIn}>
             <PiSignOutBold/> 
             Sign up
           </Link>
