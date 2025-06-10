@@ -1,6 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
 
-
+.maze-background {
+  /* Purple to white gradient background */
+  background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 25%, #c4b5fd 50%, #e0e7ff 75%, #f8fafc 100%);
+  
+  /* Maze pattern overlay with purple lines */
+  background-image: 
+    linear-gradient(90deg, rgba(139, 92, 246, 0.3) 10%, transparent 10%),
+    linear-gradient(0deg, rgba(139, 92, 246, 0.3) 10%, transparent 10%);
+  
+  background-size: 10px 10px;
+}
 @import "tailwindcss";
 @import "tw-animate-css";
 
