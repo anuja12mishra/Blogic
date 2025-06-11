@@ -1,10 +1,16 @@
 import User from '../models/user.model.js';
-import { handleError } from '../helpers/handleError.js';
+import {
+  handleError
+} from '../helpers/handleError.js';
 import bcryptjs from 'bcryptjs';
-
+import jwt from "jsonwebtoken";
 export const Register = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const {
+      name,
+      email,
+      password
+    } = req.body;
 
     // 1. Required fields validation
     if (!name || !email || !password) {
@@ -31,9 +37,11 @@ export const Register = async (req, res, next) => {
     }
 
     // 4. Check if user already exists
-    const isUserExist = await User.findOne({ email: email });
+    const isUserExist = await User.findOne({
+      email: email
+    });
     if (isUserExist) {
-      return next(handleError(403, 'User already exists'));
+      return next(handleError(409, 'User already exists'));
     }
 
     // 5. Hash the password
@@ -61,6 +69,46 @@ export const Register = async (req, res, next) => {
   }
 };
 
-export const Login = async(req,res)=>{
-    
-}
+export const Login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return next(handleError(403, 'Both the fields are required'));
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return next(handleError(404, 'Invalid login credentials'));
+    }
+
+    const isValidPass = await bcryptjs.compare(password, user.password);
+    if (!isValidPass) {
+      return next(handleError(404, 'Invalid login credentials'));
+    }
+
+    const token = jwt.sign({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar
+    }, process.env.JWT_SECRET);
+
+    res.cookie("access_token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+      path: '/'
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Login successful',
+      user
+    });
+
+  } catch (error) {
+    console.error(error.message);
+    next(handleError(500, error.message));
+  }
+};

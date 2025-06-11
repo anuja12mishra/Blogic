@@ -30,10 +30,11 @@ mongoose.connect(process.env.MONGODB_URL, {
     .catch(err => {
         console.error('❌ Database connection error:', err);
         process.exit(1);
-    });
+    }
+);
 
 app.use((err, req, res, next) => {
-    const statusCode = err.statusCodel || 500;
+    const statusCode = err.statusCode || 500;
     const message = err.message || 'internal server error';
     res.status(statusCode).json({
         success: false,
