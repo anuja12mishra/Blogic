@@ -10,6 +10,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { RouteSignIn } from '@/helpers/RouteName';
 import { getEnv } from '@/helpers/getEnv';
 import { showtoast } from '@/helpers/showtoast';
+import GoogleLogin from '../components/GoogleLogin';
 
 const formSchema = z.object({
     name: z.string().min(3, 'Name should have a minimum length of 3'),
@@ -35,31 +36,31 @@ const Signup = () => {
     });
 
     async function onSubmit(values) {
-        console.log('Form values:', values);
-        
+        // console.log('Form values:', values);
+
         try {
             const res = await fetch(`${getEnv('VITE_API_URL')}/api/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(values)
             });
-            
+
             // Always await the response parsing
             const data = await res.json();
             // console.log('Server response:', data);
-            
+
             if (!res.ok) {
                 // Server returned an error (like 500)
                 const errorMessage = data.message || `Server error: ${res.status}`;
                 showtoast('error', errorMessage);
                 return;
             }
-            
+
             // Success case
             const successMessage = data.message || 'Registration successful!';
             showtoast('success', successMessage);
             navigate(RouteSignIn);
-            
+
         } catch (err) {
             // console.error('Request failed:', err);
             showtoast('error', 'Network error: Unable to connect to server');
@@ -132,6 +133,15 @@ const Signup = () => {
                     <div className='flex gap-2 justify-center'>
                         <p className='text-xs text-center'>Already have an account ?</p>
                         <Link className='font-bold text-xs text-blue-600' to={RouteSignIn}> Sign In</Link>
+                    </div>
+                    <div className="flex items-center gap-2 my-4">
+                        <hr className="flex-grow border-t border-gray-300" />
+                        <p className="text-xs font-bold text-center">Or</p>
+                        <hr className="flex-grow border-t border-gray-300" />
+                    </div>
+
+                    <div className='w-full p-0'>
+                        <GoogleLogin />
                     </div>
                 </form>
             </Form>

@@ -71,13 +71,18 @@ export const Register = async (req, res, next) => {
 
 export const Login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const {
+      email,
+      password
+    } = req.body;
 
     if (!email || !password) {
       return next(handleError(403, 'Both the fields are required'));
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({
+      email
+    });
     if (!user) {
       return next(handleError(404, 'Invalid login credentials'));
     }
@@ -101,10 +106,81 @@ export const Login = async (req, res, next) => {
       path: '/'
     });
 
+    const newUser = user.toObject({
+      getters: true
+    });
+    delete newUser.password;
+
     res.status(200).json({
       success: true,
       message: 'Login successful',
-      user
+      user: newUser
+    });
+
+  } catch (error) {
+    console.error(error.message);
+    next(handleError(500, error.message));
+  }
+};
+
+export const GoogleLogin = async (req, res, next) => {
+  try {
+    const {
+      email,
+      avatar,
+      name
+    } = req.body;
+
+    if (!email || !name) {
+      return next(handleError(403, 'no name or email found'));
+    }
+
+    let user;
+    user = await User.findOne({
+      email
+    });
+
+    if (!user) {
+      // Create a random password
+      const password = Math.floor(Math.random() * 100000000).toString();
+      const salt = parseInt(process.env.SALT) || 10;
+      const hashPass = bcryptjs.hashSync(password.toString(), salt);
+
+      // Create a new user with correct syntax
+      const newUser = new User({
+        email,
+        avatar,
+        name,
+        password: hashPass
+      });
+
+      user = await newUser.save();
+    }
+
+
+    const token = jwt.sign({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar
+    }, process.env.JWT_SECRET);
+
+    res.cookie("access_token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+      path: '/'
+    });
+
+    const userObj = user.toObject({
+      getters: true
+    });
+    delete userObj.password;
+
+    res.status(200).json({
+      success: true,
+      message: 'Login successful',
+      user: userObj
     });
 
   } catch (error) {

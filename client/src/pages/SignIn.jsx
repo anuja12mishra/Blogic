@@ -6,8 +6,10 @@ import logo from '@/assets/logo.png'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
-import { RouteSignUp } from '@/helpers/RouteName';
+import { Link, useNavigate } from 'react-router-dom';
+import { RouteIndex,RouteSignUp } from '@/helpers/RouteName';
+import { showtoast } from '@/helpers/showtoast';
+import { getEnv } from '@/helpers/getEnv';
 
 const formSchema = z.object({
     email: z.string().email("Please enter a valid email address"),
@@ -15,6 +17,8 @@ const formSchema = z.object({
 });
 
 const SignIn = () => {
+
+    const navigate = useNavigate();
     const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -23,8 +27,36 @@ const SignIn = () => {
         },
     });
 
-    function onSubmit(values) {
-        console.log(values);
+    async function onSubmit(values) {
+        //console.log(values);
+        try {
+            const res = await fetch(`${getEnv('VITE_API_URL')}/api/auth/login`, {
+                method: 'POST',
+                credentials:'include',
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify(values)
+            });
+
+            // Always await the response parsing
+            const data = await res.json();
+            // console.log('Server response:', data);
+
+            if (!res.ok) {
+                // Server returned an error (like 500)
+                const errorMessage = data.message || `Server error: ${res.status}`;
+                showtoast('error', errorMessage);
+                return;
+            }
+
+            // Success case
+            const successMessage = data.message || 'Registration successful!';
+            showtoast('success', successMessage);
+            navigate(RouteIndex);
+
+        } catch (err) {
+            // console.error('Request failed:', err);
+            showtoast('error', 'Network error: Unable to connect to server');
+        }
     }
 
     return (
@@ -35,7 +67,7 @@ const SignIn = () => {
                         <img src={logo} alt="logo-image" width={65} className="bg-transparent drop-shadow-lg" />
                     </div>
                     <h1 className='text-2xl text-center py-1 border-b-2 border-gray-300 mb-6'>Login to your account</h1>
-                    
+
                     <div className="space-y-6">
                         <FormField
                             control={form.control}
