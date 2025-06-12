@@ -7,9 +7,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
-import { RouteIndex,RouteSignUp } from '@/helpers/RouteName';
+import { RouteIndex, RouteSignUp } from '@/helpers/RouteName';
 import { showtoast } from '@/helpers/showtoast';
 import { getEnv } from '@/helpers/getEnv';
+import { useDispatch } from 'react-redux';
+import { setUser } from '@/redux/user/user.slice';
+import GoogleLogin from '@/components/GoogleLogin';
 
 const formSchema = z.object({
     email: z.string().email("Please enter a valid email address"),
@@ -17,6 +20,8 @@ const formSchema = z.object({
 });
 
 const SignIn = () => {
+
+    const dispatch = useDispatch();
 
     const navigate = useNavigate();
     const form = useForm({
@@ -32,8 +37,8 @@ const SignIn = () => {
         try {
             const res = await fetch(`${getEnv('VITE_API_URL')}/api/auth/login`, {
                 method: 'POST',
-                credentials:'include',
-                headers: { 'Content-Type': 'application/json'},
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(values)
             });
 
@@ -47,6 +52,8 @@ const SignIn = () => {
                 showtoast('error', errorMessage);
                 return;
             }
+
+            dispatch(setUser(data.user));
 
             // Success case
             const successMessage = data.message || 'Registration successful!';
@@ -62,7 +69,7 @@ const SignIn = () => {
     return (
         <div className="flex flex-col justify-center items-center min-h-screen p-6 maze-background relative">
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="w-[350px] md:w-[450px] border-2 border-gray-300 rounded-lg p-6 bg-white relative z-50">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="w-[270px] sm:w-[350px] md:w-[450px] space-y-6 border-2 border-gray-300 rounded-lg p-6 bg-white relative z-50">
                     <div className="flex justify-center mb-3">
                         <img src={logo} alt="logo-image" width={65} className="bg-transparent drop-shadow-lg" />
                     </div>
@@ -102,6 +109,15 @@ const SignIn = () => {
                             <p className='text-xs text-center'>Don&apos;t have an account ?</p>
                             <Link className='font-bold text-xs text-blue-600' to={RouteSignUp}> Sign Up</Link>
                         </div>
+                    </div>
+                    <div className="flex items-center gap-2 my-4">
+                        <hr className="flex-grow border-t border-gray-300" />
+                        <p className="text-xs font-bold text-center">Or</p>
+                        <hr className="flex-grow border-t border-gray-300" />
+                    </div>
+
+                    <div className='w-full p-0'>
+                        <GoogleLogin />
                     </div>
                 </form>
             </Form>

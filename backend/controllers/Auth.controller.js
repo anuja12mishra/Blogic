@@ -188,3 +188,22 @@ export const GoogleLogin = async (req, res, next) => {
     next(handleError(500, error.message));
   }
 };
+
+export const Logout = async(req,res,next)=>{
+  try {
+    res.clearCookie("access_token",{
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+      path: '/'
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Logout successful',
+    });
+  } catch (error) {
+    console.error(error.message);
+    next(handleError(500, error.message));
+  }
+}

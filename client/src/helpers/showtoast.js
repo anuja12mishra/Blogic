@@ -3,7 +3,7 @@ import { toast, Bounce } from "react-toastify"
 export const showtoast = (type, message) => {
     const config = {
         position: "top-right",
-        autoClose: 5000,
+        autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: false,
         pauseOnHover: true,

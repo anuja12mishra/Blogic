@@ -7,8 +7,11 @@ import { getEnv } from '@/helpers/getEnv';
 import { showtoast } from '@/helpers/showtoast';
 import { RouteIndex } from '@/helpers/RouteName';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setUser } from '@/redux/user/user.slice';
 
 function GoogleLogin() {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const handleLogin = async () => {
         const googleRes = await signInWithPopup(auth, provider);
@@ -38,6 +41,8 @@ function GoogleLogin() {
                 return;
             }
 
+            dispatch(setUser(data.user));
+            
             // Success case
             const successMessage = data.message || 'Registration successful!';
             showtoast('success', successMessage);
