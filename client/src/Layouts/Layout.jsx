@@ -14,7 +14,7 @@ const Layout = () => {
             <AppSidebar />
             <main className='w-full'>
                 {/* content */}
-                <div className='w-full min-h-[calc(100vh-45px)] '>
+                <div className='w-full min-h-[calc(100vh-45px)] pt-28 px-10'>
                     <Outlet />
                 </div>
                 {/* footer */}

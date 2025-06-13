@@ -127,7 +127,7 @@ const Signup = () => {
                             </FormItem>
                         )}
                     />
-                    <Button type="submit" className="w-full bg-purple-400 hover:bg-purple-500 transition duration-300 cursor-pointer">
+                    <Button type="submit" className="w-full transition duration-300 cursor-pointer">
                         Submit
                     </Button>
                     <div className='flex gap-2 justify-center'>
