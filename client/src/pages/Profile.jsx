@@ -68,7 +68,7 @@ function Profile() {
     const handleFileUpload = (files) => {
         const uploadedFile = files[0];
         const preview = URL.createObjectURL(uploadedFile);
-        console.log("handleFileUpload",uploadedFile);
+        // console.log("handleFileUpload",uploadedFile);
         setFile(uploadedFile); // ✅ send this to backend
         setAvatar(preview);    // ✅ this is just for displaying image
     }
