@@ -48,11 +48,11 @@ export const updateUserDetails = async (req, res, next) => {
         // Optional: update avatar if uploaded
         if (file) {
             try {
-                console.log('Uploading file to R2:', {
-                    originalname: file.originalname,
-                    mimetype: file.mimetype,
-                    size: file.size
-                });
+                // console.log('Uploading file to R2:', {
+                //     originalname: file.originalname,
+                //     mimetype: file.mimetype,
+                //     size: file.size
+                // });
 
                 // Upload new image to R2
                 const uploadResult = await uploadToR2(file, 'avatars');
@@ -60,13 +60,13 @@ export const updateUserDetails = async (req, res, next) => {
                 user.avatar = uploadResult.url;
                 user.avatarKey = uploadResult.key; // Store R2 key for future deletion
 
-                console.log('File uploaded successfully to R2:', uploadResult.url);
+                //console.log('File uploaded successfully to R2:', uploadResult.url);
 
                 // Delete old avatar from R2 if exists
                 if (oldAvatarKey) {
                     try {
                         await deleteFromR2(oldAvatarKey);
-                        console.log('Old avatar deleted from R2:', oldAvatarKey);
+                        //console.log('Old avatar deleted from R2:', oldAvatarKey);
                     } catch (deleteError) {
                         console.error('Error deleting old avatar:', deleteError.message);
                         // Don't fail the request if delete fails
@@ -74,7 +74,7 @@ export const updateUserDetails = async (req, res, next) => {
                 }
 
             } catch (uploadError) {
-                console.error('R2 upload error:', uploadError);
+                // console.error('R2 upload error:', uploadError);
                 return next(handleError(500, `File upload failed: ${uploadError.message}`));
             }
         }
@@ -86,7 +86,7 @@ export const updateUserDetails = async (req, res, next) => {
         delete userResponse.password;
         delete userResponse.avatarKey;
         
-        console.log('User updated successfully:', user.name);
+        //console.log('User updated successfully:', user.name);
 
         res.status(200).json({
             success: true,

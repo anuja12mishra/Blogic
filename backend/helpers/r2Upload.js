@@ -1,21 +1,27 @@
-// helpers/r2Upload.js
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+//imports 
+import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { v4 as uuidv4 } from 'uuid';
+import r2Client from '../config/cloudeflare.config.js';
+
 import dotenv from 'dotenv';
-//import {r2Client} from '../config/cloudeflare.config';
-// Load environment variables from .env
-dotenv.config();
+dotenv.config();//loading env variables
+
+
+
+// console.log(r2Client)
 // console.log(process.env.CLOUDFLARE_ENDPOINT,process.env.CLOUDFLARE_ACCESS_KEY_ID,process.env.CLOUDFLARE_SECRET_ACCESS_KEY)
 // Configure R2 client
 // console.log(process.env.R2_PUBLIC_URL , process.env.R2_BUCKET_NAME )
-const r2Client = new S3Client({
-    region: 'auto', // Cloudflare R2 uses 'auto'
-    endpoint: process.env.CLOUDFLARE_ENDPOINT, // Your R2 endpoint URL
-    credentials: {
-        accessKeyId: process.env.CLOUDFLARE_ACCESS_KEY_ID,
-        secretAccessKey: process.env.CLOUDFLARE_SECRET_ACCESS_KEY,
-    },
-});
+
+
+// const r2Client = new S3Client({
+//     region: 'auto', // Cloudflare R2 uses 'auto'
+//     endpoint: process.env.CLOUDFLARE_ENDPOINT, // Your R2 endpoint URL
+//     credentials: {
+//         accessKeyId: process.env.CLOUDFLARE_ACCESS_KEY_ID,
+//         secretAccessKey: process.env.CLOUDFLARE_SECRET_ACCESS_KEY,
+//     },
+// });
 
 export const uploadToR2 = async (file, folder = 'uploads') => {
     try {
@@ -74,7 +80,7 @@ export const deleteFromR2 = async (key) => {
         const command = new DeleteObjectCommand(deleteParams);
         await r2Client.send(command);
 
-        console.log(`Successfully deleted ${key} from R2`);
+        //console.log(`Successfully deleted ${key} from R2`);
         return { success: true, key };
 
     } catch (error) {
