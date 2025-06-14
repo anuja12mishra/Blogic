@@ -65,10 +65,26 @@ export const DeleteCategory = async (req, res, next) => {
     }
 };
 
+export const GetACategory = async (req, res, next) => {
+    try {
+        const {categoryId} = req.params;
+        const category = await Category.findById({_id:categoryId});
+        if(!category){
+            return next(handleError(404, 'Category not found'));
+        }
+        res.status(200).json({
+            success: true,
+            message: "Categories retrieved successfully",
+            category: category
+        });
+    } catch (error) {
+        console.error(error.message);
+        next(handleError(500, error.message));
+    }
+};
 export const GetAllCategory = async (req, res, next) => {
     try {
-        const categories = await Category.find({});
-        
+        const categories = await Category.find({}).sort({name:1}).lean().exec();
         res.status(200).json({
             success: true,
             message: "Categories retrieved successfully",
