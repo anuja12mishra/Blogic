@@ -17,6 +17,7 @@ import { TbLogs } from "react-icons/tb";
 import { FaRegUser } from "react-icons/fa";
 import { LiaComments } from "react-icons/lia";
 import { GoDot } from "react-icons/go";
+import { RouteCategoryDetails } from "@/helpers/RouteName";
 export function AppSidebar() {
     return (
         <Sidebar>
@@ -35,7 +36,7 @@ export function AppSidebar() {
                         <SidebarMenuItem>
                             <SidebarMenuButton>
                                 <BiCategoryAlt />
-                                <Link to="">Categories</Link>
+                                <Link to={RouteCategoryDetails}>Categories</Link>
                             </SidebarMenuButton>
                         </SidebarMenuItem>
                         <SidebarMenuItem>
