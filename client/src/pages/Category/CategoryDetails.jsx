@@ -9,14 +9,16 @@ function CategoryDetails() {
     <div>
         <Card>
             <CardHeader>
-                <Button asChild>
+              <div>
+                <Button>
                     <Link to={RouteAddCategory}>
                     Add Category
                     </Link>
-                
                 </Button>
+              </div>
             </CardHeader>
             <CardContent>
+              
             </CardContent>
         </Card>
     </div>
