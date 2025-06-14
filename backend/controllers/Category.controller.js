@@ -42,28 +42,27 @@ export const AddCategory = async (req, res, next) => {
 
 export const DeleteCategory = async (req, res, next) => {
     try {
-        const {
-            categoryId
-        } = req.params;
-        
-        const isCategoryExit = await Category.findById(categoryId);
-        
-        if (!isCategoryExit) {
+        const { categoryId } = req.params;
+
+        const existingCategory = await Category.findById(categoryId);
+
+        if (!existingCategory) {
             return next(handleError(404, 'Category not found'));
         }
-        
-        const name = isCategoryExit.name;
+
+        const name = existingCategory.name;
         await Category.findByIdAndDelete(categoryId);
-        
-        res.status(200).json({
+
+        return res.status(200).json({
             success: true,
-            message: `Category ${name} deleted successfully`
+            message: `Category '${name}' deleted successfully.`
         });
     } catch (error) {
-        console.error(error.message);
-        next(handleError(500, error.message));
+        console.error("Error in DeleteCategory:", error);
+        return next(handleError(500, "Internal Server Error"));
     }
 };
+
 
 export const GetACategory = async (req, res, next) => {
     try {
