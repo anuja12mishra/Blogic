@@ -1,8 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
 body{
   font-family: "Nunito", sans-serif;
 }
+/* ck editor style */
 
+@media print {
+	body {
+		margin: 0 !important;
+	}
+}
+
+.main-container {
+  font-family: 'Lato';
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.ck-content {
+	font-family: 'Lato';
+	line-height: 1.6;
+	word-break: break-word;
+}
+.editor-container__editor {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.editor-container_include-block-toolbar {
+	margin-left: 0;
+}
+
+
+/* signin and signup background */
 .maze-background {
   /* Purple to white gradient background */
   background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 25%, #c4b5fd 50%, #e0e7ff 75%, #f8fafc 100%);

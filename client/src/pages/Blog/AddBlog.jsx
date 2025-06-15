@@ -1,0 +1,309 @@
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Link, useNavigate } from 'react-router-dom';
+import { showtoast } from '@/helpers/showtoast';
+import { getEnv } from '@/helpers/getEnv';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import slugify from 'slugify';
+import { RouteBlog } from '@/helpers/RouteName';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import { useFetch } from '@/hooks/useFetch';
+import Dropzone from 'react-dropzone';
+import Editor from '@/components/Editor';
+
+const formSchema = z.object({
+    title: z.string().min(3, "Title must be at least 3 characters long"),
+    category: z.string().min(3, "Category must be at least 3 characters long"),
+    slug: z.string().min(3, 'Slug must be at least 3 characters long'),
+    blogcontent: z.string().min(3, "Blog content must be at least 3 characters long"),
+});
+
+function AddBlog() {
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const navigate = useNavigate();
+
+    const [avatar, setAvatar] = useState();
+    const [file, setFile] = useState();
+
+    // Form setup
+    const form = useForm({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            title: '',
+            category: '',
+            slug: '',
+            blogcontent: ''
+        },
+    });
+
+    // // Auto-generate slug from title (changed from category to title)
+    const watchedCategory = form.watch('category');
+
+    const { data: categoriesdata, loading, error } = useFetch(
+        `${getEnv('VITE_API_URL')}/api/category/get-all-category`,
+        { method: 'GET', credentials: 'include' },
+    )
+
+    useEffect(() => {
+        // console.log('useEffect',watchedCategory)
+        if (watchedCategory) {
+            const categoryName = categoriesdata.categories.find(category => category._id === watchedCategory);
+            // console.log('categoryName',categoryName.name)
+            const slug = slugify(categoryName.name, {
+                lower: true,
+                strict: true, // Remove special characters
+                trim: true
+            });
+            form.setValue('slug', slug);
+        } else {
+            form.setValue('slug', '');
+        }
+    }, [watchedCategory, form]);
+
+    async function onSubmit(values) {
+        if (isSubmitting) return;
+        console.log('Form values:', values);
+        console.log('Uploaded file:', file);
+
+        setIsSubmitting(true);
+
+        try {
+            // Create FormData for file upload
+            const formData = new FormData();
+            formData.append('title', values.title);
+            formData.append('category', values.category);
+            formData.append('slug', values.slug);
+            formData.append('blogcontent', values.blogcontent);
+
+            if (file) {
+                formData.append('featuredImage', file);
+            }
+
+            const res = await fetch(`${getEnv('VITE_API_URL')}/api/blog/add`, {
+                method: 'POST',
+                credentials: 'include',
+                body: formData // Don't set Content-Type header when using FormData
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                const errorMessage = data.message || `Server error: ${res.status}`;
+                showtoast('error', errorMessage);
+                return;
+            }
+
+            // Success case
+            const successMessage = data.message || 'Blog added successfully!';
+            showtoast('success', successMessage);
+
+            // Reset form after successful submission
+            handleClearForm();
+
+            // Optional: Navigate to blogs list
+            // navigate(RouteBlog);
+
+        } catch (err) {
+            console.error('Request failed:', err);
+            showtoast('error', 'Network error: Unable to connect to server');
+        } finally {
+            setIsSubmitting(false);
+        }
+    }
+
+    const handleFileUpload = (files) => {
+        const uploadedFile = files[0];
+        const preview = URL.createObjectURL(uploadedFile);
+        setFile(uploadedFile); // ✅ send this to backend
+        setAvatar(preview);    // ✅ this is just for displaying image
+    }
+
+    const handleClearForm = () => {
+        form.reset();
+        setAvatar(null);
+        setFile(null);
+        // Clean up any existing object URLs to prevent memory leaks
+        if (avatar) {
+            URL.revokeObjectURL(avatar);
+        }
+    }
+
+    return (
+        <div className="container mx-auto p-4">
+            <Card className='max-w-screen-md mx-auto'>
+                <CardHeader>
+                    <h1 className='text-2xl font-bold text-left border-b-2 pb-2 border-gray-300'>
+                        Add a New Blog
+                    </h1>
+                </CardHeader>
+                <CardContent>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)}>
+                            <div className="space-y-6">
+                                <FormField
+                                    control={form.control}
+                                    name="title" // Fixed: was "tittle"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Title</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder="Enter the title"
+                                                    disabled={isSubmitting}
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="category"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Category</FormLabel>
+                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger className='w-full'>
+                                                        <SelectValue placeholder="Select Category" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent className='bg-white'>
+                                                    {
+                                                        categoriesdata && categoriesdata?.categories.length > 0 ?
+                                                            categoriesdata.categories.map((category, index) => {
+                                                                return <SelectItem key={index} value={category._id}>{category.name}</SelectItem>
+                                                            })
+                                                            :
+                                                            <div className="px-2 py-1.5 text-sm text-gray-500">No categories available</div>
+                                                    }
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="slug"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Slug</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder="Auto-generated from title"
+                                                    disabled={isSubmitting}
+                                                    readOnly
+                                                    className="bg-gray-100 cursor-not-allowed"
+                                                    {...field} 
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                            <p className="text-sm text-gray-500">
+                                                The slug is automatically generated from the blog title
+                                            </p>
+                                        </FormItem>
+                                    )}
+                                />
+                                <div>
+                                    <FormLabel className='mb-2 block'>Featured Image</FormLabel>
+                                    <Dropzone
+                                        onDrop={acceptedFiles => handleFileUpload(acceptedFiles)}
+                                        accept={{
+                                            'image/*': ['.jpeg', '.jpg', '.png', '.webp']
+                                        }}
+                                        maxFiles={1}
+                                    >
+                                        {({ getRootProps, getInputProps, isDragActive }) => (
+                                            <div {...getRootProps()}>
+                                                <input {...getInputProps()} />
+                                                <div className={`flex justify-center items-center w-full lg:w-72 h-56 border-2 border-dashed rounded cursor-pointer transition-colors ${isDragActive ? 'border-blue-400 bg-blue-50' : 'border-gray-300 hover:border-gray-400'
+                                                    }`}>
+                                                    {avatar ? (
+                                                        <img
+                                                            src={avatar}
+                                                            alt="Preview"
+                                                            className="max-w-full max-h-full object-contain rounded"
+                                                        />
+                                                    ) : (
+                                                        <div className="text-center text-gray-500">
+                                                            <p>Drag & drop an image here, or click to select</p>
+                                                            <p className="text-sm mt-1">Supports: JPG, PNG, WebP</p>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </Dropzone>
+                                </div>
+                                <FormField
+                                    control={form.control}
+                                    name="blogcontent"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Blog Content</FormLabel>
+                                            <FormControl>
+                                                <div className="w-full max-w-full h-72 overflow-hidden rounded border border-gray-300">
+                                                    <Editor
+                                                        onChange={(data) => {
+                                                            field.onChange(data);
+                                                        }}
+                                                        {...field}
+                                                        props={{ initialData: '' }}
+                                                    />
+                                                </div>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <div className="flex gap-4">
+                                    <Button
+                                        type="submit"
+                                        className="flex-1"
+                                        disabled={isSubmitting}
+                                    >
+                                        {isSubmitting ? 'Adding Blog...' : 'Add Blog'}
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        className="flex-1"
+                                        onClick={handleClearForm}
+                                        disabled={isSubmitting}
+                                    >
+                                        Clear Form
+                                    </Button>
+                                </div>
+
+                                {/* Link to view Blogs */}
+                                <div className="text-center">
+                                    <Button asChild variant="outline">
+                                        <Link to={RouteBlog}>
+                                            View All Blogs
+                                        </Link>
+                                    </Button>
+                                </div>
+                            </div>
+                        </form>
+                    </Form>
+                </CardContent>
+            </Card>
+        </div>
+    );
+}
+
+export default AddBlog;

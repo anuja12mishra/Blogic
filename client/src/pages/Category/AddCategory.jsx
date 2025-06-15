@@ -212,7 +212,7 @@ function AddCategory() {
         <div className="container mx-auto p-4">
             <Card className='max-w-screen-md mx-auto'>
                 <CardHeader>
-                    <h1 className='text-xl text-center border-b-2 pb-2 border-gray-300'>
+                    <h1 className='text-2xl font-bold text-center border-b-2 pb-2 border-gray-300'>
                         Add a New Category
                     </h1>
                 </CardHeader>
@@ -282,7 +282,7 @@ function AddCategory() {
                                     <Button asChild>
                                         <Link
                                             to={RouteCategoryDetails}
-                                            
+
                                         >
                                             View All Categories
                                         </Link>

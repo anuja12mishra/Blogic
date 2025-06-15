@@ -154,8 +154,8 @@ function Profile() {
                                             <Input
                                                 placeholder="Enter your email"
                                                 {...field}
-                                                readOnly
-                                                className="bg-gray-100 cursor-not-allowed"
+                                                
+                                                className="bg-readOnlygray-100 cursor-not-allowed"
                                             />
                                         </FormControl>
                                         <FormMessage />
