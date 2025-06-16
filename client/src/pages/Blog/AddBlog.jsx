@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -21,6 +21,7 @@ import {
 import { useFetch } from '@/hooks/useFetch';
 import Dropzone from 'react-dropzone';
 import Editor from '@/components/Editor';
+import { useSelector } from 'react-redux';
 
 const formSchema = z.object({
     title: z.string().min(3, "Title must be at least 3 characters long"),
@@ -32,6 +33,7 @@ const formSchema = z.object({
 function AddBlog() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
+    const user = useSelector((state) => state.user);
 
     const [avatar, setAvatar] = useState();
     const [file, setFile] = useState();
@@ -73,27 +75,39 @@ function AddBlog() {
 
     async function onSubmit(values) {
         if (isSubmitting) return;
-        console.log('Form values:', values);
-        console.log('Uploaded file:', file);
+
+        // Basic validation
+        if (!values.title?.trim() || !values.blogcontent?.trim()) {
+            showtoast('error', 'All fields are required');
+            return;
+        }
 
         setIsSubmitting(true);
 
         try {
-            // Create FormData for file upload
             const formData = new FormData();
-            formData.append('title', values.title);
+            formData.append('title', values.title.trim());
             formData.append('category', values.category);
             formData.append('slug', values.slug);
-            formData.append('blogcontent', values.blogcontent);
+            formData.append('blogContent', values.blogcontent.trim()); // Match backend expectation
+
+            // Add authenticated user ID
+            if (user?.user?._id) {
+                formData.append('author', user.user._id);
+            }
 
             if (file) {
                 formData.append('featuredImage', file);
+            } else {
+                showtoast('error', 'Featured image is required');
+                setIsSubmitting(false);
+                return;
             }
 
             const res = await fetch(`${getEnv('VITE_API_URL')}/api/blog/add`, {
                 method: 'POST',
                 credentials: 'include',
-                body: formData // Don't set Content-Type header when using FormData
+                body: formData
             });
 
             const data = await res.json();
@@ -111,16 +125,22 @@ function AddBlog() {
             // Reset form after successful submission
             handleClearForm();
 
-            // Optional: Navigate to blogs list
+            // Optional: Navigate to blogs list or the new blog post
             // navigate(RouteBlog);
+            // or navigate(`/blog/${data.blog.slug}`);
 
         } catch (err) {
             console.error('Request failed:', err);
-            showtoast('error', 'Network error: Unable to connect to server');
+            if (err.name === 'TypeError' && err.message.includes('fetch')) {
+                showtoast('error', 'Network error: Unable to connect to server');
+            } else {
+                showtoast('error', 'An unexpected error occurred. Please try again.');
+            }
         } finally {
             setIsSubmitting(false);
         }
     }
+
 
     const handleFileUpload = (files) => {
         const uploadedFile = files[0];
@@ -207,7 +227,7 @@ function AddBlog() {
                                                     disabled={isSubmitting}
                                                     readOnly
                                                     className="bg-gray-100 cursor-not-allowed"
-                                                    {...field} 
+                                                    {...field}
                                                 />
                                             </FormControl>
                                             <FormMessage />

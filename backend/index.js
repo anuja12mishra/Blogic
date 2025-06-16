@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import AuthRoute from './routes/Auth.route.js';
 import UserRoute from './routes/User.route.js';
 import CategoryRoute from './routes/Category.route.js';
+import BlogRoute from './routes/Blog.route.js';
 
 //getting the envs
 import dotenv from 'dotenv';
@@ -28,6 +29,7 @@ app.use(express.urlencoded({
 app.use('/api/auth',AuthRoute);
 app.use('/api/user',UserRoute);
 app.use('/api/category',CategoryRoute);
+app.use('/api/blog',BlogRoute);
 
 mongoose.connect(process.env.MONGODB_URL, {
         dbName: 'blogic'
