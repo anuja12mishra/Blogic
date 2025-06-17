@@ -23,6 +23,7 @@ import Dropzone from 'react-dropzone';
 import Editor from '@/components/Editor';
 import { useSelector } from 'react-redux';
 import { decode } from 'entities'
+import Loading from '@/components/Loading';
 const formSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters long"),
   category: z.string().min(1, "Please select a category"),
@@ -120,7 +121,8 @@ function EditBlog() {
       if (file) {
         formData.append('featuredImage', file);
       }
-
+      
+      //updating the edited data 
       const res = await fetch(`${getEnv('VITE_API_URL')}/api/blog/edit/${blog_id}`, {
         method: 'PUT',
         credentials: 'include',
@@ -154,7 +156,7 @@ function EditBlog() {
   };
 
   if (blogLoading) {
-    return <div className="container mx-auto p-4">Loading blog data...</div>;
+    return <Loading />
   }
 
   return (

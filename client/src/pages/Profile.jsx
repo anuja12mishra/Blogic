@@ -32,6 +32,7 @@ const formSchema = z.object({
 function Profile() {
     const [avatar, setAvatar] = useState();
     const [file, setFile] = useState();
+    const [submitting,setSubmiting] = useState(false);
     const user = useSelector((state) => state.user);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -75,6 +76,7 @@ function Profile() {
 
 
     async function onSubmit(values) {
+        setSubmiting(true)
         try {
             const newFormData = new FormData;
             newFormData.append('file', file);
@@ -97,6 +99,8 @@ function Profile() {
 
         } catch (err) {
             showtoast('error', 'Network error: Unable to connect to server');
+        }finally{
+            setSubmiting(false);
         }
     }
 
@@ -190,8 +194,9 @@ function Profile() {
                                     </FormItem>
                                 )}
                             />*/}
-                            <Button type="submit" className="w-full transition duration-300 cursor-pointer">
-                                Save changes
+                            <Button type="submit" className="w-full transition duration-300 cursor-pointer" disabled={submitting} >
+                                {submitting?'Saveing changes....':'Save changes'}
+                                
                             </Button>
                         </Form>
                     </form>
