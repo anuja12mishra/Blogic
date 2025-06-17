@@ -92,6 +92,12 @@ export const Login = async (req, res, next) => {
       return next(handleError(404, 'Invalid login credentials'));
     }
 
+    // const token = jwt.sign({
+    //   _id: user._id,
+    //   name: user.name,
+    //   email: user.email,
+    //   avatar: user.avatar
+    // }, process.env.JWT_SECRET);
     const token = jwt.sign({
       _id: user._id,
       name: user.name,
@@ -103,7 +109,8 @@ export const Login = async (req, res, next) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-      path: '/'
+      path: '/',
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
     });
 
     const newUser = user.toObject({
@@ -158,6 +165,12 @@ export const GoogleLogin = async (req, res, next) => {
     }
 
 
+    // const token = jwt.sign({
+    //   _id: user._id,
+    //   name: user.name,
+    //   email: user.email,
+    //   avatar: user.avatar
+    // }, process.env.JWT_SECRET);
     const token = jwt.sign({
       _id: user._id,
       name: user.name,
@@ -169,7 +182,8 @@ export const GoogleLogin = async (req, res, next) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-      path: '/'
+      path: '/',
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
     });
 
     const userObj = user.toObject({
@@ -189,9 +203,9 @@ export const GoogleLogin = async (req, res, next) => {
   }
 };
 
-export const Logout = async(req,res,next)=>{
+export const Logout = async (req, res, next) => {
   try {
-    res.clearCookie("access_token",{
+    res.clearCookie("access_token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',

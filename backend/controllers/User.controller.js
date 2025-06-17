@@ -100,6 +100,9 @@ export const updateUserDetails = async (req, res, next) => {
 }
 
 
+
+// trash >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 //cloudinary setup ------>>>>>>>>>>>
 
 // import User from '../models/user.model.js';

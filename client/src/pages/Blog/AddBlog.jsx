@@ -49,8 +49,8 @@ function AddBlog() {
         },
     });
 
-    // // Auto-generate slug from title (changed from category to title)
-    const watchedCategory = form.watch('category');
+    //Auto-generate slug from title 
+    const watchedTitle = form.watch('title');
 
     const { data: categoriesdata, loading, error } = useFetch(
         `${getEnv('VITE_API_URL')}/api/category/get-all-category`,
@@ -58,11 +58,9 @@ function AddBlog() {
     )
 
     useEffect(() => {
-        // console.log('useEffect',watchedCategory)
-        if (watchedCategory) {
-            const categoryName = categoriesdata.categories.find(category => category._id === watchedCategory);
-            // console.log('categoryName',categoryName.name)
-            const slug = slugify(categoryName.name, {
+        // CHANGED: Generate slug from title instead of category
+        if (watchedTitle && watchedTitle.trim()) {
+            const slug = slugify(watchedTitle, {
                 lower: true,
                 strict: true, // Remove special characters
                 trim: true
@@ -71,7 +69,7 @@ function AddBlog() {
         } else {
             form.setValue('slug', '');
         }
-    }, [watchedCategory, form]);
+    }, [watchedTitle, form]);
 
     async function onSubmit(values) {
         if (isSubmitting) return;
@@ -126,8 +124,7 @@ function AddBlog() {
             handleClearForm();
 
             // Optional: Navigate to blogs list or the new blog post
-            // navigate(RouteBlog);
-            // or navigate(`/blog/${data.blog.slug}`);
+            navigate(RouteBlog);
 
         } catch (err) {
             console.error('Request failed:', err);
@@ -173,23 +170,6 @@ function AddBlog() {
                             <div className="space-y-6">
                                 <FormField
                                     control={form.control}
-                                    name="title" // Fixed: was "tittle"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Title</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder="Enter the title"
-                                                    disabled={isSubmitting}
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
                                     name="category"
                                     render={({ field }) => (
                                         <FormItem>
@@ -211,6 +191,23 @@ function AddBlog() {
                                                     }
                                                 </SelectContent>
                                             </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="title"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Title</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder="Enter the title"
+                                                    disabled={isSubmitting}
+                                                    {...field}
+                                                />
+                                            </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}

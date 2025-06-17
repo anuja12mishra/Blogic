@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { RouteAddBlog, RouteAddCategory, RouteEditCategory } from '@/helpers/RouteName'
+import { RouteAddBlog, RouteBlog, RouteEditBlog } from '@/helpers/RouteName'
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
@@ -18,22 +18,25 @@ import { getEnv } from '@/helpers/getEnv'
 import Loading from '@/components/Loading'
 import { MdDeleteOutline } from "react-icons/md";
 import { FaRegEdit } from "react-icons/fa";
-import { handleCategoryDelete } from '@/helpers/handleCategoryDelete'
+import { handleBlogDelete } from '@/helpers/hangleBlogDelete'
+import { MdOutlineRemoveRedEye } from "react-icons/md";
+import moment from 'moment'
 
 function BlogDetails() {
     const [refresh, setRefresh] = useState(false);
 
     // Pass refresh as a dependency to trigger re-fetch
-    const { data: categoriesdata, loading, error } = useFetch(
-        `${getEnv('VITE_API_URL')}/api/category/get-all-category`,
+    const { data: blogsData, loading, error } = useFetch(
+        `${getEnv('VITE_API_URL')}/api/blog/get-all-blogs`,
         { method: 'GET', credentials: 'include' },
-        [refresh] // Add refresh as dependency
+        [refresh]
     );
+    console.log('blogsData', blogsData?.blog)
 
-    const handleDelete = async (id, categoryName) => {
+    const handleDelete = async (id) => {
         try {
-            const deleteres = await handleCategoryDelete(
-                `${getEnv('VITE_API_URL')}/api/category/delete/${id}`
+            const deleteres = await handleBlogDelete(
+                `${getEnv('VITE_API_URL')}/api/blog/delete/${id}`
             );
 
             if (deleteres && deleteres.success) {
@@ -71,8 +74,7 @@ function BlogDetails() {
         return <Loading />
     }
 
-    const categories = categoriesdata?.categories || [];
-
+    const blogs = blogsData?.blog || [];
     return (
         <div>
             <Card>
@@ -89,10 +91,7 @@ function BlogDetails() {
                 <CardContent>
                     <Table>
                         <TableCaption>
-                            {categories.length > 0
-                                ? `A list of ${categories.length} categories.`
-                                : "No categories found."
-                            }
+
                         </TableCaption>
                         <TableHeader>
                             <TableRow>
@@ -105,16 +104,23 @@ function BlogDetails() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {categories.length > 0 ? (
-                                categories.map((category) => (
-                                    <TableRow key={category._id}>
-                                        <TableCell className="font-medium">
-                                            {category.name}
+                            {
+                                blogs.map((data, index) => {
+                                    return <TableRow key={index}>
+                                        <TableCell>
+                                            {data.author.name}
                                         </TableCell>
                                         <TableCell>
-                                            <code className="bg-gray-100 px-2 py-1 rounded text-sm">
-                                                {category.slug}
-                                            </code>
+                                            {data.category.name}
+                                        </TableCell>
+                                        <TableCell>
+                                            {data.title}
+                                        </TableCell>
+                                        <TableCell>
+                                            {data.slug}
+                                        </TableCell>
+                                        <TableCell>
+                                            {moment(data.updatedAt).format('LLLL')}
                                         </TableCell>
                                         <TableCell>
                                             <div className="flex gap-2 justify-end">
@@ -122,40 +128,41 @@ function BlogDetails() {
                                                     variant="outline"
                                                     size="sm"
                                                     asChild
-                                                    aria-label={`Edit ${category.name}`}
+                                                    aria-label={`Edit ${data.name}`}
                                                 >
-                                                    <Link to={RouteEditCategory(category._id)}>
+                                                    <Link to={RouteEditBlog(data._id)}>
                                                         <FaRegEdit size={16} />
-                                                        <span className="sr-only">Edit {category.name}</span>
+                                                        <span className="sr-only">Edit {data.name}</span>
+                                                    </Link>
+                                                </Button>
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    asChild
+                                                    aria-label={`Edit ${data.name}`}
+                                                >
+                                                    <Link to={RouteBlog}>
+                                                        <MdOutlineRemoveRedEye size={16} />
+                                                        <span className="sr-only">view {data.name}</span>
                                                     </Link>
                                                 </Button>
                                                 <Button
                                                     variant="destructive"
                                                     size="sm"
-                                                    onClick={() => handleDelete(category._id, category.name)}
-                                                    aria-label={`Delete ${category.name}`}
+                                                    onClick={() => handleDelete(data._id)}
+                                                    className='hover:cursor-pointer'
+                                                    aria-label={`Delete ${data.name}`}
                                                 >
+
                                                     <MdDeleteOutline size={16} />
-                                                    <span className="sr-only">Delete {category.name}</span>
+                                                    <span className="sr-only">Delete {data.name}</span>
                                                 </Button>
                                             </div>
                                         </TableCell>
                                     </TableRow>
-                                ))
-                            ) : (
-                                <TableRow>
-                                    <TableCell colSpan={3} className="text-center py-8 text-muted-foreground">
-                                        <div className="flex flex-col items-center gap-2">
-                                            <p className="text-lg">No categories found</p>
-                                            <Button asChild variant="outline">
-                                                <Link to={RouteAddCategory}>
-                                                    Create your first category
-                                                </Link>
-                                            </Button>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            )}
+                                })
+                            }
+
                         </TableBody>
                     </Table>
                 </CardContent>

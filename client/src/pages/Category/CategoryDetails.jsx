@@ -30,7 +30,7 @@ function CategoryDetails() {
     [refresh] // Add refresh as dependency
   );
 
-  const handleDelete = async (id, categoryName) => {
+  const handleDelete = async (id) => {
     try {
       const deleteres = await handleCategoryDelete(
         `${getEnv('VITE_API_URL')}/api/category/delete/${id}`
@@ -129,8 +129,9 @@ function CategoryDetails() {
                         <Button 
                           variant="destructive"
                           size="sm"
-                          onClick={() => handleDelete(category._id, category.name)}
+                          onClick={() => handleDelete(category._id)}
                           aria-label={`Delete ${category.name}`}
+                          className='hover:cursor-pointer'
                         >
                           <MdDeleteOutline size={16} />
                           <span className="sr-only">Delete {category.name}</span>
