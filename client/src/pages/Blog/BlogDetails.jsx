@@ -76,7 +76,7 @@ function BlogDetails() {
 
     const blogs = blogsData?.blog || [];
     return (
-        <div >
+        <div className='w-full'>
             <Card>
                 <CardHeader>
                     <div className="flex justify-between items-center">

@@ -115,7 +115,7 @@ function Profile() {
                                 <input {...getInputProps()} />
                                 <div className="relative w-24 h-24">
                                     <Avatar className="w-full h-full">
-                                        <AvatarImage src={avatar ? avatar : userData?.user?.avatar || ''} />
+                                        <AvatarImage className='object-cover' src={avatar ? avatar : userData?.user?.avatar || ''} />
                                     </Avatar>
                                     <button
                                         type="button"

@@ -32,6 +32,7 @@ export function AppSidebar() {
     const categories = categoriesdata?.categories || [];
 
     return (
+        // <Sidebar className="bg-gradient-to-r from-purple-500 via-purple-400 via-purple-300 to-white text-white border-none">
         <Sidebar>
             <SidebarHeader className='items-center'>
                 <img src={logo} alt="logo-image" width={50} className="bg-transparent" />
@@ -40,52 +41,64 @@ export function AppSidebar() {
                 <SidebarGroup>
                     <SidebarMenu>
                         <SidebarMenuItem>
-                            <SidebarMenuButton>
-                                <IoHomeOutline />
-                                <Link to="">Home</Link>
-                            </SidebarMenuButton>
+                            <Link to="">
+                                <SidebarMenuButton className='hover:bg-purple-300'>
+                                    <IoHomeOutline />
+                                    Home
+                                </SidebarMenuButton>
+                            </Link>
                         </SidebarMenuItem>
                         <SidebarMenuItem>
-                            <SidebarMenuButton>
-                                <BiCategoryAlt />
-                                <Link to={RouteCategoryDetails}>Categories</Link>
-                            </SidebarMenuButton>
+                            <Link to={RouteCategoryDetails}>
+                                <SidebarMenuButton className='hover:bg-purple-300'>
+                                    <BiCategoryAlt />
+                                    Categories
+                                </SidebarMenuButton>
+                            </Link>
                         </SidebarMenuItem>
                         <SidebarMenuItem>
-                            <SidebarMenuButton>
-                                <TbLogs />
-                                <Link to={RouteBlog}>Blogs</Link>
-                            </SidebarMenuButton>
+                            <Link to={RouteBlog}>
+                                <SidebarMenuButton className='hover:bg-purple-300'>
+                                    <TbLogs />
+                                    Blogs
+                                </SidebarMenuButton>
+                            </Link>
                         </SidebarMenuItem>
                         <SidebarMenuItem>
-                            <SidebarMenuButton>
-                                <FaRegUser />
-                                <Link to="">User</Link>
-                            </SidebarMenuButton>
+                            <Link to="">
+                                <SidebarMenuButton className='hover:bg-purple-300'>
+                                    <FaRegUser />
+                                    User
+                                </SidebarMenuButton>
+                            </Link>
                         </SidebarMenuItem>
                         <SidebarMenuItem>
-                            <SidebarMenuButton>
-                                <LiaComments />
-                                <Link to="">Comments</Link>
-                            </SidebarMenuButton>
+                            <Link to="">
+                                <SidebarMenuButton className='hover:bg-purple-300'>
+                                    <LiaComments />
+                                    Comments
+                                </SidebarMenuButton>
+                            </Link>
                         </SidebarMenuItem>
                     </SidebarMenu>
                 </SidebarGroup>
                 <SidebarGroup>
                     <SidebarGroupLabel>Categories</SidebarGroupLabel>
-                    <SidebarMenu>
+                    <SidebarMenu >
                         {
                             categories.length > 0 ?
-                            categories?.map((category, index) => {
-                                return (
-                                    <SidebarMenuItem key={index}>
-                                        <SidebarMenuButton>
-                                            <GoDot />
-                                            <Link to="">{category.name}</Link>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                )
-                            }):<SidebarGroupLabel>No category found</SidebarGroupLabel>
+                                categories?.map((category, index) => {
+                                    return (
+                                        <SidebarMenuItem key={index}>
+                                            <Link to="">
+                                                <SidebarMenuButton className='hover:bg-purple-300'>
+                                                    <GoDot />
+                                                    {category.name}
+                                                </SidebarMenuButton>
+                                            </Link>
+                                        </SidebarMenuItem>
+                                    )
+                                }) : <SidebarGroupLabel>No category found</SidebarGroupLabel>
                         }
 
                     </SidebarMenu>

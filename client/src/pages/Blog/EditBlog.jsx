@@ -64,8 +64,6 @@ function EditBlog() {
     { method: 'GET', credentials: 'include' }
   );
 
-  console.log
-
   // Populate form when blog data loads
   useEffect(() => {
     if (blogData?.blog) {

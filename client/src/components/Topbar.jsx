@@ -86,7 +86,7 @@ function Topbar() {
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <Avatar className=" md:w-10 md:h-10">
-                  <AvatarImage src={user.user.avatar} />
+                  <AvatarImage className='object-cover' src={user.user.avatar} />
                   <AvatarFallback className="bg-gray-300">{(user.user.name)?.split(" ").map((n) => n[0]).join("").toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
