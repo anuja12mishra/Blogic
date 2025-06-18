@@ -139,7 +139,7 @@ export const EditBlog = async (req, res, next) => {
 export const GetAllBlog = async (req, res, next) => {
     try {
 
-        const allBlogs = await Blog.find().populate('author', 'name').populate('category', 'name').sort({
+        const allBlogs = await Blog.find().populate('author', 'name avatar role').populate('category', 'name slug').sort({
             updatedAt: -1
         }).lean().exec();
 
@@ -161,12 +161,14 @@ export const GetABlog = async (req, res, next) => {
             blogId
         } = req.params;
         const blog = await Blog.findById(blogId)
-            .populate('author', 'name email') // Populate author details
-            .populate('category', 'name') // Populate category details
+            .populate('author', 'name avatar') 
+            .populate('category', 'name') 
             .lean();
         if (!blog) {
             return next(handleError(404, 'blog not found'));
         }
+
+        // console.log('blog',blog)
 
         res.status(200).json({
             success: true,
