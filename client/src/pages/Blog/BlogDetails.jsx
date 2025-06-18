@@ -31,7 +31,7 @@ function BlogDetails() {
         { method: 'GET', credentials: 'include' },
         [refresh]
     );
-    console.log('blogsData', blogsData?.blog)
+    //console.log('blogsData', blogsData?.blog)
 
     const handleDelete = async (id) => {
         try {
@@ -76,7 +76,7 @@ function BlogDetails() {
 
     const blogs = blogsData?.blog || [];
     return (
-        <div>
+        <div >
             <Card>
                 <CardHeader>
                     <div className="flex justify-between items-center">
@@ -91,7 +91,10 @@ function BlogDetails() {
                 <CardContent>
                     <Table>
                         <TableCaption>
-
+                            {blogsData?.blog?.length > 0
+                                ? `A list of ${blogsData?.blog?.length} blogs.`
+                                : "No Blogs found."
+                            }
                         </TableCaption>
                         <TableHeader>
                             <TableRow>
@@ -108,10 +111,10 @@ function BlogDetails() {
                                 blogs.map((data, index) => {
                                     return <TableRow key={index}>
                                         <TableCell>
-                                            {data.author.name}
+                                            {data.author?.name}
                                         </TableCell>
                                         <TableCell>
-                                            {data.category.name}
+                                            {data.category?.name}
                                         </TableCell>
                                         <TableCell>
                                             {data.title}

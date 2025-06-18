@@ -38,7 +38,7 @@ function CategoryDetails() {
 
       if (deleteres && deleteres.success) {
         showtoast('success', deleteres.message);
-        setRefresh(prev => !prev); // Use functional update
+        setRefresh(prev => !prev);
       } else {
         showtoast('error', deleteres?.message || 'Failed to delete category');
       }
@@ -51,7 +51,7 @@ function CategoryDetails() {
   // Handle error state
   if (error) {
     return (
-      <div className="flex justify-center items-center h-64">
+      <div className="flex justify-center items-center">
         <Card>
           <CardContent className="p-6">
             <p className="text-red-600">Error loading categories: {error.message}</p>
