@@ -7,6 +7,7 @@ import React from 'react'
 import { useParams } from 'react-router-dom';
 import moment from 'moment'; // Added for date formatting
 import { decode } from 'entities'
+import Comments from '@/components/Comments';
 function SingleBlogDetails() {
     const { blog_id } = useParams();
 
@@ -14,10 +15,10 @@ function SingleBlogDetails() {
         `${getEnv('VITE_API_URL')}/api/blog/get-a-blog/${blog_id}`,
         { method: 'GET', credentials: 'include' }
     );
-    
+
     console.log('blogData', blogData)
-    
-    if(blogLoading){
+
+    if (blogLoading) {
         return <Loading />
     }
 
@@ -33,14 +34,14 @@ function SingleBlogDetails() {
             <div className='border-2 rounded w-full md:w-[70%] p-5'>
                 {/* Blog Title */}
                 <h1 className='text-3xl font-bold mb-4'>{blog.title}</h1>
-                
+
                 {/* Author and Admin Badge Section */}
                 <div className="flex flex-col md:flex-row md:justify-between md:items-center w-full gap-2 mb-2">
                     <div className="flex items-center gap-2">
                         <Avatar className="flex items-center gap-2">
-                            <AvatarImage 
-                                src={blog.author.avatar || '/default-avatar.png'} 
-                                className="h-10 w-10 rounded-full object-cover" 
+                            <AvatarImage
+                                src={blog.author.avatar || '/default-avatar.png'}
+                                className="h-10 w-10 rounded-full object-cover"
                             />
                             <div className="flex flex-col">
                                 <p className="font-medium text-sm">{blog.author.name}</p>
@@ -70,8 +71,8 @@ function SingleBlogDetails() {
                 {/* Featured Image */}
                 {blog.featuredImage && (
                     <div className="mb-2">
-                        <img 
-                            src={blog.featuredImage} 
+                        <img
+                            src={blog.featuredImage}
                             alt={blog.title}
                             className="w-full h-64 object-cover rounded-lg"
                         />
@@ -86,14 +87,19 @@ function SingleBlogDetails() {
                 </div>
 
                 {/* Blog Content */}
-                <div 
-                    className="border-t-2 pt-4 prose max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-blue-600 prose-strong:text-gray-900 prose-ul:text-gray-700 prose-ol:text-gray-700"
-                    dangerouslySetInnerHTML={{ 
+                <div
+                    className="border-t-2 border-b-2 py-4 prose max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-blue-600 prose-strong:text-gray-900 prose-ul:text-gray-700 prose-ol:text-gray-700"
+                    dangerouslySetInnerHTML={{
                         __html: decode(blog.blogContent)
                     }}
                 />
+                <div className='mt-4 rounded w-full p-2'>
+                    {console.log('blogId:blogData.blog._id',blogData.blog._id)}
+                    <Comments props={blogData.blog._id}/>
+                </div>
+
             </div>
-            
+
             <div className='border rounded w-full md:w-[30%] p-4'>
                 <h2 className="text-xl font-bold mb-4">Related Blogs</h2>
                 {/* Related blog content will go here */}
