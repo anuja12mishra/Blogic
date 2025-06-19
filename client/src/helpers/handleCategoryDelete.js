@@ -11,7 +11,7 @@ export const handleCategoryDelete = async (endpoint) => {
       }
     });
 
-    const data = await res.json(); // 👈 Read JSON response from backend
+    const data = await res.json();
 
     if (res.ok) {
       return data;

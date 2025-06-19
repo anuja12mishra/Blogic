@@ -8,6 +8,9 @@ import { useParams } from 'react-router-dom';
 import moment from 'moment'; // Added for date formatting
 import { decode } from 'entities'
 import Comments from '@/components/Comments';
+import { FaRegComment } from "react-icons/fa";
+import CommentCount from '@/components/CommentCount';
+import BlogLike from '@/components/BlogLike';
 function SingleBlogDetails() {
     const { blog_id } = useParams();
 
@@ -15,8 +18,6 @@ function SingleBlogDetails() {
         `${getEnv('VITE_API_URL')}/api/blog/get-a-blog/${blog_id}`,
         { method: 'GET', credentials: 'include' }
     );
-
-    console.log('blogData', blogData)
 
     if (blogLoading) {
         return <Loading />
@@ -37,7 +38,7 @@ function SingleBlogDetails() {
 
                 {/* Author and Admin Badge Section */}
                 <div className="flex flex-col md:flex-row md:justify-between md:items-center w-full gap-2 mb-2">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-between gap-8">
                         <Avatar className="flex items-center gap-2">
                             <AvatarImage
                                 src={blog.author.avatar || '/default-avatar.png'}
@@ -53,6 +54,10 @@ function SingleBlogDetails() {
                                 {blog.author.name?.charAt(0)?.toUpperCase() || 'A'}
                             </AvatarFallback>
                         </Avatar>
+                        <div className='flex gap-4 justify-end items-center'>
+                            <BlogLike props={blogData.blog._id} />
+                            <CommentCount props={blogData.blog._id} />
+                        </div>
                     </div>
 
                     {/* Fixed the condition - removed props reference */}
@@ -94,8 +99,7 @@ function SingleBlogDetails() {
                     }}
                 />
                 <div className='mt-4 rounded w-full p-2'>
-                    {console.log('blogId:blogData.blog._id',blogData.blog._id)}
-                    <Comments props={blogData.blog._id}/>
+                    <Comments props={blogData.blog._id} />
                 </div>
 
             </div>

@@ -1,8 +1,10 @@
 import express from 'express';
-import { AddComment } from '../controllers/Comment.controller.js';
+import { AddComment, CommentCount, GetAllComment } from '../controllers/Comment.controller.js';
 
 const CommentRoute = express.Router();
 
 CommentRoute.post('/add', AddComment);
+CommentRoute.get('/get-all-comment/:blogId',GetAllComment);
+CommentRoute.get('/comment-count/:blogId',CommentCount);
 
 export default CommentRoute;

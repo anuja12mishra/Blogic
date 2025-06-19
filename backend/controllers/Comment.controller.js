@@ -52,6 +52,40 @@ export const AddComment = async (req, res, next) => {
         next(handleError(500, error.message));
     }
 };
+
+export const GetAllComment = async (req, res, next) => {
+    try {
+        const {blogId} = req.params;
+        // console.log('blogId',blogId)
+        const comments = await Comment.find({blogId:blogId}).populate('authorId', 'avatar name').sort({updatedAt:-1}).lean().exec();
+        // console.log('comments',comments)
+        res.status(200).json({
+            success: true,
+            message: "Comments retrieved successfully",
+            comment: comments
+        });
+    } catch (error) {
+        console.error(error.message);
+        next(handleError(500, error.message));
+    }
+};
+
+export const CommentCount= async (req, res, next) => {
+    try {
+        const {blogId} = req.params;
+        //console.log('blogId',blogId)
+        const comment = (await Comment.find({blogId:blogId})).length;
+        // console.log('comments',comments)
+        res.status(200).json({
+            success: true,
+            message: "Comments retrieved successfully",
+            comment: comment
+        });
+    } catch (error) {
+        console.error(error.message);
+        next(handleError(500, error.message));
+    }
+};
 // export const DeleteComment = async (req, res, next) => {
 //     try {
 //         const { categoryId } = req.params;
@@ -76,16 +110,3 @@ export const AddComment = async (req, res, next) => {
 // };
 
 
-// export const GetAllComment = async (req, res, next) => {
-//     try {
-//         const categories = await Category.find({}).sort({name:1}).lean().exec();
-//         res.status(200).json({
-//             success: true,
-//             message: "Categories retrieved successfully",
-//             categories: categories
-//         });
-//     } catch (error) {
-//         console.error(error.message);
-//         next(handleError(500, error.message));
-//     }
-// };

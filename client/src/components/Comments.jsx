@@ -12,6 +12,10 @@ import { Link } from 'react-router-dom';
 import { RouteSignIn } from '@/helpers/RouteName';
 import { getEnv } from '@/helpers/getEnv';
 import { showtoast } from '@/helpers/showtoast';
+import { useFetch } from '@/hooks/useFetch';
+import Loading from './Loading';
+import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
+import moment from 'moment';
 
 const formSchema = z.object({
     comment: z.string().min(1, 'Comment cannot be empty'),
@@ -19,6 +23,8 @@ const formSchema = z.object({
 
 function Comments(props) {
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [refresh, setRefresh] = useState(false);
+
     const user = useSelector((state) => state.user);
 
     const form = useForm({
@@ -27,6 +33,14 @@ function Comments(props) {
             comment: ''
         },
     });
+
+    const { data: commentData, loading: commentLoading } = useFetch(
+        `${getEnv('VITE_API_URL')}/api/comment/get-all-comment/${props.props}`,
+        { method: 'GET', credentials: 'include' },
+        [refresh] // Fixed: added missing comma before dependency array
+    );
+
+    console.log('commentData', commentData);
 
     async function onSubmit(values) {
         if (isSubmitting) return;
@@ -40,7 +54,6 @@ function Comments(props) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newValues)
             });
-
 
             const data = await res.json();
 
@@ -57,9 +70,12 @@ function Comments(props) {
             // Reset form after successful submission
             form.reset();
 
+            // Trigger refresh to reload comments
+            setRefresh((prev) => !prev);
+
         } catch (err) {
             console.error('Request failed:', err);
-            // showtoast('error', 'Network error: Unable to connect to server');
+            showtoast('error', 'Network error: Unable to connect to server');
         } finally {
             setIsSubmitting(false);
         }
@@ -78,7 +94,7 @@ function Comments(props) {
                             <div className="space-y-2">
                                 <FormField
                                     control={form.control}
-                                    name="comment" // Fixed: was "name", should be "comment"
+                                    name="comment"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
@@ -114,7 +130,53 @@ function Comments(props) {
 
             {/* All comments */}
             <div className='px-4 mt-4'>
-                <p>Comments will be displayed here</p>
+                {
+                    commentLoading ?
+                        <Loading />
+                        :
+                        commentData && commentData.comment && commentData.comment.length > 0 ?
+                            <div>
+                                <div  className='flex gap-2 text-2xl mb-3 font-bold'> 
+                                    {commentData.comment.length}
+                                    <h1>Comments</h1>
+                                </div>
+                                {commentData.comment.map((data) => {
+                                    return (
+                                        <div key={data._id} className="mb-6 p-4 bg-gray-200 rounded-full border-b border-gray-200 last:border-b-0">
+                                            <div className="flex items-start gap-3">
+                                                <Avatar className="flex-shrink-0">
+                                                    <AvatarImage
+                                                        src={data.authorId?.avatar || '/default-avatar.png'}
+                                                        alt={data.authorId?.name || 'User'}
+                                                        className="h-10 w-10 rounded-full object-cover"
+                                                    />
+                                                    <AvatarFallback className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium">
+                                                        {data.authorId?.name?.charAt(0)?.toUpperCase() || 'A'}
+                                                    </AvatarFallback>
+                                                </Avatar>
+
+                                                <div className="flex-1">
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <p className="font-medium text-sm text-gray-900">
+                                                            {data.authorId?.name || 'Anonymous'}
+                                                        </p>
+                                                        <p className="text-xs text-gray-500">
+                                                            {moment(data.createdAt).format('MMM DD, YYYY')}
+                                                        </p>
+                                                    </div>
+
+                                                    <p className="text-gray-700 text-sm leading-relaxed">
+                                                        {data.comment}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                            :
+                            <p className="text-gray-500 text-center py-8">No comments yet. Be the first to comment!</p>
+                }
             </div>
 
         </div >
