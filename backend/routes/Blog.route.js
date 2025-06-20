@@ -1,5 +1,5 @@
 import express from 'express';
-import { AddBlog, DeleteBlog, EditBlog, GetABlog, GetAllBlog } from '../controllers/Blog.controller.js';
+import { AddBlog, DeleteBlog, EditBlog, GetABlog, GetAllBlog, GetBlogByCategory } from '../controllers/Blog.controller.js';
 import upload from '../config/multer.config.js';
 
 const BlogRoute = express.Router();
@@ -10,6 +10,7 @@ BlogRoute.put('/edit/:blogId',upload.single('featuredImage'),EditBlog);
 BlogRoute.get('/get-a-blog/:blogId',GetABlog);
 BlogRoute.get('/get-all-blogs',GetAllBlog);
 BlogRoute.delete('/delete/:blogId',DeleteBlog);
+BlogRoute.get('/get-blog-by-category/:category/:blog',GetBlogByCategory)
 
 
 export default BlogRoute;

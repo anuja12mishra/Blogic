@@ -1,10 +1,10 @@
 export default {
   content: [
-    './index.html', // Ensure correct path
-    './src/**/*.{js,ts,jsx,tsx}', // Fixed syntax
+    './index.html', 
+    './src/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
-    extend: {}, // Fixed typo
+    extend: {}, 
   },
   plugins: [],
 };

@@ -40,7 +40,7 @@ function Comments(props) {
         [refresh] // Fixed: added missing comma before dependency array
     );
 
-    console.log('commentData', commentData);
+    // console.log('commentData', commentData);
 
     async function onSubmit(values) {
         if (isSubmitting) return;

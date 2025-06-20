@@ -83,7 +83,7 @@ function Topbar() {
               </Link>
             </Button>
             :
-            <DropdownMenu>
+            <DropdownMenu className='bg-amber-700'>
               <DropdownMenuTrigger>
                 <Avatar className=" md:w-10 md:h-10">
                   <AvatarImage className='object-cover' src={user.user.avatar} />

@@ -21,7 +21,6 @@ export const SetLike = async (req, res, next) => {
             return next(handleError(400, "Blog ID is required"));
         }
 
-
         const isLiked = await BlogLike.findOne({
             authorId,
             blogId
@@ -75,10 +74,97 @@ export const GetLikeCount = async (req, res, next) => {
         res.status(201).json({
             success: true,
             like: likeCount,
-            isLiked:Boolean(isUserLiked)
+            isLiked: Boolean(isUserLiked)
         });
     } catch (error) {
         console.error(error.message);
         next(handleError(500, error.message));
     }
 };
+
+
+
+// import { handleError } from "../helpers/handleError.js";
+// import BlogLike from "../models/blogLike.model.js";
+// import Blog from "../models/blog.model.js";
+
+// export const SetLike = async (req, res, next) => {
+//     try {
+//         const { authorId, blogId } = req.body;
+
+//         // Validate required fields
+//         if (!authorId || !blogId) {
+//             return next(handleError(400, "Both authorId and blogId are required"));
+//         }
+
+//         // Check if blog exists
+//         const blog = await Blog.findById(blogId);
+//         if (!blog) {
+//             return next(handleError(404, "Blog not found"));
+//         }
+
+//         // Prevent users from liking their own blog
+//         if (blog.author.toString() === authorId) {
+//             return next(handleError(400, "You cannot like your own blog"));
+//         }
+
+//         // Check if like already exists
+//         const existingLike = await BlogLike.findOne({ authorId, blogId });
+
+//         if (existingLike) {
+//             // Unlike if already liked
+//             await BlogLike.findOneAndDelete({ authorId, blogId });
+//         } else {
+//             // Add new like
+//             const newBlogLike = new BlogLike({ authorId, blogId });
+//             await newBlogLike.save();
+//         }
+
+//         // Get updated like count
+//         const likeCount = await BlogLike.countDocuments({ blogId });
+        
+//         res.status(200).json({
+//             success: true,
+//             likeCount,
+//             isLiked: !existingLike // Returns true if new like, false if unlike
+//         });
+
+//     } catch (error) {
+//         console.error('SetLike error:', error);
+//         next(handleError(500, "Failed to process like"));
+//     }
+// };
+
+// export const GetLikeCount = async (req, res, next) => {
+//     try {
+//         const { blogId } = req.params;
+//         const { authorId } = req.query; // Optional
+
+//         if (!blogId) {
+//             return next(handleError(400, "Blog ID is required"));
+//         }
+
+//         // Check if blog exists
+//         const blogExists = await Blog.exists({ _id: blogId });
+//         if (!blogExists) {
+//             return next(handleError(404, "Blog not found"));
+//         }
+
+//         const likeCount = await BlogLike.countDocuments({ blogId });
+//         let isUserLiked = false;
+
+//         if (authorId) {
+//             isUserLiked = await BlogLike.exists({ authorId, blogId });
+//         }
+
+//         res.status(200).json({
+//             success: true,
+//             likeCount,
+//             isLiked: isUserLiked
+//         });
+
+//     } catch (error) {
+//         console.error('GetLikeCount error:', error);
+//         next(handleError(500, "Failed to get like count"));
+//     }
+// };

@@ -8,7 +8,7 @@ function CommentCount(props) {
         `${getEnv('VITE_API_URL')}/api/comment/comment-count/${props.props}`,
         { method: 'GET', credentials: 'include' },
     );
-    console.log('commentData', commentData)
+    // console.log('commentData', commentData)
     return (
         <div >
             {

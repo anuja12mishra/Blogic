@@ -113,7 +113,7 @@ function BlogCard({
     props
 }) {
     const user = useSelector((state) => state.user);
-    console.log('props',props)
+    // console.log('props',props)
 
     return (
         <Link to={RouteSingleBlogDetails(props.blog.category.slug,props.blog.slug,props.blog._id)}>
@@ -128,7 +128,7 @@ function BlogCard({
                             </Avatar>
                         </div>
 
-                        {props.blog.author && props.blog.author.role === "admin" && (
+                        {props.blog.author && props.blog.author.role === "admin" ? (
                             <div className="flex justify-start max-md:justify-center items-center hover:cursor-default">
                                 <Badge
                                     variant="secondary"
@@ -137,7 +137,15 @@ function BlogCard({
                                     Admin
                                 </Badge>
                             </div>
-                        )}
+                        ): <div className="flex justify-start max-md:justify-center items-center hover:cursor-default">
+                                <Badge
+                                    variant="secondary"
+                                    className="bg-blue-500 text-white dark:bg-blue-600 rounded-lg px-3 py-1 "
+                                >
+                                    User
+                                </Badge>
+                            </div>
+                        }
                     </div>
 
                     {/* Fixed height image container */}

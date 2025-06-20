@@ -19,8 +19,6 @@ function Index() {
     return <p>Error loading blogs: {error.message}</p>;
   }
 
-
-
   // const blogs = blogsData?.blog || [];
   // console.log('blogs',blogs);
 

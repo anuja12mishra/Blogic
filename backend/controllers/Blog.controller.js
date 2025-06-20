@@ -66,7 +66,9 @@ export const AddBlog = async (req, res, next) => {
 
 export const EditBlog = async (req, res, next) => {
     try {
-        const { blogId } = req.params;
+        const {
+            blogId
+        } = req.params;
 
         // Find the blog by ID
         const isBlogExist = await Blog.findById(blogId);
@@ -75,7 +77,13 @@ export const EditBlog = async (req, res, next) => {
             return next(handleError(400, 'Blog not found'));
         }
 
-        const { author, title, category, slug, blogContent } = req.body;
+        const {
+            author,
+            title,
+            category,
+            slug,
+            blogContent
+        } = req.body;
         const file = req.file;
 
         // console.log('body',req.body,'file',req.file);
@@ -114,7 +122,7 @@ export const EditBlog = async (req, res, next) => {
         isBlogExist.title = title;
         isBlogExist.slug = slug || isBlogExist.slug;
         isBlogExist.blogContent = encode(blogContent);
-        
+
         // Only update image fields if new image was uploaded
         if (file && uploadResult) {
             isBlogExist.featuredImage = uploadResult.url;
@@ -161,8 +169,8 @@ export const GetABlog = async (req, res, next) => {
             blogId
         } = req.params;
         const blog = await Blog.findById(blogId)
-            .populate('author', 'name avatar') 
-            .populate('category', 'name') 
+            .populate('author', 'name avatar')
+            .populate('category', 'name')
             .lean();
         if (!blog) {
             return next(handleError(404, 'blog not found'));
@@ -192,10 +200,12 @@ export const UpdateBlog = async (req, res, next) => {
 
 export const DeleteBlog = async (req, res, next) => {
     try {
-        const { blogId } = req.params;
-        
+        const {
+            blogId
+        } = req.params;
+
         const blog = await Blog.findById(blogId);
-        
+
         if (!blog) {
             return res.status(404).json({
                 success: false,
@@ -217,6 +227,38 @@ export const DeleteBlog = async (req, res, next) => {
         res.status(200).json({
             success: true,
             message: 'Blog deleted successfully'
+        });
+
+    } catch (error) {
+        console.error('Error in DeleteBlog:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+            error: error.message
+        });
+    }
+}
+
+export const GetBlogByCategory = async (req, res, next) => {
+    try {
+        const {
+            category,
+            blog
+        } = req.params;
+
+        const relatedBlogs = await Blog.find({
+            category: category,
+            slug:{$ne:blog}
+        }).lean().exec();
+
+        if (!relatedBlogs) {
+            next(handleError(404,'Category data not found'))
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Related Blogs fetched successfully',
+            blog: relatedBlogs
         });
 
     } catch (error) {
