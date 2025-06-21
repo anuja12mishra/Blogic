@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { PiSignOutBold } from "react-icons/pi";
 import { Input } from './ui/input';
 import SearchBox from './SearchBox';
-import { RouteIndex, RouteProfile, RouteSignIn } from '@/helpers/RouteName';
+import { RouteAddBlog, RouteIndex, RouteProfile, RouteSignIn } from '@/helpers/RouteName';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   DropdownMenu,
@@ -104,7 +104,7 @@ function Topbar() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link>
+                  <Link to={RouteAddBlog}>
                     <FaPlus />
                     Create Blog
                   </Link>

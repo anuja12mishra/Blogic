@@ -28,7 +28,7 @@ function CommentDashboard() {
 
   // Pass refresh as a dependency to trigger re-fetch
   const { data: CommentData, loading, error } = useFetch(
-    `${getEnv('VITE_API_URL')}/api/comment/all-comments`,
+    `${getEnv('VITE_API_URL')}/api/comment/protected-all-comments`,
     { method: 'GET', credentials: 'include' },
     [refresh] 
   );

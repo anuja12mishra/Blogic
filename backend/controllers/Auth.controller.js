@@ -102,7 +102,8 @@ export const Login = async (req, res, next) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      avatar: user.avatar
+      avatar: user.avatar,
+      role:user.role
     }, process.env.JWT_SECRET);
 
     res.cookie("access_token", token, {
@@ -175,7 +176,8 @@ export const GoogleLogin = async (req, res, next) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      avatar: user.avatar
+      avatar: user.avatar,
+      role:user.role
     }, process.env.JWT_SECRET);
 
     res.cookie("access_token", token, {
@@ -211,6 +213,8 @@ export const Logout = async (req, res, next) => {
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
       path: '/'
     });
+
+    // console.log('logout')
 
     res.status(200).json({
       success: true,

@@ -120,7 +120,7 @@ export const GetAllUsers =async(req, res, next) => {
                 message: "No Users are present",
             });
         }
-        console.log('users',users)
+        // console.log('users',users)
         res.status(200).json({
             success: true,
             message: "User data updated",
@@ -140,7 +140,7 @@ export const DeleteUser= async(req,res,next)=>{
         }
 
         const user = await User.findByIdAndDelete(userId);
-        console.log('User',user)
+        // console.log('User',user)
 
         return res.status(200).json({
             success: true,

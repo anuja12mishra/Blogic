@@ -1,11 +1,14 @@
 import express from 'express';
-import { AddComment, CommentCount, DeleteComment, GetAllComment, GetAllCommentByBlogId } from '../controllers/Comment.controller.js';
+import { AddComment, CommentCount, DeleteComment, GetAllComment, GetAllCommentByBlogId, ProtectedGetAllComment } from '../controllers/Comment.controller.js';
+import { authenticate } from '../middleware/authenticate.js';
 
 const CommentRoute = express.Router();
 
-CommentRoute.post('/add', AddComment);
+CommentRoute.delete('/delete/:commentId',authenticate,DeleteComment)
+CommentRoute.post('/add',authenticate, AddComment);
+CommentRoute.get('/protected-all-comments',authenticate,ProtectedGetAllComment);
+
 CommentRoute.get('/get-all-comment/:blogId',GetAllCommentByBlogId);
 CommentRoute.get('/comment-count/:blogId',CommentCount);
 CommentRoute.get('/all-comments',GetAllComment);
-CommentRoute.delete('/delete/:commentId',DeleteComment)
 export default CommentRoute;

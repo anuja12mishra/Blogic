@@ -1,10 +1,14 @@
 import express from 'express';
 import { DeleteUser, GetAllUsers, getUserDetails, updateUserDetails } from '../controllers/User.controller.js';
 import upload from '../config/multer.config.js';
+import { onlyadmin } from '../middleware/onlyAdmin.js';
+import { authenticate } from '../middleware/authenticate.js';
 const UserRoute = express.Router();
 
-UserRoute.get('/user-details/:userId',getUserDetails);
-UserRoute.put('/user-update/:userId',upload.single('file'), updateUserDetails);
-UserRoute.get('/get-all-users',GetAllUsers);
-UserRoute.delete('/delete/:userId',DeleteUser);
+UserRoute.delete('/delete/:userId',onlyadmin, DeleteUser);
+UserRoute.get('/get-all-users',onlyadmin,GetAllUsers);
+
+UserRoute.put('/user-update/:userId',onlyadmin, upload.single('file'), updateUserDetails);
+UserRoute.get('/user-details/:userId',onlyadmin, getUserDetails);
+
 export default UserRoute;

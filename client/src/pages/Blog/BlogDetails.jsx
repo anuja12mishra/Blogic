@@ -29,7 +29,7 @@ function BlogDetails() {
 
     // Pass refresh as a dependency to trigger re-fetch
     const { data: blogsData, loading, error } = useFetch(
-        `${getEnv('VITE_API_URL')}/api/blog/get-all-blogs`,
+        `${getEnv('VITE_API_URL')}/api/blog/protect-get-all-blogs`,
         { method: 'GET', credentials: 'include' },
         [refresh]
     );

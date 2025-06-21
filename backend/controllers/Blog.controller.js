@@ -164,6 +164,36 @@ export const GetAllBlog = async (req, res, next) => {
         next(handleError(500, error.message));
     }
 }
+
+export const GetAllBlogProtect = async (req, res, next) => {
+    try {
+        const user = req.user;
+
+        let allBlogs;
+        if (user.role === 'admin') {
+            allBlogs = await Blog.find().populate('author', 'name avatar role').populate('category', 'name slug').sort({
+                updatedAt: -1
+            }).lean().exec();
+        }
+        else{
+            allBlogs = await Blog.find({author:user._id}).populate('author', 'name avatar role').populate('category', 'name slug').sort({
+                updatedAt: -1
+            }).lean().exec();
+        }
+
+        // console.log('allBlogs',allBlogs)
+        res.status(200).json({
+            success: true,
+            message: "Blogs retrieved successfully",
+            blog: allBlogs
+        });
+
+    } catch (error) {
+        console.error(error.message);
+        next(handleError(500, error.message));
+    }
+}
+
 export const GetABlog = async (req, res, next) => {
     try {
         const {
@@ -217,7 +247,7 @@ export const DeleteBlog = async (req, res, next) => {
         if (blog.featuredImageKey) {
             try {
                 await deleteFromR2(blog.featuredImageKey);
-                console.log(`Successfully deleted image from R2: ${blog.featuredImageKey}`);
+                // console.log(`Successfully deleted image from R2: ${blog.featuredImageKey}`);
             } catch (r2Error) {
                 console.error(`Failed to delete image from R2: ${blog.featuredImageKey}`, r2Error);
             }
@@ -280,7 +310,7 @@ export const GetBlogByCategoryOnly = async (req, res, next) => {
         const {
             category
         } = req.params;
-        // console.log('category',category);
+        //  ('category',category);
 
         const categoryData = await Category.findOne({
             slug: category

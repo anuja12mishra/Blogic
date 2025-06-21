@@ -14,23 +14,23 @@ export const AddComment = async (req, res, next) => {
 
         // Validate required fields with detailed logging
         if (!authorId) {
-            console.log('ERROR: authorId is missing or falsy');
+            // console.log('ERROR: authorId is missing or falsy');
             return next(handleError(400, "Author ID is required"));
         }
         
         if (!blogId) {
-            console.log('ERROR: blogId is missing or falsy');
+            // console.log('ERROR: blogId is missing or falsy');
             return next(handleError(400, "Blog ID is required"));
         }
         
         if (!comment) {
-            console.log('ERROR: comment is missing or falsy');
+            // console.log('ERROR: comment is missing or falsy');
             return next(handleError(400, "Comment is required"));
         }
 
         // Validate comment content is not empty after trimming
         if (!comment.trim()) {
-            console.log('ERROR: comment is empty after trimming');
+            // console.log('ERROR: comment is empty after trimming');
             return next(handleError(400, "Comment cannot be empty"));
         }
 
@@ -103,6 +103,30 @@ export const GetAllComment = async (req, res, next) => {
         next(handleError(500, error.message));
     }
 };
+
+
+export const ProtectedGetAllComment = async (req, res, next) => {
+    try {
+
+        const user=req.user;
+        let comments
+        if(user.role ==='admin'){
+            comments = await Comment.find().populate('authorId', 'name').populate('blogId','title').sort({updatedAt:-1}).lean().exec();
+        }
+        else{
+            comments = await Comment.find({authorId:user._id}).populate('authorId', 'name').populate('blogId','title').sort({updatedAt:-1}).lean().exec();
+        }
+        res.status(200).json({
+            success: true,
+            message: "Comments retrieved successfully",
+            comment: comments
+        });
+    } catch (error) {
+        console.error(error.message);
+        next(handleError(500, error.message));
+    }
+};
+
 
 export const DeleteComment = async (req, res, next) => {
     try {

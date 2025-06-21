@@ -157,8 +157,8 @@ function AddBlog() {
     }
 
     return (
-        <div className="container mx-auto p-4">
-            <Card className='max-w-screen-md mx-auto'>
+        <div className="container flex justify-center items-center mx-auto p-4 ">
+            <Card className=' md:w-[80%]'>
                 <CardHeader>
                     <h1 className='text-2xl font-bold text-left border-b-2 pb-2 border-gray-300'>
                         Add a New Blog

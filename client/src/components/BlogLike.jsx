@@ -10,7 +10,7 @@ function BlogLike({ props: blogId }) {
     const [liked, setLiked] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
 
-    const authorIdParam = user?.isLoggedIn && user?.user?._id ? user.user._id : 'guest';
+    const authorIdParam = user?.isLoggedIn && user?.user?._id ? user.user._id:null ;
 
     useEffect(() => {
         const fetchLikes = async () => {
