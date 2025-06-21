@@ -2,6 +2,7 @@ import {
     handleError
 } from "../helpers/handleError.js";
 import Blog from '../models/blog.model.js';
+import Category from '../models/category.model.js'
 import {
     deleteFromR2,
     uploadToR2
@@ -252,6 +253,36 @@ export const GetBlogByCategory = async (req, res, next) => {
         }).lean().exec();
 
         if (!relatedBlogs) {
+            next(handleError(404,'Category data not found'))
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Related Blogs fetched successfully',
+            blog: relatedBlogs
+        });
+
+    } catch (error) {
+        console.error('Error in DeleteBlog:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+            error: error.message
+        });
+    }
+}
+
+export const GetBlogByCategoryOnly = async (req, res, next) => {
+    try {
+        const {
+            category
+        } = req.params;
+
+        const blogs = await Category.findOne({
+            category: category
+        });
+
+        if (!blogs) {
             next(handleError(404,'Category data not found'))
         }
 

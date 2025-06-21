@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { RouteAddBlog, RouteBlog, RouteEditBlog } from '@/helpers/RouteName'
+import { RouteAddBlog, RouteBlog, RouteEditBlog, RouteSignIn } from '@/helpers/RouteName'
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
@@ -21,8 +21,10 @@ import { FaRegEdit } from "react-icons/fa";
 import { handleBlogDelete } from '@/helpers/hangleBlogDelete'
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import moment from 'moment'
+import { useSelector } from 'react-redux'
 
 function BlogDetails() {
+    const user = useSelector((state) => state.user)
     const [refresh, setRefresh] = useState(false);
 
     // Pass refresh as a dependency to trigger re-fetch
@@ -76,16 +78,26 @@ function BlogDetails() {
 
     const blogs = blogsData?.blog || [];
     return (
-        <div className='w-full'>
+        <div>
             <Card>
                 <CardHeader>
                     <div className="flex justify-between items-center">
                         <h2 className="text-2xl font-bold">Blogs</h2>
-                        <Button asChild>
-                            <Link to={RouteAddBlog}>
-                                Add Blog
-                            </Link>
-                        </Button>
+                        {
+                            user?.isLoggedIn ? (
+                                <Button asChild>
+                                    <Link to={RouteAddBlog}>
+                                        Add Blog
+                                    </Link>
+                                </Button>
+                            ) : (
+                                <Link to={RouteSignIn}>
+                                    <Button>
+                                        Sign-In To Add Blog
+                                    </Button>
+                                </Link>
+                            )
+                        }
                     </div>
                 </CardHeader>
                 <CardContent>

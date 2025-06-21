@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { RouteAddCategory, RouteEditCategory } from '@/helpers/RouteName'
+import { RouteAddCategory, RouteEditCategory, RouteSignIn } from '@/helpers/RouteName'
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
@@ -19,8 +19,10 @@ import Loading from '@/components/Loading'
 import { MdDeleteOutline } from "react-icons/md";
 import { FaRegEdit } from "react-icons/fa";
 import { handleCategoryDelete } from '@/helpers/handleCategoryDelete'
+import { useSelector } from 'react-redux'
 
 function CategoryDetails() {
+  const user = useSelector((state) => state.user)
   const [refresh, setRefresh] = useState(false);
 
   // Pass refresh as a dependency to trigger re-fetch
@@ -55,8 +57,8 @@ function CategoryDetails() {
         <Card>
           <CardContent className="p-6">
             <p className="text-red-600">Error loading categories: {error.message}</p>
-            <Button 
-              onClick={() => setRefresh(prev => !prev)} 
+            <Button
+              onClick={() => setRefresh(prev => !prev)}
               className="mt-4"
             >
               Try Again
@@ -79,18 +81,28 @@ function CategoryDetails() {
         <CardHeader>
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold">Categories</h2>
-            <Button asChild>
-              <Link to={RouteAddCategory}>
-                Add Category
-              </Link>
-            </Button>
+            {
+              user?.isLoggedIn ? (
+                <Button asChild>
+                  <Link to={RouteAddCategory}>
+                    Add Blog
+                  </Link>
+                </Button>
+              ) : (
+                <Link to={RouteSignIn}>
+                  <Button>
+                    Sign-In To Add Category
+                  </Button>
+                </Link>
+              )
+            }
           </div>
         </CardHeader>
         <CardContent>
           <Table>
             <TableCaption>
-              {categories.length > 0 
-                ? `A list of ${categories.length} categories.` 
+              {categories.length > 0
+                ? `A list of ${categories.length} categories.`
                 : "No categories found."
               }
             </TableCaption>
@@ -115,7 +127,7 @@ function CategoryDetails() {
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-2 justify-end">
-                        <Button 
+                        <Button
                           variant="outline"
                           size="sm"
                           asChild
@@ -126,7 +138,7 @@ function CategoryDetails() {
                             <span className="sr-only">Edit {category.name}</span>
                           </Link>
                         </Button>
-                        <Button 
+                        <Button
                           variant="destructive"
                           size="sm"
                           onClick={() => handleDelete(category._id)}
