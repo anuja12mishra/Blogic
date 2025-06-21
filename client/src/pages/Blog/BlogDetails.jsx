@@ -79,7 +79,7 @@ function BlogDetails() {
     const blogs = blogsData?.blog || [];
     return (
         <div>
-            <Card>
+            <Card className='md:w-6xl'>
                 <CardHeader>
                     <div className="flex justify-between items-center">
                         <h2 className="text-2xl font-bold">Blogs</h2>
@@ -134,7 +134,7 @@ function BlogDetails() {
                                         <TableCell>
                                             {data.slug}
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell className='w-fit'>
                                             {moment(data.updatedAt).format('LLLL')}
                                         </TableCell>
                                         <TableCell>

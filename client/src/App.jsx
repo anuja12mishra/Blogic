@@ -7,6 +7,7 @@ import {
   RouteBlog,
   RouteBlogByCategory,
   RouteCategoryDetails,
+  RouteComment,
   RouteEditBlog,
   RouteEditCategory,
   RouteIndex,
@@ -14,7 +15,8 @@ import {
   RouteSearch,
   RouteSignIn,
   RouteSignUp,
-  RouteSingleBlogDetails
+  RouteSingleBlogDetails,
+  RouteUser
 } from "./helpers/RouteName"
 import Index from "./pages"
 import SignIn from "./pages/SignIn";
@@ -29,6 +31,8 @@ import BlogDetails from "./pages/Blog/BlogDetails";
 import SingleBlogDetails from "./pages/Blog/SingleBlogDetails";
 import BlogByCategory from "./pages/Blog/BlogByCategory";
 import SerachResult from "./pages/SerachResult";
+import CommentDashboard from "./pages/CommentDashboard";
+import UsersDashboard from "./pages/UsersDashboard";
 
 function App() {
   return (
@@ -49,6 +53,10 @@ function App() {
           <Route path={RouteBlogByCategory()} element={<BlogByCategory />}></Route>
           {/* Search routes */}
           <Route path={RouteSearch()} element={<SerachResult />}></Route>
+          {/* comments page */}
+          <Route path={RouteComment} element={<CommentDashboard />}></Route>
+           {/* users page */}
+          <Route path={RouteUser} element={<UsersDashboard />}></Route>
         </Route>
         <Route element={<SignIn />} path={RouteSignIn} />
         <Route element={<SignUp />} path={RouteSignUp} />

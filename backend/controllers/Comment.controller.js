@@ -53,7 +53,7 @@ export const AddComment = async (req, res, next) => {
     }
 };
 
-export const GetAllComment = async (req, res, next) => {
+export const GetAllCommentByBlogId = async (req, res, next) => {
     try {
         const {blogId} = req.params;
         // console.log('blogId',blogId)
@@ -86,27 +86,94 @@ export const CommentCount= async (req, res, next) => {
         next(handleError(500, error.message));
     }
 };
-// export const DeleteComment = async (req, res, next) => {
+
+
+export const GetAllComment = async (req, res, next) => {
+    try {
+        // console.log('blogId',blogId)
+        const comments = await Comment.find().populate('authorId', 'name').populate('blogId','title').sort({updatedAt:-1}).lean().exec();
+        // console.log('comments',comments)
+        res.status(200).json({
+            success: true,
+            message: "Comments retrieved successfully",
+            comment: comments
+        });
+    } catch (error) {
+        console.error(error.message);
+        next(handleError(500, error.message));
+    }
+};
+
+export const DeleteComment = async (req, res, next) => {
+    try {
+        const { commentId } = req.params;
+
+        // const existingCategory = await Comment.findById(categoryId);
+
+        if (!commentId) {
+            return next(handleError(404, 'Category not found'));
+        }
+
+        await Comment.findByIdAndDelete(commentId);
+
+        return res.status(200).json({
+            success: true,
+            message: `Comment deleted successfully.`
+        });
+    } catch (error) {
+        console.error("Error in DeleteCategory:", error);
+        return next(handleError(500, "Internal Server Error"));
+    }
+};
+
+
+
+// export const AddComment = async (req, res, next) => {
 //     try {
-//         const { categoryId } = req.params;
+//         const {
+//             authorId,
+//             blogId,
+//             comment
+//         } = req.body;
 
-//         const existingCategory = await Category.findById(categoryId);
 
-//         if (!existingCategory) {
-//             return next(handleError(404, 'Category not found'));
+//         // Validate required fields with detailed logging
+//         if (!authorId) {
+//             console.log('ERROR: authorId is missing or falsy');
+//             return next(handleError(400, "Author ID is required"));
+//         }
+        
+//         if (!blogId) {
+//             console.log('ERROR: blogId is missing or falsy');
+//             return next(handleError(400, "Blog ID is required"));
+//         }
+        
+//         if (!comment) {
+//             console.log('ERROR: comment is missing or falsy');
+//             return next(handleError(400, "Comment is required"));
 //         }
 
-//         const name = existingCategory.name;
-//         await Category.findByIdAndDelete(categoryId);
+//         // Validate comment content is not empty after trimming
+//         if (!comment.trim()) {
+//             console.log('ERROR: comment is empty after trimming');
+//             return next(handleError(400, "Comment cannot be empty"));
+//         }
 
-//         return res.status(200).json({
+//         const newComment = new Comment({
+//             authorId,
+//             blogId,
+//             comment: comment.trim()
+//         });
+
+//         await newComment.save();
+
+//         res.status(201).json({
 //             success: true,
-//             message: `Category '${name}' deleted successfully.`
+//             message: "Comment added successfully",
+//             comment: newComment
 //         });
 //     } catch (error) {
-//         console.error("Error in DeleteCategory:", error);
-//         return next(handleError(500, "Internal Server Error"));
+//         console.error('AddComment error:', error.message);
+//         next(handleError(500, error.message));
 //     }
 // };
-
-

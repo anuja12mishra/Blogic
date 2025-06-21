@@ -39,3 +39,7 @@ export const RouteSearch = (q) => {
     }
     return '/search'
 }
+
+export const RouteComment = '/comments'
+
+export const RouteUser = '/users'

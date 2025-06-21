@@ -3,13 +3,22 @@ import dotenv from 'dotenv';
 dotenv.config()
 
 import User from '../models/user.model.js';
-import { handleError } from '../helpers/handleError.js';
-import { uploadToR2, deleteFromR2 } from '../helpers/r2Upload.js';
+import {
+    handleError
+} from '../helpers/handleError.js';
+import {
+    uploadToR2,
+    deleteFromR2
+} from '../helpers/r2Upload.js';
 
 export const getUserDetails = async (req, res, next) => {
     try {
-        const { userId } = req.params;
-        const user = await User.findOne({ _id: userId }).lean().exec();
+        const {
+            userId
+        } = req.params;
+        const user = await User.findOne({
+            _id: userId
+        }).lean().exec();
         if (!user) {
             return next(handleError(404, "User not found"));
         }
@@ -29,7 +38,9 @@ export const getUserDetails = async (req, res, next) => {
 
 export const updateUserDetails = async (req, res, next) => {
     try {
-        const { userId } = req.params;
+        const {
+            userId
+        } = req.params;
         const data = JSON.parse(req.body.user);
         const file = req.file;
 
@@ -56,7 +67,7 @@ export const updateUserDetails = async (req, res, next) => {
 
                 // Upload new image to R2
                 const uploadResult = await uploadToR2(file, 'avatars');
-                
+
                 user.avatar = uploadResult.url;
                 user.avatarKey = uploadResult.key; // Store R2 key for future deletion
 
@@ -85,7 +96,7 @@ export const updateUserDetails = async (req, res, next) => {
         const userResponse = user.toObject();
         delete userResponse.password;
         delete userResponse.avatarKey;
-        
+
         //console.log('User updated successfully:', user.name);
 
         res.status(200).json({
@@ -98,7 +109,49 @@ export const updateUserDetails = async (req, res, next) => {
         next(handleError(500, error.message));
     }
 }
+export const GetAllUsers =async(req, res, next) => {
+    try {
+        const users = await User.find().sort({
+            createdAt: 1
+        }).lean().exec();
+        if (!users) {
+            res.status(404).json({
+                success: false,
+                message: "No Users are present",
+            });
+        }
+        console.log('users',users)
+        res.status(200).json({
+            success: true,
+            message: "User data updated",
+            user: users
+        });
+    } catch (error) {
+        console.error('Update user error:', error);
+        next(handleError(500, error.message));
+    }
+}
 
+export const DeleteUser= async(req,res,next)=>{
+    try {
+        const {userId} = req.params;
+         if (!userId) {
+            return next(handleError(404, 'Category not found'));
+        }
+
+        const user = await User.findByIdAndDelete(userId);
+        console.log('User',user)
+
+        return res.status(200).json({
+            success: true,
+            message: `User ${user.name} deleted successfully.`
+        });
+        
+    } catch (error) {
+        console.error('Update user error:', error);
+        next(handleError(500, error.message));
+    }
+}
 
 
 // trash >>>>>>>>>>>>>>>>>>>>>>>>>>>>>

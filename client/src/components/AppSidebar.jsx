@@ -17,7 +17,7 @@ import { TbLogs } from "react-icons/tb";
 import { FaRegUser } from "react-icons/fa";
 import { LiaComments } from "react-icons/lia";
 import { GoDot } from "react-icons/go";
-import { RouteAddCategory, RouteBlog, RouteBlogByCategory, RouteCategoryDetails } from "@/helpers/RouteName";
+import { RouteAddCategory, RouteBlog, RouteBlogByCategory, RouteCategoryDetails, RouteComment, RouteUser } from "@/helpers/RouteName";
 import { useFetch } from "@/hooks/useFetch";
 import { getEnv } from "@/helpers/getEnv";
 export function AppSidebar() {
@@ -65,7 +65,7 @@ export function AppSidebar() {
                             </Link>
                         </SidebarMenuItem>
                         <SidebarMenuItem>
-                            <Link to="">
+                            <Link to={RouteUser}>
                                 <SidebarMenuButton className='hover:bg-purple-300'>
                                     <FaRegUser />
                                     User
@@ -73,7 +73,7 @@ export function AppSidebar() {
                             </Link>
                         </SidebarMenuItem>
                         <SidebarMenuItem>
-                            <Link to="">
+                            <Link to={RouteComment}>
                                 <SidebarMenuButton className='hover:bg-purple-300'>
                                     <LiaComments />
                                     Comments
