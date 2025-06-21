@@ -249,11 +249,13 @@ export const GetBlogByCategory = async (req, res, next) => {
 
         const relatedBlogs = await Blog.find({
             category: category,
-            slug:{$ne:blog}
+            slug: {
+                $ne: blog
+            }
         }).lean().exec();
 
         if (!relatedBlogs) {
-            next(handleError(404,'Category data not found'))
+            next(handleError(404, 'Category data not found'))
         }
 
         res.status(200).json({
@@ -283,25 +285,90 @@ export const GetBlogByCategoryOnly = async (req, res, next) => {
         const categoryData = await Category.findOne({
             slug: category
         });
-        console.log('categoryData',categoryData)
+        // console.log('categoryData', categoryData)
         if (!categoryData) {
-            next(handleError(404,'This Category data not found'))
+            next(handleError(404, 'This Category data not found'))
         }
         const categoryId = categoryData._id;
 
-        const blog = await Blog.find({category:categoryId}).populate('author', 'name avatar role').populate('category', 'name slug').sort({
+        const blog = await Blog.find({
+            category: categoryId
+        }).populate('author', 'name avatar role').populate('category', 'name slug').sort({
             updatedAt: -1
         }).lean().exec();
-        console.log('blog',blog)
+
         res.status(200).json({
             success: true,
             message: 'Related Blogs fetched successfully',
             blog: blog,
-            category:categoryData
+            category: categoryData
         });
 
     } catch (error) {
         console.error('Error in DeleteBlog:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+            error: error.message
+        });
+    }
+}
+
+export const Search = async (req, res, next) => {
+    try {
+        // Use req.query instead of req.params for query parameters
+        const {
+            q
+        } = req.query;
+
+        // Validate that search query exists
+        if (!q || q.trim().length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Search query is required',
+                blog: []
+            });
+        }
+
+        // Fixed: $options instead of $option, and added search in content as well
+        const blog = await Blog.find({
+                $or: [{
+                        title: {
+                            $regex: q.trim(),
+                            $options: 'i'
+                        }
+                    },
+                    {
+                        blogContent: {
+                            $regex: q.trim(),
+                            $options: 'i'
+                        }
+                    },
+                    {
+                        slug: {
+                            $regex: q.trim(),
+                            $options: 'i'
+                        }
+                    }
+                ]
+            })
+            .populate('author', 'name avatar role')
+            .populate('category', 'name slug')
+            .sort({
+                title: 1
+            })
+            .lean()
+            .exec();
+
+        res.status(200).json({
+            success: true,
+            message: `Found ${blog.length} blog(s) for "${q}"`,
+            blog: blog,
+            query: q
+        });
+
+    } catch (error) {
+        console.error('Error in Search:', error);
         res.status(500).json({
             success: false,
             message: 'Internal server error',

@@ -1,7 +1,21 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"; 
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Button } from "./components/ui/button"
 import Layout from "./Layouts/Layout"
-import { RouteAddBlog, RouteAddCategory, RouteBlog, RouteBlogByCategory, RouteCategoryDetails, RouteEditBlog, RouteEditCategory, RouteIndex, RouteProfile, RouteSignIn, RouteSignUp, RouteSingleBlogDetails } from "./helpers/RouteName"
+import {
+  RouteAddBlog,
+  RouteAddCategory,
+  RouteBlog,
+  RouteBlogByCategory,
+  RouteCategoryDetails,
+  RouteEditBlog,
+  RouteEditCategory,
+  RouteIndex,
+  RouteProfile,
+  RouteSearch,
+  RouteSignIn,
+  RouteSignUp,
+  RouteSingleBlogDetails
+} from "./helpers/RouteName"
 import Index from "./pages"
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
@@ -14,6 +28,7 @@ import EditBlog from "./pages/Blog/EditBlog";
 import BlogDetails from "./pages/Blog/BlogDetails";
 import SingleBlogDetails from "./pages/Blog/SingleBlogDetails";
 import BlogByCategory from "./pages/Blog/BlogByCategory";
+import SerachResult from "./pages/SerachResult";
 
 function App() {
   return (
@@ -32,9 +47,11 @@ function App() {
           <Route path={RouteEditBlog()} element={<EditBlog />}></Route>
           <Route path={RouteSingleBlogDetails()} element={<SingleBlogDetails />}></Route>
           <Route path={RouteBlogByCategory()} element={<BlogByCategory />}></Route>
+          {/* Search routes */}
+          <Route path={RouteSearch()} element={<SerachResult />}></Route>
         </Route>
-        <Route element={<SignIn />} path={RouteSignIn}/>
-        <Route element={<SignUp />} path={RouteSignUp}/>
+        <Route element={<SignIn />} path={RouteSignIn} />
+        <Route element={<SignUp />} path={RouteSignUp} />
       </Routes>
     </BrowserRouter>
   )
