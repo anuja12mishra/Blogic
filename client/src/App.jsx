@@ -33,6 +33,8 @@ import BlogByCategory from "./pages/Blog/BlogByCategory";
 import SerachResult from "./pages/SerachResult";
 import CommentDashboard from "./pages/CommentDashboard";
 import UsersDashboard from "./pages/UsersDashboard";
+import AuthRouteProtection from "./components/Protected Routes/AuthRouteProtection";
+import OnlyAdminAllowed from "./components/Protected Routes/OnlyAdminAllowed";
 
 function App() {
   return (
@@ -40,23 +42,42 @@ function App() {
       <Routes>
         <Route path={RouteIndex} element={<Layout />}>
           <Route index element={<Index />}></Route>
-          <Route path={RouteProfile} element={<Profile />}></Route>
-          {/* Category routes */}
-          <Route path={RouteAddCategory} element={<AddCategory />}></Route>
-          <Route path={RouteCategoryDetails} element={<CategoryDetails />}></Route>
-          <Route path={RouteEditCategory()} element={<EditCategory />}></Route>
           {/* Blog routes */}
-          <Route path={RouteAddBlog} element={<AddBlog />}></Route>
-          <Route path={RouteBlog} element={<BlogDetails />}></Route>
-          <Route path={RouteEditBlog()} element={<EditBlog />}></Route>
           <Route path={RouteSingleBlogDetails()} element={<SingleBlogDetails />}></Route>
           <Route path={RouteBlogByCategory()} element={<BlogByCategory />}></Route>
           {/* Search routes */}
           <Route path={RouteSearch()} element={<SerachResult />}></Route>
-          {/* comments page */}
-          <Route path={RouteComment} element={<CommentDashboard />}></Route>
-           {/* users page */}
-          <Route path={RouteUser} element={<UsersDashboard />}></Route>
+
+          <Route element={<AuthRouteProtection />}>
+            <Route path={RouteProfile} element={<Profile />}></Route>
+
+            {/* Blog routes */}
+            <Route path={RouteAddBlog} element={<AddBlog />}></Route>
+            <Route path={RouteBlog} element={<BlogDetails />}></Route>
+            <Route path={RouteEditBlog()} element={<EditBlog />}></Route>
+            {/* comments page */}
+            <Route path={RouteComment} element={<CommentDashboard />}></Route>
+
+          </Route>
+
+          <Route element={<OnlyAdminAllowed/>}>
+            <Route path={RouteProfile} element={<Profile />}></Route>
+
+            {/* Blog routes */}
+            <Route path={RouteAddBlog} element={<AddBlog />}></Route>
+            <Route path={RouteBlog} element={<BlogDetails />}></Route>
+            <Route path={RouteEditBlog()} element={<EditBlog />}></Route>
+            {/* comments page */}
+            <Route path={RouteComment} element={<CommentDashboard />}></Route>
+
+            {/* Category routes */}
+            <Route path={RouteAddCategory} element={<AddCategory />}></Route>
+            <Route path={RouteCategoryDetails} element={<CategoryDetails />}></Route>
+            <Route path={RouteEditCategory()} element={<EditCategory />}></Route>
+            {/* users page */}
+            <Route path={RouteUser} element={<UsersDashboard />}></Route>
+          </Route>
+
         </Route>
         <Route element={<SignIn />} path={RouteSignIn} />
         <Route element={<SignUp />} path={RouteSignUp} />

@@ -17,11 +17,12 @@ import { TbLogs } from "react-icons/tb";
 import { FaRegUser } from "react-icons/fa";
 import { LiaComments } from "react-icons/lia";
 import { GoDot } from "react-icons/go";
-import { RouteAddCategory, RouteBlog, RouteBlogByCategory, RouteCategoryDetails, RouteComment, RouteUser } from "@/helpers/RouteName";
+import { RouteAddCategory, RouteBlog, RouteBlogByCategory, RouteCategoryDetails, RouteComment, RouteIndex, RouteUser } from "@/helpers/RouteName";
 import { useFetch } from "@/hooks/useFetch";
 import { getEnv } from "@/helpers/getEnv";
+import { useSelector } from "react-redux";
 export function AppSidebar() {
-
+    const user = useSelector((state => state.user));
     // Pass refresh as a dependency to trigger re-fetch
     const { data: categoriesdata, loading, error } = useFetch(
         `${getEnv('VITE_API_URL')}/api/category/get-all-category`,
@@ -33,53 +34,66 @@ export function AppSidebar() {
 
     return (
         // <Sidebar className="bg-gradient-to-r from-purple-500 via-purple-400 via-purple-300 to-white text-white border-none">
-        <Sidebar>
-            <SidebarHeader className='items-center'>
-                <img src={logo} alt="logo-image" width={50} className="bg-transparent" />
+        <Sidebar className='pt-16'>
+            <SidebarHeader className='text-2xl font-bold text-purple-600 items-start pt-5'>
+                <h2>Control Panel</h2>
             </SidebarHeader>
             <SidebarContent >
                 <SidebarGroup>
                     <SidebarMenu>
                         <SidebarMenuItem>
-                            <Link to="">
+                            <Link to={RouteIndex}>
                                 <SidebarMenuButton className='hover:bg-purple-300'>
                                     <IoHomeOutline />
                                     Home
                                 </SidebarMenuButton>
                             </Link>
                         </SidebarMenuItem>
-                        <SidebarMenuItem>
-                            <Link to={RouteCategoryDetails}>
-                                <SidebarMenuButton className='hover:bg-purple-300'>
-                                    <BiCategoryAlt />
-                                    Categories
-                                </SidebarMenuButton>
-                            </Link>
-                        </SidebarMenuItem>
-                        <SidebarMenuItem>
-                            <Link to={RouteBlog}>
-                                <SidebarMenuButton className='hover:bg-purple-300'>
-                                    <TbLogs />
-                                    Blogs
-                                </SidebarMenuButton>
-                            </Link>
-                        </SidebarMenuItem>
-                        <SidebarMenuItem>
-                            <Link to={RouteUser}>
-                                <SidebarMenuButton className='hover:bg-purple-300'>
-                                    <FaRegUser />
-                                    User
-                                </SidebarMenuButton>
-                            </Link>
-                        </SidebarMenuItem>
-                        <SidebarMenuItem>
-                            <Link to={RouteComment}>
-                                <SidebarMenuButton className='hover:bg-purple-300'>
-                                    <LiaComments />
-                                    Comments
-                                </SidebarMenuButton>
-                            </Link>
-                        </SidebarMenuItem>
+                        {
+                            user && user.isLoggedIn ? (
+                                <>
+                                    <SidebarMenuItem>
+                                        <Link to={RouteComment}>
+                                            <SidebarMenuButton className='hover:bg-purple-300'>
+                                                <LiaComments />
+                                                Comments
+                                            </SidebarMenuButton>
+                                        </Link>
+                                    </SidebarMenuItem>
+                                    <SidebarMenuItem>
+                                        <Link to={RouteBlog}>
+                                            <SidebarMenuButton className='hover:bg-purple-300'>
+                                                <TbLogs />
+                                                Blogs
+                                            </SidebarMenuButton>
+                                        </Link>
+                                    </SidebarMenuItem>
+                                </>
+                            ) : <></>
+                        }
+                        {
+
+                            user && user.user.role === 'admin' ? (
+                                <>
+                                    <SidebarMenuItem>
+                                        <Link to={RouteCategoryDetails}>
+                                            <SidebarMenuButton className='hover:bg-purple-300'>
+                                                <BiCategoryAlt />
+                                                Categories
+                                            </SidebarMenuButton>
+                                        </Link>
+                                    </SidebarMenuItem>
+                                    <SidebarMenuItem>
+                                        <Link to={RouteUser}>
+                                            <SidebarMenuButton className='hover:bg-purple-300'>
+                                                <FaRegUser />
+                                                User
+                                            </SidebarMenuButton>
+                                        </Link>
+                                    </SidebarMenuItem>
+                                </>
+                            ) : <></>
+                        }
                     </SidebarMenu>
                 </SidebarGroup>
                 <SidebarGroup>
