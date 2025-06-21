@@ -274,22 +274,30 @@ export const GetBlogByCategory = async (req, res, next) => {
 
 export const GetBlogByCategoryOnly = async (req, res, next) => {
     try {
+        //here the category getting from param is the slug of that category
         const {
             category
         } = req.params;
+        // console.log('category',category);
 
-        const blogs = await Category.findOne({
-            category: category
+        const categoryData = await Category.findOne({
+            slug: category
         });
-
-        if (!blogs) {
-            next(handleError(404,'Category data not found'))
+        console.log('categoryData',categoryData)
+        if (!categoryData) {
+            next(handleError(404,'This Category data not found'))
         }
+        const categoryId = categoryData._id;
 
+        const blog = await Blog.find({category:categoryId}).populate('author', 'name avatar role').populate('category', 'name slug').sort({
+            updatedAt: -1
+        }).lean().exec();
+        console.log('blog',blog)
         res.status(200).json({
             success: true,
             message: 'Related Blogs fetched successfully',
-            blog: relatedBlogs
+            blog: blog,
+            category:categoryData
         });
 
     } catch (error) {

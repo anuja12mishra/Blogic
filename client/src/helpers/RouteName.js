@@ -26,3 +26,10 @@ export const RouteSingleBlogDetails = (category,slug,blog_id)=>{
         return `/blog/${category}/${slug}/${blog_id}`
     }
 }
+export const RouteBlogByCategory = (category)=>{
+    if(!category){
+        return '/blog/:category'
+    }else{
+        return `/blog/${category}`
+    }
+}

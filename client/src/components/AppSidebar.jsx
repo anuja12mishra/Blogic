@@ -17,7 +17,7 @@ import { TbLogs } from "react-icons/tb";
 import { FaRegUser } from "react-icons/fa";
 import { LiaComments } from "react-icons/lia";
 import { GoDot } from "react-icons/go";
-import { RouteAddCategory, RouteBlog, RouteCategoryDetails } from "@/helpers/RouteName";
+import { RouteAddCategory, RouteBlog, RouteBlogByCategory, RouteCategoryDetails } from "@/helpers/RouteName";
 import { useFetch } from "@/hooks/useFetch";
 import { getEnv } from "@/helpers/getEnv";
 export function AppSidebar() {
@@ -90,7 +90,7 @@ export function AppSidebar() {
                                 categories?.map((category, index) => {
                                     return (
                                         <SidebarMenuItem key={index}>
-                                            <Link to="">
+                                            <Link to={RouteBlogByCategory(category.slug)}>
                                                 <SidebarMenuButton className='hover:bg-purple-300'>
                                                     <GoDot />
                                                     {category.name}

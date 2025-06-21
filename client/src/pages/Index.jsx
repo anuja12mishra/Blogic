@@ -4,7 +4,8 @@ import Loading from '@/components/Loading';
 import { getEnv } from '@/helpers/getEnv';
 import { useFetch } from '@/hooks/useFetch';
 import React from 'react'
-
+import { TbCategory } from 'react-icons/tb';
+import { MdOutlineHome } from "react-icons/md";
 function Index() {
   const { data: blogsData, loading, error } = useFetch(
     `${getEnv('VITE_API_URL')}/api/blog/get-all-blogs`,
@@ -24,6 +25,10 @@ function Index() {
 
   return (
     <div className="w-full">
+      <div className='flex justify-start items-center gap-2 text-purple-600  p-2 border-b-2 border-gray-300' >
+        <MdOutlineHome size={30} />
+        <h4 className='text-2xl font-bold'>Home</h4>
+      </div>
       {/* Container with proper padding and max-width */}
       <div className="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
         {blogsData && blogsData.blog.length > 0 ? (
@@ -31,12 +36,7 @@ function Index() {
             {blogsData.blog.map((blog) => (
               <BlogCard
                 key={blog._id}
-                // title={blog.title}
-                // author={blog.author.name}
-                // createdAt={blog.createdAt}
-                // image={blog.featuredImage}
-                // avatar={blog.author.avatar}
-                props={{blog}}
+                props={{ blog }}
               />
             ))}
           </div>
