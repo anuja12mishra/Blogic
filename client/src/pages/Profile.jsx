@@ -32,7 +32,7 @@ const formSchema = z.object({
 function Profile() {
     const [avatar, setAvatar] = useState();
     const [file, setFile] = useState();
-    const [submitting,setSubmiting] = useState(false);
+    const [submitting, setSubmiting] = useState(false);
     const user = useSelector((state) => state.user);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -99,7 +99,7 @@ function Profile() {
 
         } catch (err) {
             showtoast('error', 'Network error: Unable to connect to server');
-        }finally{
+        } finally {
             setSubmiting(false);
         }
     }
@@ -158,8 +158,8 @@ function Profile() {
                                             <Input
                                                 placeholder="Enter your email"
                                                 {...field}
-                                                
-                                                className="bg-readOnlygray-100 cursor-not-allowed"
+                                                readOnly
+                                                className="bg-gray-200 cursor-not-allowed"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -195,8 +195,8 @@ function Profile() {
                                 )}
                             />*/}
                             <Button type="submit" className="w-full transition duration-300 cursor-pointer" disabled={submitting} >
-                                {submitting?'Saveing changes....':'Save changes'}
-                                
+                                {submitting ? 'Saveing changes....' : 'Save changes'}
+
                             </Button>
                         </Form>
                     </form>

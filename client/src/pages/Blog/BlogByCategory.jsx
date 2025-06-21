@@ -12,7 +12,7 @@ function BlogByCategory() {
         { method: 'GET', credentials: 'include' },
         [category]
     );
-    console.log('blogsData',blogsData)
+    // console.log('blogsData',blogsData)
 
     if (loading) {
         return <Loading />;

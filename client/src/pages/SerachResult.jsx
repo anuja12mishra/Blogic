@@ -16,7 +16,7 @@ export default function SerachResult() {
         [q]
     );
 
-    console.log('blogsData', blogsData);
+    // console.log('blogsData', blogsData);
 
     return (
         <div className="w-full">

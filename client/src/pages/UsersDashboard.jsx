@@ -29,7 +29,7 @@ function UsersDashboard() {
         { method: 'GET', credentials: 'include' },
         [refresh]
     );
-    console.log('UserData',UserData)
+    // console.log('UserData',UserData)
     const handleDelete = async (id) => {
         try {
             const deleteres = await handleCategoryDelete(

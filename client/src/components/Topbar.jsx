@@ -1,9 +1,9 @@
 import React from 'react'
-import name from '@/assets/name.png'
+// import name from '@/assets/name.png'
+import name from '../assets/name.png'
 import { Button } from './ui/button'
 import { Link, useNavigate } from 'react-router-dom'
 import { PiSignOutBold } from "react-icons/pi";
-import { Input } from './ui/input';
 import SearchBox from './SearchBox';
 import { RouteAddBlog, RouteIndex, RouteProfile, RouteSignIn } from '@/helpers/RouteName';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,11 +22,13 @@ import { FaPlus } from "react-icons/fa";
 import { removeUser } from '@/redux/user/user.slice';
 import { showtoast } from '@/helpers/showtoast';
 import { getEnv } from '@/helpers/getEnv';
-
+import { IoMenu } from "react-icons/io5";
+import { useSidebar } from './ui/sidebar';
 function Topbar() {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const { toggleSidebar } = useSidebar();
   const handleLogout = async () => {
     try {
       const res = await fetch(`${getEnv('VITE_API_URL')}/api/auth/logout`, {
@@ -62,10 +64,16 @@ function Topbar() {
 
   return (
     <div className="flex justify-between items-center gap-2 w-full fixed bg-white h-16 z-20 px-5 md:px-16 lg:px-20 border-b-2 border-gray-200">
-      <div className="flex items-center">
-        <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-purple-400 to-purple-700 text-transparent bg-clip-text">
-          BLogic
-        </h1>
+      <div className="flex justify-center items-center gap-2">
+        <button onClick={toggleSidebar} className='md:hidden'>
+          <IoMenu size={25} />
+        </button>
+        <Link to={RouteIndex}>
+          <h1 className="flex text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold bg-black bg-clip-text">
+            b<p className='text-purple-600 font-extrabold'>L</p>ogic
+          </h1>
+        </Link>
+        {/* <img src={name} className='h-72 w-72 object object-cover'/>  */}
       </div>
 
       <div className="w-40 sm:w-60 md:w-80 lg:w-[400px]">
