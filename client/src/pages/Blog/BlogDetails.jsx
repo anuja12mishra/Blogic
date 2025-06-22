@@ -33,7 +33,7 @@ function BlogDetails() {
         { method: 'GET', credentials: 'include' },
         [refresh]
     );
-    //console.log('blogsData', blogsData?.blog)
+    console.log('blogsData', blogsData?.blog)
 
     const handleDelete = async (id) => {
         try {

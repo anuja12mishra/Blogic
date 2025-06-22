@@ -10,14 +10,9 @@ import {
 import {
     encode
 } from 'entities';
+import { deleteBlogWithRelatedData } from "../helpers/DeleteRelatedBlog.js";
 export const AddBlog = async (req, res, next) => {
     try {
-        // Access form fields directly from req.body
-        // console.log("Form data:", req.body);
-
-        // Access uploaded file
-        // console.log("Uploaded file:", req.file);
-
         const {
             author,
             title,
@@ -174,9 +169,10 @@ export const GetAllBlogProtect = async (req, res, next) => {
             allBlogs = await Blog.find().populate('author', 'name avatar role').populate('category', 'name slug').sort({
                 updatedAt: -1
             }).lean().exec();
-        }
-        else{
-            allBlogs = await Blog.find({author:user._id}).populate('author', 'name avatar role').populate('category', 'name slug').sort({
+        } else {
+            allBlogs = await Blog.find({
+                author: user._id
+            }).populate('author', 'name avatar role').populate('category', 'name slug').sort({
                 updatedAt: -1
             }).lean().exec();
         }
@@ -220,55 +216,97 @@ export const GetABlog = async (req, res, next) => {
         next(handleError(500, error.message));
     }
 }
-export const UpdateBlog = async (req, res, next) => {
-    try {
-
-    } catch (error) {
-        console.error(error.message);
-        next(handleError(500, error.message));
-    }
-}
 
 export const DeleteBlog = async (req, res, next) => {
     try {
-        const {
-            blogId
-        } = req.params;
+        const { blogId } = req.params;
 
-        const blog = await Blog.findById(blogId);
+        const result = await deleteBlogWithRelatedData(blogId);
 
-        if (!blog) {
-            return res.status(404).json({
-                success: false,
-                message: 'Blog not found'
-            });
+        if (!result.success) {
+            // return res.status(404).json({
+            //     success: false,
+            //     message: result.message || 'Failed to delete blog'
+            // });
+            next(404,result.message || 'Failed to delete blog')
         }
-
-        if (blog.featuredImageKey) {
-            try {
-                await deleteFromR2(blog.featuredImageKey);
-                // console.log(`Successfully deleted image from R2: ${blog.featuredImageKey}`);
-            } catch (r2Error) {
-                console.error(`Failed to delete image from R2: ${blog.featuredImageKey}`, r2Error);
-            }
-        }
-
-        await Blog.findByIdAndDelete(blogId);
 
         res.status(200).json({
             success: true,
-            message: 'Blog deleted successfully'
+            message: 'Blog and all related data deleted successfully'
         });
 
     } catch (error) {
-        console.error('Error in DeleteBlog:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error',
-            error: error.message
-        });
+        // console.error('Error in DeleteBlog:', error);
+        // res.status(500).json({
+        //     success: false,
+        //     message: 'Internal server error',
+        //     error: error.message
+        // });
+        console.error(error.message);
+        next(handleError(500, error.message));
     }
-}
+};
+
+// export const DeleteBlog = async (req, res, next) => {
+//     try {
+//         const {
+//             blogId
+//         } = req.params;
+
+//         const blog = await Blog.findById(blogId);
+
+//         if (!blog) {
+//             return res.status(404).json({
+//                 success: false,
+//                 message: 'Blog not found'
+//             });
+//         }
+
+//         if (blog.featuredImageKey) {
+//             try {
+//                 await deleteFromR2(blog.featuredImageKey);
+//                 // console.log(`Successfully deleted image from R2: ${blog.featuredImageKey}`);
+//             } catch (r2Error) {
+//                 console.error(`Failed to delete image from R2: ${blog.featuredImageKey}`, r2Error);
+//             }
+//         }
+
+//         // Delete all likes and comments related to that blog
+//         try {
+//             // Delete all likes for this blog
+//             await Like.deleteMany({
+//                 blog: blogId
+//             });
+
+//             // Delete all comments for this blog
+//             await Comment.deleteMany({
+//                 blog: blogId
+//             });
+
+//             console.log(`Successfully deleted likes and comments for blog: ${blogId}`);
+//         } catch (cleanupError) {
+//             console.error(`Failed to delete related data for blog: ${blogId}`, cleanupError);
+//             // Continue with blog deletion even if cleanup fails
+//         }
+
+
+//         await Blog.findByIdAndDelete(blogId);
+
+//         res.status(200).json({
+//             success: true,
+//             message: 'Blog deleted successfully'
+//         });
+
+//     } catch (error) {
+//         console.error('Error in DeleteBlog:', error);
+//         res.status(500).json({
+//             success: false,
+//             message: 'Internal server error',
+//             error: error.message
+//         });
+//     }
+// }
 
 export const GetBlogByCategory = async (req, res, next) => {
     try {

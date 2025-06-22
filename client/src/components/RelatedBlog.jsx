@@ -42,38 +42,3 @@ function RelatedBlog({ props }) {
 }
 
 export default RelatedBlog
-
-
-
-//{
-//     "success": true,
-//     "message": "Related Blogs fetched successfully",
-//     "blog": [
-//         {
-//             "_id": "6852aa02ea886efead1aaeb2",
-//             "author": "6849a2f55acf922667e9fee4",
-//             "category": "685295a0ea886efead1aad8e",
-//             "title": "dj all night rust all day {{{{}}}}((((_)))))",
-//             "slug": "dj-all-night-rust-all-day",
-//             "blogContent": "&lt;p&gt;asoedujgf;HWEBFHVBWQEW;FIBWE&lt;/p&gt;",
-//             "featuredImage": "https://pub-9f09e6b4408f404cb8578e1043c90ce6.r2.dev/featuredImage/ab684566-8442-4c01-86e2-f408d564c691.png",
-//             "featuredImageKey": "featuredImage/ab684566-8442-4c01-86e2-f408d564c691.png",
-//             "createdAt": "2025-06-18T11:58:58.530Z",
-//             "updatedAt": "2025-06-18T11:58:58.530Z",
-//             "__v": 0
-//         },
-//         {
-//             "_id": "6855642f7d48b51b401ed96f",
-//             "author": "684c32ba265f922656f0ab9d",
-//             "category": "685295a0ea886efead1aad8e",
-//             "title": "rrrrrrrrrr",
-//             "slug": "rrrrrrrrrr",
-//             "blogContent": "&lt;p&gt;ddddd&lt;/p&gt;",
-//             "featuredImage": "https://pub-9f09e6b4408f404cb8578e1043c90ce6.r2.dev/featuredImage/15271fac-79fe-452e-820a-86bb2aae5369.png",
-//             "featuredImageKey": "featuredImage/15271fac-79fe-452e-820a-86bb2aae5369.png",
-//             "createdAt": "2025-06-20T13:37:51.671Z",
-//             "updatedAt": "2025-06-20T13:37:51.671Z",
-//             "__v": 0
-//         }
-//     ]
-// }

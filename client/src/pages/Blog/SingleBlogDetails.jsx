@@ -120,25 +120,3 @@ function SingleBlogDetails() {
 export default SingleBlogDetails;
 
 
-
-
-// {
-//     "_id": "6855642f7d48b51b401ed96f",
-//     "author": {
-//         "_id": "684c32ba265f922656f0ab9d",
-//         "name": "anuj mishra",
-//         "avatar": "https://pub-9f09e6b4408f404cb8578e1043c90ce6.r2.dev/avatars/e82563de-4270-4605-9f50-aa9d95186ff5.png"
-//     },
-//     "category": {
-//         "_id": "685295a0ea886efead1aad8e",
-//         "name": "Rust"
-//     },
-//     "title": "rrrrrrrrrr",
-//     "slug": "rrrrrrrrrr",
-//     "blogContent": "&lt;p&gt;ddddd&lt;/p&gt;",
-//     "featuredImage": "https://pub-9f09e6b4408f404cb8578e1043c90ce6.r2.dev/featuredImage/15271fac-79fe-452e-820a-86bb2aae5369.png",
-//     "featuredImageKey": "featuredImage/15271fac-79fe-452e-820a-86bb2aae5369.png",
-//     "createdAt": "2025-06-20T13:37:51.671Z",
-//     "updatedAt": "2025-06-20T13:37:51.671Z",
-//     "__v": 0
-// }

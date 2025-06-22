@@ -2,7 +2,8 @@ import {
     handleError
 } from "../helpers/handleError.js";
 import Category from "../models/category.model.js";
-
+import Blog from '../models/blog.model.js'
+import { deleteBlogWithRelatedData } from "../helpers/DeleteRelatedBlog.js";
 export const AddCategory = async (req, res, next) => {
     try {
         const {
@@ -51,17 +52,60 @@ export const DeleteCategory = async (req, res, next) => {
         }
 
         const name = existingCategory.name;
+
+        // Find all blogs in this category
+        const blogsInCategory = await Blog.find({ category: categoryId });
+
+        // Delete each blog with its related data
+        const deletionPromises = blogsInCategory.map(blog => 
+            deleteBlogWithRelatedData(blog._id)
+        );
+
+        // Wait for all blog deletions to complete
+        const deletionResults = await Promise.all(deletionPromises);
+
+        // Log any failed deletions
+        const failedDeletions = deletionResults.filter(result => !result.success);
+        if (failedDeletions.length > 0) {
+            console.error(`Failed to delete ${failedDeletions.length} blogs when deleting category ${categoryId}`);
+        }
+
+        // Delete the category itself
         await Category.findByIdAndDelete(categoryId);
 
         return res.status(200).json({
             success: true,
-            message: `Category '${name}' deleted successfully.`
+            message: `Category '${name}' and ${blogsInCategory.length} related blog(s) deleted successfully.`
         });
+
     } catch (error) {
         console.error("Error in DeleteCategory:", error);
         return next(handleError(500, "Internal Server Error"));
     }
 };
+
+// export const DeleteCategory = async (req, res, next) => {
+//     try {
+//         const { categoryId } = req.params;
+
+//         const existingCategory = await Category.findById(categoryId);
+
+//         if (!existingCategory) {
+//             return next(handleError(404, 'Category not found'));
+//         }
+
+//         const name = existingCategory.name;
+//         await Category.findByIdAndDelete(categoryId);
+
+//         return res.status(200).json({
+//             success: true,
+//             message: `Category '${name}' deleted successfully.`
+//         });
+//     } catch (error) {
+//         console.error("Error in DeleteCategory:", error);
+//         return next(handleError(500, "Internal Server Error"));
+//     }
+// };
 
 
 export const GetACategory = async (req, res, next) => {

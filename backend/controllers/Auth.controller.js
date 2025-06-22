@@ -91,13 +91,6 @@ export const Login = async (req, res, next) => {
     if (!isValidPass) {
       return next(handleError(404, 'Invalid login credentials'));
     }
-
-    // const token = jwt.sign({
-    //   _id: user._id,
-    //   name: user.name,
-    //   email: user.email,
-    //   avatar: user.avatar
-    // }, process.env.JWT_SECRET);
     const token = jwt.sign({
       _id: user._id,
       name: user.name,
@@ -164,14 +157,6 @@ export const GoogleLogin = async (req, res, next) => {
 
       user = await newUser.save();
     }
-
-
-    // const token = jwt.sign({
-    //   _id: user._id,
-    //   name: user.name,
-    //   email: user.email,
-    //   avatar: user.avatar
-    // }, process.env.JWT_SECRET);
     const token = jwt.sign({
       _id: user._id,
       name: user.name,

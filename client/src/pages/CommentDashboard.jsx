@@ -106,10 +106,10 @@ function CommentDashboard() {
                 comments.map((comment) => (
                   <TableRow key={comment._id}>
                     <TableCell className="font-medium">
-                      {comment.blogId.title}
+                      {comment.blogId?.title}
                     </TableCell>
                     <TableCell>
-                      {comment.authorId.name}
+                      {comment.authorId?.name}
                     </TableCell>
                     <TableCell className='w-fit'>
                       {moment(comment.createdAt).format('LLLL')}
@@ -151,37 +151,3 @@ export default CommentDashboard
 
 
 
-
-
-// [
-//     {
-//         "_id": "68569047f7845e2b866220bd",
-//         "authorId": {
-//             "_id": "6849a2f55acf922667e9fee4",
-//             "name": "Anuj Mishra admin"
-//         },
-//         "blogId": {
-//             "_id": "68568870d5ec0d5f4ec282ea",
-//             "title": "in the"
-//         },
-//         "comment": "greate",
-//         "createdAt": "2025-06-21T10:58:15.657Z",
-//         "updatedAt": "2025-06-21T10:58:15.657Z",
-//         "__v": 0
-//     },
-//     {
-//         "_id": "6856903df7845e2b866220b9",
-//         "authorId": {
-//             "_id": "6849a2f55acf922667e9fee4",
-//             "name": "Anuj Mishra admin"
-//         },
-//         "blogId": {
-//             "_id": "68568870d5ec0d5f4ec282ea",
-//             "title": "in the"
-//         },
-//         "comment": "gjehf",
-//         "createdAt": "2025-06-21T10:58:05.143Z",
-//         "updatedAt": "2025-06-21T10:58:05.143Z",
-//         "__v": 0
-//     }
-// ]
