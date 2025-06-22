@@ -18,7 +18,7 @@ import {
   RouteSingleBlogDetails,
   RouteUser
 } from "./helpers/RouteName"
-import Index from "./pages"
+import Index from "./pages/index.jsx"
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Profile from "./pages/Profile";

@@ -85,7 +85,7 @@ function CategoryDetails() {
               user?.isLoggedIn ? (
                 <Button asChild>
                   <Link to={RouteAddCategory}>
-                    Add Blog
+                    Add Category
                   </Link>
                 </Button>
               ) : (
