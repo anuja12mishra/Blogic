@@ -33,14 +33,13 @@ A robust, full-stack blogging platform built with modern web technologies. Blogi
 - **Backend:** Node.js, Express, MongoDB
 - **Authentication:** JWT
 - **Content Delivery:** Cloudflare
-- **Other:** ESLint, GitHub Actions (for CI/CD)
 
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js >= 16.x
-- npm or yarn
+- npm or yarn 
 - MongoDB instance
 
 ### Installation
