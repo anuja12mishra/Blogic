@@ -1,8 +1,6 @@
-import React from 'react'
-// import name from '@/assets/name.png'
-import name from '../assets/name.png'
+import React, { useEffect } from 'react'
 import { Button } from './ui/button'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { PiSignOutBold } from "react-icons/pi";
 import SearchBox from './SearchBox';
 import { RouteAddBlog, RouteIndex, RouteProfile, RouteSignIn } from '@/helpers/RouteName';
@@ -24,11 +22,15 @@ import { showtoast } from '@/helpers/showtoast';
 import { getEnv } from '@/helpers/getEnv';
 import { IoMenu } from "react-icons/io5";
 import { useSidebar } from './ui/sidebar';
+
 function Topbar() {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
-  const { toggleSidebar } = useSidebar();
+  const { toggleSidebar } = useSidebar(false);
+
+  
+
   const handleLogout = async () => {
     try {
       const res = await fetch(`${getEnv('VITE_API_URL')}/api/auth/logout`, {
@@ -62,10 +64,18 @@ function Topbar() {
   };
 
 
+
+  const handleMenuClick = () => {
+    if (toggleSidebar) {
+      toggleSidebar();
+    }
+  };
+
+
   return (
     <div className="flex justify-between items-center gap-2 w-full fixed bg-white h-16 z-20 px-5 md:px-16 lg:px-20 border-b-2 border-gray-200">
       <div className="flex justify-center items-center gap-2">
-        <button onClick={toggleSidebar} className='md:hidden'>
+        <button onClick={handleMenuClick}>
           <IoMenu size={25} />
         </button>
         <Link to={RouteIndex}>
@@ -93,9 +103,20 @@ function Topbar() {
             :
             <DropdownMenu className='bg-amber-700'>
               <DropdownMenuTrigger>
-                <Avatar className=" md:w-10 md:h-10">
-                  <AvatarImage className='object-cover' src={user.user.avatar} />
-                  <AvatarFallback className="bg-gray-300">{(user.user.name)?.split(" ").map((n) => n[0]).join("").toUpperCase()}
+                <Avatar className="inline-block h-10 w-10 rounded-full overflow-hidden border-2 border-gray-200">
+                  <AvatarImage
+                    className="h-full w-full object-cover"
+                    src={user.user.avatar}
+                    alt={user.user.name}
+                  />
+                  <AvatarFallback className="bg-gray-300 text-sm text-gray-700 flex items-center justify-center h-full w-full">
+                    {(user?.user?.name || "")
+                      .trim()
+                      .split(/\s+/)
+                      .filter(Boolean)
+                      .map((n) => n[0])
+                      .join("")
+                      .toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>

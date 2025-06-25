@@ -8,7 +8,7 @@ import { TbCategory } from 'react-icons/tb';
 import { MdOutlineHome } from "react-icons/md";
 function Index() {
   const { data: blogsData, loading, error } = useFetch(
-    `${getEnv('VITE_API_URL')} `,
+    `${getEnv('VITE_API_URL')}/api/blog/get-all-blogs`,
     { method: 'GET', credentials: 'include' },
   );
 

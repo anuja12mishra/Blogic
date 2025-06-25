@@ -35,7 +35,7 @@ function SingleBlogDetails() {
     const blog = blogData.blog;
 
     return (
-        <div className='flex flex-col md:flex-row justify-between gap-6 md:gap-16 p-4'>
+        <div className='flex flex-col w-full md:flex-row justify-between gap-6 md:gap-16 p-4'>
             <div className='border-2 rounded w-full md:w-[70%] p-5'>
                 {/* Blog Title */}
                 <h1 className='text-3xl font-bold mb-4'>{blog.title}</h1>
@@ -48,15 +48,15 @@ function SingleBlogDetails() {
                                 src={blog.author.avatar || '/default-avatar.png'}
                                 className="h-10 w-10 rounded-full object-cover"
                             />
+                            <AvatarFallback className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+                                {blog.author.name?.charAt(0)?.toUpperCase() || 'A'}
+                            </AvatarFallback>
                             <div className="flex flex-col">
                                 <p className="font-medium text-sm">{blog.author.name}</p>
                                 <p className="text-xs text-gray-500">
                                     {moment(blog.createdAt).format('MMM DD, YYYY')}
                                 </p>
                             </div>
-                            <AvatarFallback className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
-                                {blog.author.name?.charAt(0)?.toUpperCase() || 'A'}
-                            </AvatarFallback>
                         </Avatar>
                         <div className='flex gap-4 justify-end items-center'>
                             <BlogLike props={blogData.blog._id} />
@@ -79,6 +79,17 @@ function SingleBlogDetails() {
 
                 {/* Featured Image */}
                 {blog.featuredImage && (
+                    <div className="mb-2 flex justify-center">
+                        <div className="bg-gray-300 p-2 rounded-lg">
+                            <img
+                                src={blog.featuredImage}
+                                alt={blog.title}
+                                className="w-auto h-auto max-w-full rounded-lg"
+                            />
+                        </div>
+                    </div>
+                )}
+                {/* {blog.featuredImage && (
                     <div className="mb-2">
                         <img
                             src={blog.featuredImage}
@@ -86,7 +97,7 @@ function SingleBlogDetails() {
                             className="w-full h-64 object-cover rounded-lg"
                         />
                     </div>
-                )}
+                )} */}
 
                 {/* Category */}
                 <div className="mb-2">
@@ -111,7 +122,7 @@ function SingleBlogDetails() {
             <div className='border rounded w-full md:w-[30%] p-4 h-fit'>
                 <h2 className="text-xl font-bold mb-4">Related Blogs</h2>
                 {/* Related blog content will go here */}
-                <RelatedBlog props={{category:blogData.blog?.category?._id,currentBlogSlug:blogData.blog?.slug}}/>
+                <RelatedBlog props={{ category: blogData.blog?.category?._id, currentBlogSlug: blogData.blog?.slug }} />
             </div>
         </div>
     )

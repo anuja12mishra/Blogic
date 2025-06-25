@@ -12,7 +12,7 @@ function Loading() {
                 <div></div>
                 <div></div>
             </div>
-            <p className="mt-4 text-gray-600 text-sm">Loading...</p>
+            <p className="mt-8 text-gray-600 text-xl">Loading...</p>
         </div>
     );
 }

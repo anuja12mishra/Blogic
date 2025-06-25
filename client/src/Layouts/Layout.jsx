@@ -12,9 +12,9 @@ const Layout = () => {
             <Topbar />
             {/* side-bar */}
             <AppSidebar />
-            <main className='w-full'>
+            <main className='w-full '>
                 {/* content */}
-                <div className='w-full min-h-[calc(100vh-45px)] pt-22 px-10 pb-12'>
+                <div className="container mx-auto md:flex justify-center min-h-[calc(100vh-45px)] pt-22 px-2 md:px-20 pb-12">
                     <Outlet />
                 </div>
                 {/* footer */}

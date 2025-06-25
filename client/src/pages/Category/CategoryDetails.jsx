@@ -77,7 +77,7 @@ function CategoryDetails() {
 
   return (
     <div>
-      <Card>
+      <Card className='md:w-6xl'>
         <CardHeader>
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold">Categories</h2>
