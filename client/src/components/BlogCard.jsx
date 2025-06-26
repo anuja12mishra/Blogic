@@ -21,7 +21,7 @@ function BlogCard({
                     <div className="flex flex-col max-md:flex-row justify-between w-full gap-2 mb-2">
                         <div className="flex items-center gap-1.5">
                             <Avatar className="flex items-center gap-1">
-                                <AvatarImage src={props?.blog?.author?.avatar} className="h-10 w-10 rounded-full object-cover" />
+                                <AvatarImage src={props?.blog?.author?.avatar} className="h-10 w-10 rounded-full object-cover border-2" />
                                 <p className="truncate">{props?.blog?.author?.name}</p>
                                 <AvatarFallback />
                             </Avatar>
@@ -52,10 +52,18 @@ function BlogCard({
                         <Avatar asChild className="w-full h-full">
                             <AvatarImage
                                 src={props.blog.featuredImage}
-                                className="rounded-md object-cover hover:scale-105 transition-transform duration-300"
+                                className="rounded-md object-contain bg-gray-100 hover:scale-105 transition-transform duration-300"
                             />
                         </Avatar>
                     </div>
+                    {/* <div className="w-full h-32 flex justify-center items-center mb-2">
+                        <Avatar asChild className="w-full h-full">
+                            <AvatarImage
+                                src={props.blog.featuredImage}
+                                className="rounded-md object-cover hover:scale-105 transition-transform duration-300"
+                            />
+                        </Avatar>
+                    </div> */}
 
                     {/* Content that takes remaining space */}
                     <div className="mt-auto">

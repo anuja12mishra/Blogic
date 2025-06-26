@@ -78,26 +78,26 @@ function SingleBlogDetails() {
                 </div>
 
                 {/* Featured Image */}
-                {blog.featuredImage && (
+                {/* {blog.featuredImage && (
                     <div className="mb-2 flex justify-center">
                         <div className="bg-gray-300 p-2 rounded-lg">
                             <img
                                 src={blog.featuredImage}
                                 alt={blog.title}
-                                className="w-auto h-auto max-w-full rounded-lg"
+                                className="w-full h-64 object-contain rounded-lg bg-gray-100"
                             />
                         </div>
                     </div>
-                )}
-                {/* {blog.featuredImage && (
+                )} */}
+                {blog.featuredImage && (
                     <div className="mb-2">
                         <img
                             src={blog.featuredImage}
                             alt={blog.title}
-                            className="w-full h-64 object-cover rounded-lg"
+                            className="w-full h-64 object-contain bg-gray-100 rounded-lg"
                         />
                     </div>
-                )} */}
+                )}
 
                 {/* Category */}
                 <div className="mb-2">
@@ -119,7 +119,7 @@ function SingleBlogDetails() {
 
             </div>
 
-            <div className='border rounded w-full md:w-[30%] p-4 h-fit'>
+            <div className='border-2 rounded w-full md:w-[30%] p-4 h-fit'>
                 <h2 className="text-xl font-bold mb-4">Related Blogs</h2>
                 {/* Related blog content will go here */}
                 <RelatedBlog props={{ category: blogData.blog?.category?._id, currentBlogSlug: blogData.blog?.slug }} />
