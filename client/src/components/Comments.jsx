@@ -21,6 +21,20 @@ const formSchema = z.object({
     comment: z.string().min(1, 'Comment cannot be empty'),
 });
 
+const getTimeAgo = (timestamp) => {
+    const now = moment();
+    const created = moment(timestamp);
+    const minutes = now.diff(created, 'minutes');
+    const hours = now.diff(created, 'hours');
+    const days = now.diff(created, 'days');
+
+    if (minutes < 1) return 'just now';
+    if (minutes < 60) return `${minutes} min ago`;
+    if (hours < 24) return `${hours} hr ago`;
+    return `${days} day${days > 1 ? 's' : ''} ago`;
+};
+
+
 function Comments(props) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [refresh, setRefresh] = useState(false);
@@ -129,20 +143,20 @@ function Comments(props) {
             }
 
             {/* All comments */}
-            <div className='px-4 mt-4'>
+            <div className='px-2 mt-4'>
                 {
                     commentLoading ?
                         <Loading />
                         :
                         commentData && commentData.comment && commentData.comment.length > 0 ?
                             <div>
-                                <div  className='flex gap-2 text-2xl mb-3 font-bold'> 
+                                <div className='flex gap-2 text-2xl mb-3 font-bold'>
                                     {commentData.comment.length}
                                     <h1>Comments</h1>
                                 </div>
                                 {commentData.comment.map((data) => {
                                     return (
-                                        <div key={data._id} className="mb-6 p-4 bg-gray-200 rounded-full border-b border-gray-200 last:border-b-0">
+                                        <div key={data._id} className="mb-6 p-4 bg-gray-200 rounded-xl border-b border-gray-200 last:border-b-0">
                                             <div className="flex items-start gap-3">
                                                 <Avatar className="flex-shrink-0">
                                                     <AvatarImage
@@ -155,22 +169,24 @@ function Comments(props) {
                                                     </AvatarFallback>
                                                 </Avatar>
 
-                                                <div className="flex-1">
-                                                    <div className="flex items-center gap-2 mb-1">
+                                                <div className="flex flex-col w-full max-w-full overflow-x-auto">
+                                                    <div className="flex justify-between items-center gap-1 mb-1">
                                                         <p className="font-medium text-sm text-gray-900">
                                                             {data.authorId?.name || 'Anonymous'}
                                                         </p>
                                                         <p className="text-xs text-gray-500">
-                                                            {moment(data.createdAt).format('MMM DD, YYYY')}
+                                                            {getTimeAgo(data.createdAt)}
                                                         </p>
                                                     </div>
-
-                                                    <p className="text-gray-700 text-sm leading-relaxed">
-                                                        {data.comment}
-                                                    </p>
+                                                    <div>
+                                                        <p className="text-gray-700 text-sm leading-relaxed break-words">
+                                                            {data.comment}
+                                                        </p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+
                                     )
                                 })}
                             </div>
