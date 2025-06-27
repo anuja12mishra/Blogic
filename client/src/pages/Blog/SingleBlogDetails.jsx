@@ -46,7 +46,7 @@ function SingleBlogDetails() {
                         <Avatar className="flex items-center gap-2">
                             <AvatarImage
                                 src={blog.author.avatar || '/default-avatar.png'}
-                                className="h-10 w-10 rounded-full object-cover"
+                                className="h-10 w-10 rounded-full object-cover border-2"
                             />
                             <AvatarFallback className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
                                 {blog.author.name?.charAt(0)?.toUpperCase() || 'A'}

@@ -41,5 +41,6 @@ export const RouteSearch = (q) => {
 }
 
 export const RouteComment = '/comments'
+export const RouteLike = '/likes'
 
 export const RouteUser = '/users'

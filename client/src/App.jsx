@@ -11,6 +11,7 @@ import {
   RouteEditBlog,
   RouteEditCategory,
   RouteIndex,
+  RouteLike,
   RouteProfile,
   RouteSearch,
   RouteSignIn,
@@ -35,6 +36,7 @@ import CommentDashboard from "./pages/CommentDashboard";
 import UsersDashboard from "./pages/UsersDashboard";
 import AuthRouteProtection from "./components/Protected Routes/AuthRouteProtection";
 import OnlyAdminAllowed from "./components/Protected Routes/OnlyAdminAllowed";
+import LikeDashboard from "./pages/LikeDashboard";
 
 function App() {
   return (
@@ -50,14 +52,14 @@ function App() {
 
           <Route element={<AuthRouteProtection />}>
             <Route path={RouteProfile} element={<Profile />}></Route>
-
             {/* Blog routes */}
             <Route path={RouteAddBlog} element={<AddBlog />}></Route>
             <Route path={RouteBlog} element={<BlogDetails />}></Route>
             <Route path={RouteEditBlog()} element={<EditBlog />}></Route>
             {/* comments page */}
             <Route path={RouteComment} element={<CommentDashboard />}></Route>
-
+            {/* like page */}
+            <Route path={RouteLike} element={<LikeDashboard />}></Route>
           </Route>
 
           <Route element={<OnlyAdminAllowed/>}>
@@ -69,7 +71,8 @@ function App() {
             <Route path={RouteEditBlog()} element={<EditBlog />}></Route>
             {/* comments page */}
             <Route path={RouteComment} element={<CommentDashboard />}></Route>
-
+            {/* like page */}
+            <Route path={RouteLike} element={<LikeDashboard />}></Route>
             {/* Category routes */}
             <Route path={RouteAddCategory} element={<AddCategory />}></Route>
             <Route path={RouteCategoryDetails} element={<CategoryDetails />}></Route>

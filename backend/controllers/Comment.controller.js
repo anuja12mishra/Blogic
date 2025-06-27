@@ -99,7 +99,7 @@ export const GetAllComment = async (req, res, next) => {
             comment: comments
         });
     } catch (error) {
-        console.error(error.message);
+        console.error('GetAllComment',error.message);
         next(handleError(500, error.message));
     }
 };
@@ -122,7 +122,7 @@ export const ProtectedGetAllComment = async (req, res, next) => {
             comment: comments
         });
     } catch (error) {
-        console.error(error.message);
+        console.error('ProtectedGetAllComment',error.message);
         next(handleError(500, error.message));
     }
 };
@@ -131,21 +131,16 @@ export const ProtectedGetAllComment = async (req, res, next) => {
 export const DeleteComment = async (req, res, next) => {
     try {
         const { commentId } = req.params;
-
-        // const existingCategory = await Comment.findById(categoryId);
-
         if (!commentId) {
             return next(handleError(404, 'Category not found'));
         }
-
         await Comment.findByIdAndDelete(commentId);
-
         return res.status(200).json({
             success: true,
             message: `Comment deleted successfully.`
         });
     } catch (error) {
-        console.error("Error in DeleteCategory:", error);
+        console.error("DeleteComment:", error);
         return next(handleError(500, "Internal Server Error"));
     }
 };

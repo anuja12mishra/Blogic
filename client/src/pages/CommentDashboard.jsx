@@ -32,7 +32,7 @@ function CommentDashboard() {
     { method: 'GET', credentials: 'include' },
     [refresh] 
   );
-  // console.log('categoriesdata',categoriesdata)
+  //console.log('CommentData',CommentData)
   const handleDelete = async (id) => {
     try {
       const deleteres = await handleCategoryDelete(
@@ -147,7 +147,3 @@ function CommentDashboard() {
 }
 
 export default CommentDashboard
-
-
-
-
