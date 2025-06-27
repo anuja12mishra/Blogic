@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import {
     handleError
 } from "../helpers/handleError.js";

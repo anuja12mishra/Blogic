@@ -197,18 +197,19 @@ export const GetABlog = async (req, res, next) => {
         } = req.params;
         const blog = await Blog.findById(blogId)
             .populate('author', 'name avatar')
-            .populate('category', 'name')
-            .lean();
+            .populate('category', 'name');
         if (!blog) {
             return next(handleError(404, 'blog not found'));
         }
 
-        // console.log('blog',blog)
+        //increase the views of the blog
+        blog.views = (blog.views || 0) + 1;
+        await blog.save();
 
         res.status(200).json({
             success: true,
-            message: "Categories retrieved successfully",
-            blog: blog
+            message: "Blog retrieved successfully",
+            blog: blog.toObject()
         });
 
     } catch (error) {
@@ -248,65 +249,6 @@ export const DeleteBlog = async (req, res, next) => {
     }
 };
 
-// export const DeleteBlog = async (req, res, next) => {
-//     try {
-//         const {
-//             blogId
-//         } = req.params;
-
-//         const blog = await Blog.findById(blogId);
-
-//         if (!blog) {
-//             return res.status(404).json({
-//                 success: false,
-//                 message: 'Blog not found'
-//             });
-//         }
-
-//         if (blog.featuredImageKey) {
-//             try {
-//                 await deleteFromR2(blog.featuredImageKey);
-//                 // console.log(`Successfully deleted image from R2: ${blog.featuredImageKey}`);
-//             } catch (r2Error) {
-//                 console.error(`Failed to delete image from R2: ${blog.featuredImageKey}`, r2Error);
-//             }
-//         }
-
-//         // Delete all likes and comments related to that blog
-//         try {
-//             // Delete all likes for this blog
-//             await Like.deleteMany({
-//                 blog: blogId
-//             });
-
-//             // Delete all comments for this blog
-//             await Comment.deleteMany({
-//                 blog: blogId
-//             });
-
-//             console.log(`Successfully deleted likes and comments for blog: ${blogId}`);
-//         } catch (cleanupError) {
-//             console.error(`Failed to delete related data for blog: ${blogId}`, cleanupError);
-//             // Continue with blog deletion even if cleanup fails
-//         }
-
-
-//         await Blog.findByIdAndDelete(blogId);
-
-//         res.status(200).json({
-//             success: true,
-//             message: 'Blog deleted successfully'
-//         });
-
-//     } catch (error) {
-//         console.error('Error in DeleteBlog:', error);
-//         res.status(500).json({
-//             success: false,
-//             message: 'Internal server error',
-//             error: error.message
-//         });
-//     }
-// }
 
 export const GetBlogByCategory = async (req, res, next) => {
     try {

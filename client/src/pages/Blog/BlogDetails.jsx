@@ -113,6 +113,7 @@ function BlogDetails() {
                                 <TableHead>Author</TableHead>
                                 <TableHead>Category Name</TableHead>
                                 <TableHead>Title</TableHead>
+                                <TableHead>Views</TableHead>
                                 <TableHead>Slug</TableHead>
                                 <TableHead>Dated</TableHead>
                                 <TableHead className="text-right">Actions</TableHead>
@@ -130,6 +131,9 @@ function BlogDetails() {
                                         </TableCell>
                                         <TableCell>
                                             {data.title}
+                                        </TableCell>
+                                         <TableCell className='flex justify-end'>
+                                            {data.views}
                                         </TableCell>
                                         <TableCell>
                                             {data.slug}

@@ -12,6 +12,8 @@ import { FaRegComment } from "react-icons/fa";
 import CommentCount from '@/components/CommentCount';
 import BlogLike from '@/components/BlogLike';
 import RelatedBlog from '@/components/RelatedBlog';
+import ViewsCount from '@/components/ViewsCount';
+import LikedByDropdown from '@/components/LikedByDropdown';
 function SingleBlogDetails() {
     const { blog_id } = useParams();
 
@@ -21,7 +23,7 @@ function SingleBlogDetails() {
         [blog_id]
     );
 
-    // console.log('blogData cat name',blogData?.blog?.category?.name)
+    //console.log('blogData',blogData);
 
     if (blogLoading) {
         return <Loading />
@@ -60,7 +62,10 @@ function SingleBlogDetails() {
                         </Avatar>
                         <div className='flex gap-4 justify-end items-center'>
                             <BlogLike props={blogData.blog._id} />
+                           
+                            {/* <BlogLikeWithDropdown blogId={blogData.blog._id} /> */}
                             <CommentCount props={blogData.blog._id} />
+                            <ViewsCount props={blogData.blog.views}/>
                         </div>
                     </div>
 
@@ -100,10 +105,11 @@ function SingleBlogDetails() {
                 )}
 
                 {/* Category */}
-                <div className="mb-2">
-                    <Badge variant="outline" className="mb-4">
+                <div className="flex items-start mb-1 gap-3">
+                    <Badge variant="outline" className="">
                         {blog.category.name}
                     </Badge>
+                     <LikedByDropdown props={blogData.blog._id}/>
                 </div>
 
                 {/* Blog Content */}

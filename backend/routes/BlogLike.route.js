@@ -7,7 +7,7 @@ const BlogLikeRoute = express.Router();
 BlogLikeRoute.get('/like-count/:blogId/:authorId', GetLikeCount);
 
 BlogLikeRoute.post('/update-like',authenticate, SetLike);
-BlogLikeRoute.get('/get-like-by-blog',authenticate,GetAllLikesByBlog)
+BlogLikeRoute.get('/get-like-by-blog/:blogId',authenticate,GetAllLikesByBlog)
 BlogLikeRoute.get('/protected-get-likes',authenticate,ProtectedGetAllLike)
 BlogLikeRoute.delete('/delete-like/:likeId',authenticate,DeleteLike)
 

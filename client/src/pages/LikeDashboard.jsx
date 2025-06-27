@@ -51,7 +51,7 @@ function LikeDashboard() {
     };
 
     if (loading) {
-        return (
+        return ( 
            <Loading />
         );
     }

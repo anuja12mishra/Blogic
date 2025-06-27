@@ -16,6 +16,11 @@ const BlogSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    views:{
+        type:Number,
+        required:true,
+        default:0
+    },
     slug: {
         type: String,
         trim: true,
