@@ -14,6 +14,7 @@ import { useFetch } from '@/hooks/useFetch';
 import { MdDeleteOutline } from 'react-icons/md';
 import moment from 'moment';
 import React, { useState } from 'react';
+import Loading from '@/components/Loading';
 
 function LikeDashboard() {
     const [refresh, setRefresh] = useState(false);
@@ -24,7 +25,7 @@ function LikeDashboard() {
         [refresh]
     );
 
-    console.log('LikeData', LikeData);
+    //console.log('LikeData', LikeData);
 
     const likes = LikeData?.like || [];
 
@@ -51,9 +52,7 @@ function LikeDashboard() {
 
     if (loading) {
         return (
-            <div className="flex justify-center items-center h-64">
-                <div className="text-lg">Loading likes...</div>
-            </div>
+           <Loading />
         );
     }
 
