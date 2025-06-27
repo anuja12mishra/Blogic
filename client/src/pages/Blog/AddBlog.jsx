@@ -22,7 +22,7 @@ import { useFetch } from '@/hooks/useFetch';
 import Dropzone from 'react-dropzone';
 import Editor from '@/components/Editor';
 import { useSelector } from 'react-redux';
-
+import { FaInfoCircle } from 'react-icons/fa';
 const formSchema = z.object({
     title: z.string().min(3, "Title must be at least 3 characters long"),
     category: z.string().min(3, "Category must be at least 3 characters long"),
@@ -33,6 +33,7 @@ const formSchema = z.object({
 function AddBlog() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
+    const [showGuide, setShowGuide] = useState(false);
     const user = useSelector((state) => state.user);
 
     const [avatar, setAvatar] = useState();
@@ -270,7 +271,33 @@ function AddBlog() {
                                     name="blogcontent"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Blog Content</FormLabel>
+                                            <div className='flex justify-between items-center relative'>
+                                                <FormLabel>Blog Content</FormLabel>
+
+                                                <div className='flex items-center gap-2'>
+                                                    <Button className='w-fit'>✦ Generate with AI ✦</Button>
+
+                                                    {/* Info Icon */}
+                                                    <button
+                                                        onClick={() => setShowGuide(!showGuide)}
+                                                        className='text-blue-600 hover:text-blue-800'
+                                                    >
+                                                        <FaInfoCircle />
+                                                    </button>
+                                                </div>
+
+                                                {/* Tooltip/Guide Popup */}
+                                                {showGuide && (
+                                                    <div className="absolute right-0 top-10 z-10 w-64 p-3 bg-white border border-gray-300 rounded-md shadow-md text-sm text-gray-700">
+                                                        <p className='font-semibold mb-1'>AI Content Generation Guide:</p>
+                                                        <ul className='list-disc ml-4 space-y-1'>
+                                                            <li>Click "Generate with AI" to auto-generate blog ideas.</li>
+                                                            <li>Provide a short topic/keyword in the title field first.</li>
+                                                            <li>Edit or refine the generated content as needed.</li>
+                                                        </ul>
+                                                    </div>
+                                                )}
+                                            </div>
                                             <FormControl>
                                                 <div className="w-full max-w-full h-72 overflow-hidden rounded border border-gray-300">
                                                     <Editor

@@ -3,6 +3,7 @@ import {
     AddBlog,
     DeleteBlog,
     EditBlog,
+    GenerateContent,
     GetABlog,
     GetAllBlog,
     GetAllBlogProtect,
@@ -20,11 +21,13 @@ BlogRoute.post('/add',authenticate, upload.single('featuredImage'), AddBlog);
 BlogRoute.put('/edit/:blogId',authenticate, upload.single('featuredImage'), EditBlog);
 BlogRoute.delete('/delete/:blogId',authenticate, DeleteBlog);
 BlogRoute.get('/protect-get-all-blogs',authenticate,GetAllBlogProtect);
+BlogRoute.get('/genrate-content',authenticate,GenerateContent);
 
 BlogRoute.get('/get-a-blog/:blogId', GetABlog);
 BlogRoute.get('/get-all-blogs', GetAllBlog);
 BlogRoute.get('/get-blog-by-category/:category/:blog', GetBlogByCategory)
 BlogRoute.get('/get-blog-by-category-only/:category', GetBlogByCategoryOnly);
 BlogRoute.get('/search', Search);
+
 
 export default BlogRoute;

@@ -11,6 +11,7 @@ import {
     encode
 } from 'entities';
 import { deleteBlogWithRelatedData } from "../helpers/DeleteRelatedBlog.js";
+import main from "../config/gemini.js";
 export const AddBlog = async (req, res, next) => {
     try {
         const {
@@ -229,7 +230,7 @@ export const DeleteBlog = async (req, res, next) => {
             //     success: false,
             //     message: result.message || 'Failed to delete blog'
             // });
-            next(404,result.message || 'Failed to delete blog')
+            next(404, result.message || 'Failed to delete blog')
         }
 
         res.status(200).json({
@@ -276,11 +277,7 @@ export const GetBlogByCategory = async (req, res, next) => {
 
     } catch (error) {
         console.error('Error in DeleteBlog:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error',
-            error: error.message
-        });
+        next(handleError(500, error.message));
     }
 }
 
@@ -316,11 +313,7 @@ export const GetBlogByCategoryOnly = async (req, res, next) => {
 
     } catch (error) {
         console.error('Error in DeleteBlog:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error',
-            error: error.message
-        });
+        next(handleError(500, error.message));
     }
 }
 
@@ -342,26 +335,26 @@ export const Search = async (req, res, next) => {
 
         // Fixed: $options instead of $option, and added search in content as well
         const blog = await Blog.find({
-                $or: [{
-                        title: {
-                            $regex: q.trim(),
-                            $options: 'i'
-                        }
-                    },
-                    {
-                        blogContent: {
-                            $regex: q.trim(),
-                            $options: 'i'
-                        }
-                    },
-                    {
-                        slug: {
-                            $regex: q.trim(),
-                            $options: 'i'
-                        }
-                    }
-                ]
-            })
+            $or: [{
+                title: {
+                    $regex: q.trim(),
+                    $options: 'i'
+                }
+            },
+            {
+                blogContent: {
+                    $regex: q.trim(),
+                    $options: 'i'
+                }
+            },
+            {
+                slug: {
+                    $regex: q.trim(),
+                    $options: 'i'
+                }
+            }
+            ]
+        })
             .populate('author', 'name avatar role')
             .populate('category', 'name slug')
             .sort({
@@ -379,10 +372,21 @@ export const Search = async (req, res, next) => {
 
     } catch (error) {
         console.error('Error in Search:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error',
-            error: error.message
+        next(handleError(500, error.message));
+    }
+}
+
+export const GenerateContent = async (req, res, next) => {
+    try {
+        const { prompt } = req.body;
+        const content = await main(prompt + `Generate a blog content for this topic or provided content in blog formate`);
+         res.status(200).json({
+            success: true,
+            content: content
         });
+
+    } catch (error) {
+        console.error('Error in Search:', error);
+        next(handleError(500, error.message));
     }
 }
