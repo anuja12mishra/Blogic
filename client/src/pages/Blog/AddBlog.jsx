@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from 'react';
+import React, { use, useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -22,7 +22,8 @@ import { useFetch } from '@/hooks/useFetch';
 import Dropzone from 'react-dropzone';
 import Editor from '@/components/Editor';
 import { useSelector } from 'react-redux';
-import { FaInfoCircle } from 'react-icons/fa';
+import { FaInfoCircle, FaSpinner } from 'react-icons/fa';
+
 const formSchema = z.object({
     title: z.string().min(3, "Title must be at least 3 characters long"),
     category: z.string().min(3, "Category must be at least 3 characters long"),
@@ -32,9 +33,15 @@ const formSchema = z.object({
 
 function AddBlog() {
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isGenerating, setIsGenerating] = useState(false);
     const navigate = useNavigate();
     const [showGuide, setShowGuide] = useState(false);
     const user = useSelector((state) => state.user);
+    const guideRef = useRef(null);
+
+    // AI content generation states
+    const [generatedContent, setGeneratedContent] = useState('');
+    const [shouldUpdateEditor, setShouldUpdateEditor] = useState(false);
 
     const [avatar, setAvatar] = useState();
     const [file, setFile] = useState();
@@ -50,16 +57,106 @@ function AddBlog() {
         },
     });
 
-    //Auto-generate slug from title 
+    // Auto-generate slug from title 
     const watchedTitle = form.watch('title');
 
     const { data: categoriesdata, loading, error } = useFetch(
         `${getEnv('VITE_API_URL')}/api/category/get-all-category`,
         { method: 'GET', credentials: 'include' },
-    )
+    );
+
+    const generateContent = async () => {
+        const currentValues = form.getValues();
+
+        if (!currentValues.title?.trim()) {
+            showtoast('error', 'Title is required to generate blog content');
+            return;
+        }
+
+        if (!currentValues.category) {
+            showtoast('error', 'Category is required to generate blog content');
+            return;
+        }
+
+        try {
+            setIsGenerating(true);
+
+            const res = await fetch(`${getEnv('VITE_API_URL')}/api/blog/genrate-content`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    title: currentValues.title.trim(),
+                    body: currentValues.blogcontent,
+                }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                const errorMessage = data.message || `Server error: ${res.status}`;
+                showtoast('error', errorMessage);
+                return;
+            }
+
+            // Update the generated content and trigger editor update
+            // data.content = JSON.parse(data.content);
+            const cleanContentAdvanced = (content) => {
+                if (!content || typeof content !== 'string') return '';
+
+                return content
+                    // Remove code block markers with optional language specification
+                    .replace(/^```[\w]*\s*/gm, '')
+                    .replace(/\s*```$/gm, '')
+                    // Remove inline backticks at start/end of entire content
+                    .replace(/^`+/, '')
+                    .replace(/`+$/, '')
+                    // Clean up extra whitespace
+                    .replace(/^\s+|\s+$/g, '')
+                    // Remove multiple consecutive newlines
+                    .replace(/\n\s*\n\s*\n/g, '\n\n');
+            };
+            setGeneratedContent(cleanContentAdvanced(data.content));
+            setShouldUpdateEditor(true);
+
+            // Update form field
+            form.setValue('blogcontent', data.content);
+
+            showtoast('success', 'Blog content generated successfully!');
+        } catch (err) {
+            console.error('Content generation failed:', err);
+            showtoast('error', 'Failed to generate content. Please try again.');
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
+    // Handle editor content update completion
+    const handleContentUpdated = () => {
+        setShouldUpdateEditor(false);
+    };
+
+    // Handle click outside to close guide
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (guideRef.current && !guideRef.current.contains(event.target)) {
+                setShowGuide(false);
+            }
+        }
+
+        if (showGuide) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [showGuide]);
 
     useEffect(() => {
-        // CHANGED: Generate slug from title instead of category
+        // Generate slug from title
         if (watchedTitle && watchedTitle.trim()) {
             const slug = slugify(watchedTitle, {
                 lower: true,
@@ -139,26 +236,34 @@ function AddBlog() {
         }
     }
 
-
     const handleFileUpload = (files) => {
         const uploadedFile = files[0];
         const preview = URL.createObjectURL(uploadedFile);
-        setFile(uploadedFile); // ✅ send this to backend
-        setAvatar(preview);    // ✅ this is just for displaying image
+        setFile(uploadedFile);
+        setAvatar(preview);
     }
 
     const handleClearForm = () => {
         form.reset();
         setAvatar(null);
         setFile(null);
-        // Clean up any existing object URLs to prevent memory leaks
+        setShowGuide(false); // Close guide when clearing form
+        setGeneratedContent(''); // Clear generated content
+        setShouldUpdateEditor(false);
+
         if (avatar) {
             URL.revokeObjectURL(avatar);
         }
     }
 
+    const handleInfoClick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setShowGuide(!showGuide);
+    }
+
     return (
-        <div className="container flex justify-center items-center mx-auto p-4 ">
+        <div className="container flex justify-center items-center mx-auto p-4">
             <Card>
                 <CardHeader>
                     <h1 className='text-2xl font-bold text-left border-b-2 pb-2 border-gray-300'>
@@ -205,7 +310,7 @@ function AddBlog() {
                                             <FormControl>
                                                 <Input
                                                     placeholder="Enter the title"
-                                                    disabled={isSubmitting}
+                                                    disabled={isSubmitting || isGenerating}
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -222,7 +327,7 @@ function AddBlog() {
                                             <FormControl>
                                                 <Input
                                                     placeholder="Auto-generated from title"
-                                                    disabled={isSubmitting}
+                                                    disabled={isSubmitting || isGenerating}
                                                     readOnly
                                                     className="bg-gray-100 cursor-not-allowed"
                                                     {...field}
@@ -243,11 +348,14 @@ function AddBlog() {
                                             'image/*': ['.jpeg', '.jpg', '.png', '.webp']
                                         }}
                                         maxFiles={1}
+                                        disabled={isSubmitting || isGenerating}
                                     >
                                         {({ getRootProps, getInputProps, isDragActive }) => (
                                             <div {...getRootProps()}>
                                                 <input {...getInputProps()} />
-                                                <div className={`flex justify-center items-center w-full lg:w-72 h-56 border-2 border-dashed rounded cursor-pointer transition-colors ${isDragActive ? 'border-blue-400 bg-blue-50' : 'border-gray-300 hover:border-gray-400'
+                                                <div className={`flex justify-center items-center w-full lg:w-72 h-56 border-2 border-dashed rounded cursor-pointer transition-colors ${isDragActive ? 'border-blue-400 bg-blue-50' :
+                                                    (isSubmitting || isGenerating) ? 'border-gray-200 bg-gray-50 cursor-not-allowed' :
+                                                        'border-gray-300 hover:border-gray-400'
                                                     }`}>
                                                     {avatar ? (
                                                         <img
@@ -271,44 +379,84 @@ function AddBlog() {
                                     name="blogcontent"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <div className='flex justify-between items-center relative'>
+                                            <div className='flex justify-between items-center mb-2'>
                                                 <FormLabel>Blog Content</FormLabel>
 
-                                                <div className='flex items-center gap-2'>
-                                                    <Button className='w-fit'>✦ Generate with AI ✦</Button>
-
+                                                <div className='flex items-center gap-2 relative'>
+                                                    <Button
+                                                        type="button"
+                                                        className='w-fit flex items-center gap-2'
+                                                        onClick={generateContent}
+                                                        disabled={isSubmitting || isGenerating}
+                                                    >
+                                                        {isGenerating ? (
+                                                            <>
+                                                                <FaSpinner className="animate-spin" size={14} />
+                                                                Generating...
+                                                            </>
+                                                        ) : (
+                                                            '✦ Generate with AI ✦'
+                                                        )}
+                                                    </Button>
                                                     {/* Info Icon */}
                                                     <button
-                                                        onClick={() => setShowGuide(!showGuide)}
-                                                        className='text-blue-600 hover:text-blue-800'
+                                                        type="button"
+                                                        onClick={handleInfoClick}
+                                                        className='text-blue-600 hover:text-blue-800 p-1 rounded-full hover:bg-blue-50 transition-colors disabled:opacity-50'
+                                                        aria-label="Show AI generation guide"
+                                                        disabled={isSubmitting || isGenerating}
                                                     >
-                                                        <FaInfoCircle />
+                                                        <FaInfoCircle size={16} />
                                                     </button>
-                                                </div>
 
-                                                {/* Tooltip/Guide Popup */}
-                                                {showGuide && (
-                                                    <div className="absolute right-0 top-10 z-10 w-64 p-3 bg-white border border-gray-300 rounded-md shadow-md text-sm text-gray-700">
-                                                        <p className='font-semibold mb-1'>AI Content Generation Guide:</p>
-                                                        <ul className='list-disc ml-4 space-y-1'>
-                                                            <li>Click "Generate with AI" to auto-generate blog ideas.</li>
-                                                            <li>Provide a short topic/keyword in the title field first.</li>
-                                                            <li>Edit or refine the generated content as needed.</li>
-                                                        </ul>
-                                                    </div>
-                                                )}
+                                                    {/* Tooltip/Guide Popup */}
+                                                    {showGuide && (
+                                                        <div
+                                                            ref={guideRef}
+                                                            className="absolute right-0 top-8 z-50 w-80 p-4 bg-white border border-gray-200 rounded-lg shadow-lg text-sm text-gray-700"
+                                                            style={{ boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)' }}
+                                                        >
+                                                            <div className="flex justify-between items-start mb-2">
+                                                                <p className='font-semibold text-gray-800'>AI Content Generation Guide:</p>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setShowGuide(false)}
+                                                                    className="text-gray-400 hover:text-gray-600 ml-2"
+                                                                    aria-label="Close guide"
+                                                                >
+                                                                    ×
+                                                                </button>
+                                                            </div>
+                                                            <ul className='list-disc ml-4 space-y-1.5 text-gray-600'>
+                                                                <li>Enter a descriptive title for your blog post first.</li>
+                                                                <li>Select a category that matches your content.</li>
+                                                                <li>Click "Generate with AI" to create initial content.</li>
+                                                                <li>Edit and refine the generated content as needed.</li>
+                                                                <li>The AI will create a structured blog post based on your title.</li>
+                                                                <li>You have <strong>5</strong> free AI generations per day.</li>
+                                                            </ul>
+                                                            {/* Small arrow pointing to the info icon */}
+                                                            <div className="absolute -top-2 right-6 w-4 h-4 bg-white border-l border-t border-gray-200 transform rotate-45"></div>
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
                                             <FormControl>
-                                                <div className="w-full max-w-full h-72 overflow-hidden rounded border border-gray-300">
+                                                <div className="w-full max-w-full h-fit overflow-hidden rounded border border-gray-300">
                                                     <Editor
                                                         onChange={(data) => {
                                                             field.onChange(data);
                                                         }}
-                                                        {...field}
-                                                        props={{ initialData: '' }}
+                                                        props={{ initialData: field.value }}
+                                                        generatedContent={generatedContent}
+                                                        shouldUpdateContent={shouldUpdateEditor}
+                                                        onContentUpdated={handleContentUpdated}
                                                     />
                                                 </div>
                                             </FormControl>
+                                            <p className="text-xs text-black">
+                                                <strong>Note:</strong> Please click the <em>Full Screen</em> button in the toolbar to enable full view.
+                                            </p>
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -318,7 +466,7 @@ function AddBlog() {
                                     <Button
                                         type="submit"
                                         className="flex-1"
-                                        disabled={isSubmitting}
+                                        disabled={isSubmitting || isGenerating}
                                     >
                                         {isSubmitting ? 'Adding Blog...' : 'Add Blog'}
                                     </Button>
@@ -327,7 +475,7 @@ function AddBlog() {
                                         variant="outline"
                                         className="flex-1"
                                         onClick={handleClearForm}
-                                        disabled={isSubmitting}
+                                        disabled={isSubmitting || isGenerating}
                                     >
                                         Clear Form
                                     </Button>
@@ -335,7 +483,7 @@ function AddBlog() {
 
                                 {/* Link to view Blogs */}
                                 <div className="text-center">
-                                    <Button asChild variant="outline">
+                                    <Button asChild variant="outline" disabled={isSubmitting || isGenerating}>
                                         <Link to={RouteBlog}>
                                             View All Blogs
                                         </Link>

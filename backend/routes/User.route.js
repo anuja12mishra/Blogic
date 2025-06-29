@@ -8,7 +8,7 @@ const UserRoute = express.Router();
 UserRoute.delete('/delete/:userId',onlyadmin, DeleteUser);
 UserRoute.get('/get-all-users',onlyadmin,GetAllUsers);
 
-UserRoute.put('/user-update/:userId',onlyadmin, upload.single('file'), updateUserDetails);
-UserRoute.get('/user-details/:userId',onlyadmin, getUserDetails);
+UserRoute.put('/user-update/:userId',authenticate, upload.single('file'), updateUserDetails);
+UserRoute.get('/user-details/:userId',authenticate, getUserDetails);
 
 export default UserRoute;

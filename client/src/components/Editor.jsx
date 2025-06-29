@@ -1,6 +1,5 @@
 /**
- * This configuration was generated using the CKEditor 5 Builder. You can modify it anytime using this link:
- * https://ckeditor.com/ckeditor-5/builder/#installation/NoNgNARATAdCMEYKQQdgCxSgVgMzvQA4oMFdCAGEXK9BEDATk0JGsYYu29xGQgCmAO2QUwwBGEnSwYhAF1IjbCGIATAMYR5QA===
+ * Enhanced Editor component with AI content integration
  */
 
 import { useState, useEffect, useRef, useMemo } from 'react';
@@ -63,23 +62,46 @@ import {
 
 import 'ckeditor5/ckeditor5.css';
 
-import '../index.css';
+const LICENSE_KEY = 'GPL'; // or <YOUR_LICENSE_KEY>
 
-/**
- * Create a free account with a trial: https://portal.ckeditor.com/checkout?plan=free
- */
-const LICENSE_KEY = 'GPL'; // or <YOUR_LICENSE_KEY>.
-
-export default function Editor({ props,onChange }) {
+export default function Editor({ 
+    props, 
+    onChange, 
+    generatedContent = '', 
+    shouldUpdateContent = false,
+    onContentUpdated 
+}) {
     const editorContainerRef = useRef(null);
     const editorRef = useRef(null);
+    const editorInstanceRef = useRef(null);
     const [isLayoutReady, setIsLayoutReady] = useState(false);
 
     useEffect(() => {
         setIsLayoutReady(true);
-
         return () => setIsLayoutReady(false);
     }, []);
+
+    // Handle AI generated content updates
+    useEffect(() => {
+        if (shouldUpdateContent && generatedContent && editorInstanceRef.current) {
+            try {
+                // Get current content
+                const currentData = editorInstanceRef.current.getData();
+                
+                // Only update if the content is different
+                if (currentData !== generatedContent) {
+                    editorInstanceRef.current.setData(generatedContent);
+                    
+                    // Call callback to notify parent that content has been updated
+                    if (onContentUpdated) {
+                        onContentUpdated();
+                    }
+                }
+            } catch (error) {
+                console.error('Error updating editor content:', error);
+            }
+        }
+    }, [generatedContent, shouldUpdateContent, onContentUpdated]);
 
     const { editorConfig } = useMemo(() => {
         if (!isLayoutReady) {
@@ -294,6 +316,15 @@ export default function Editor({ props,onChange }) {
         };
     }, [isLayoutReady]);
 
+    const handleEditorReady = (editor) => {
+        editorInstanceRef.current = editor;
+        
+        // Set initial content if provided
+        if (generatedContent) {
+            editor.setData(generatedContent);
+        }
+    };
+
     return (
         <div className="main-container">
             <div
@@ -302,17 +333,19 @@ export default function Editor({ props,onChange }) {
             >
                 <div className="editor-container__editor">
                     <div ref={editorRef}>
-                        {editorConfig &&
+                        {editorConfig && (
                             <CKEditor
                                 editor={ClassicEditor}
                                 config={editorConfig}
-                                data={props.initialData}
+                                data={props?.initialData || generatedContent}
+                                onReady={handleEditorReady}
                                 onChange={(event, editor) => {
                                     const data = editor.getData();
                                     onChange?.(data);
                                 }}
                             />
-                        }</div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

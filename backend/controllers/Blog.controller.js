@@ -10,7 +10,9 @@ import {
 import {
     encode
 } from 'entities';
-import { deleteBlogWithRelatedData } from "../helpers/DeleteRelatedBlog.js";
+import {
+    deleteBlogWithRelatedData
+} from "../helpers/DeleteRelatedBlog.js";
 import main from "../config/gemini.js";
 export const AddBlog = async (req, res, next) => {
     try {
@@ -221,7 +223,9 @@ export const GetABlog = async (req, res, next) => {
 
 export const DeleteBlog = async (req, res, next) => {
     try {
-        const { blogId } = req.params;
+        const {
+            blogId
+        } = req.params;
 
         const result = await deleteBlogWithRelatedData(blogId);
 
@@ -335,26 +339,26 @@ export const Search = async (req, res, next) => {
 
         // Fixed: $options instead of $option, and added search in content as well
         const blog = await Blog.find({
-            $or: [{
-                title: {
-                    $regex: q.trim(),
-                    $options: 'i'
-                }
-            },
-            {
-                blogContent: {
-                    $regex: q.trim(),
-                    $options: 'i'
-                }
-            },
-            {
-                slug: {
-                    $regex: q.trim(),
-                    $options: 'i'
-                }
-            }
-            ]
-        })
+                $or: [{
+                        title: {
+                            $regex: q.trim(),
+                            $options: 'i'
+                        }
+                    },
+                    {
+                        blogContent: {
+                            $regex: q.trim(),
+                            $options: 'i'
+                        }
+                    },
+                    {
+                        slug: {
+                            $regex: q.trim(),
+                            $options: 'i'
+                        }
+                    }
+                ]
+            })
             .populate('author', 'name avatar role')
             .populate('category', 'name slug')
             .sort({
@@ -378,15 +382,112 @@ export const Search = async (req, res, next) => {
 
 export const GenerateContent = async (req, res, next) => {
     try {
-        const { prompt } = req.body;
-        const content = await main(prompt + `Generate a blog content for this topic or provided content in blog formate`);
-         res.status(200).json({
+        // Debug: Log the request body to see what's being received
+        // console.log('Request body:', req.body);
+        // console.log('Content-Type:', req.headers['content-type']);
+        
+        // Check if req.body exists
+        if (!req.body) {
+            return res.status(400).json({
+                success: false,
+                message: 'Request body is missing. Make sure to send JSON data.'
+            });
+        }
+
+        // Extract title and category from request body (sent from frontend)
+        const { title,body } = req.body;
+        
+        // Validate required fields
+        if (!title || !title.trim()) {
+            return res.status(400).json({
+                success: false,
+                message: 'Title is required to generate blog content'
+            });
+        }
+
+
+        // Create a comprehensive prompt for better content generation
+        const prompt = `Create a comprehensive, SEO-optimized blog post with the following specifications:
+
+        BLOG DETAILS:
+        Title: "${title.trim()}"
+        Additional Context: ${body || 'None provided'}
+
+        CONTENT REQUIREMENTS:
+        - Word Count: 400-800 words
+        - Structure: Introduction (2-3 paragraphs) + 4-6 main sections + Conclusion (2 paragraphs)
+        - Tone: Professional, engaging, and conversational
+        - Reading Level: Easy to understand for general audience
+        - SEO Elements: Include relevant keywords naturally throughout
+
+        FORMATTING SPECIFICATIONS:
+        - Use clear, descriptive H2 headings for main sections
+        - Include H3 subheadings where appropriate
+        - Write in short, scannable paragraphs (2-4 sentences each)
+        - Add bullet points or numbered lists for better readability
+        - Include transitional phrases between sections
+
+        CONTENT QUALITY STANDARDS:
+        - Provide actionable insights and practical information
+        - Include specific examples, statistics, or case studies when relevant
+        - Address common questions or pain points related to the topic
+        - Ensure factual accuracy and cite credible sources when needed
+        - Make content valuable and shareable
+
+        WRITING STYLE:
+        - Hook readers with a compelling opening
+        - Use active voice and strong verbs
+        - Include rhetorical questions to engage readers
+        - Vary sentence length for better flow
+        - End with a strong call-to-action or key takeaway
+
+        OUTPUT FORMAT:
+        Return clean, formatted text ready for web publishing. Use simple HTML formatting:
+        - Headings: <h2>Main Heading</h2>, <h3>Subheading</h3>
+        - Paragraphs: <p>Content here</p>
+        - Lists: <ul><li>Item</li></ul> or <ol><li>Item</li></ol>
+        - Bold text: <strong>important text</strong>
+        - Italic text: <em>emphasized text</em>
+
+
+        Do not include meta descriptions, tags, or any prefatory text. Start directly with the blog content.`;
+
+        // Call your AI function with the constructed prompt
+        const content = await main(prompt);
+        
+        // Validate that content was generated
+        if (!content || content.trim().length === 0) {
+            return res.status(500).json({
+                success: false,
+                message: 'Failed to generate content. Please try again.'
+            });
+        }
+
+        res.status(200).json({
             success: true,
-            content: content
+            content: content.trim(),
+            message: 'Blog content generated successfully'
         });
 
     } catch (error) {
-        console.error('Error in Search:', error);
-        next(handleError(500, error.message));
+        console.error('Error in GenerateContent:', error);
+        
+        // Provide more specific error messages
+        let errorMessage = 'Failed to generate blog content';
+        
+        if (error.message) {
+            errorMessage = error.message;
+        }
+        
+        // Handle different types of errors
+        if (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND') {
+            errorMessage = 'AI service is currently unavailable. Please try again later.';
+        } else if (error.response && error.response.status === 429) {
+            errorMessage = 'AI service rate limit exceeded. Please try again in a few minutes.';
+        } else if (error.response && error.response.status === 401) {
+            errorMessage = 'AI service authentication failed. Please check configuration.';
+        }
+        
+        next(handleError(500, errorMessage));
     }
 }

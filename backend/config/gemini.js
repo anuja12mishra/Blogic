@@ -9,8 +9,18 @@ async function main(prompt) {
     model: "gemini-2.0-flash",
     contents: prompt,
   });
-  console.log(response.text);
+  // console.log(response.text);
   return response.text
 }
+
+
+// async function main(prompt) {
+//   const model = ai.getGenerativeModel({ model: "gemini-1.5-flash" }); // Use the correct method
+//   const result = await model.generateContent(prompt); // This returns a response object
+//   const response = await result.response; // Get the actual response
+//   const text = response.text(); // Extract text
+//   console.log(text);
+//   return text;
+// }
 
 export default main;

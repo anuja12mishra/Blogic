@@ -21,7 +21,8 @@ BlogRoute.post('/add',authenticate, upload.single('featuredImage'), AddBlog);
 BlogRoute.put('/edit/:blogId',authenticate, upload.single('featuredImage'), EditBlog);
 BlogRoute.delete('/delete/:blogId',authenticate, DeleteBlog);
 BlogRoute.get('/protect-get-all-blogs',authenticate,GetAllBlogProtect);
-BlogRoute.get('/genrate-content',authenticate,GenerateContent);
+BlogRoute.post('/genrate-content', authenticate, GenerateContent);
+
 
 BlogRoute.get('/get-a-blog/:blogId', GetABlog);
 BlogRoute.get('/get-all-blogs', GetAllBlog);

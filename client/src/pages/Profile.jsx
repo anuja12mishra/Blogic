@@ -53,6 +53,7 @@ function Profile() {
     });
 
     useEffect(() => {
+        console.log('userData.user',userData?.user)
         if (userData?.success && userData.user) {
             form.reset({
                 name: userData.user.name || '',
@@ -105,7 +106,8 @@ function Profile() {
     }
 
     return (
-        <Card className="max-w-screen-md mx-auto">
+        <div >
+        <Card className='md:w-xl'>
             <CardContent>
                 <div className='w-full h-full flex justify-center items-center'>
                     <Dropzone onDrop={acceptedFiles => handleFileUpload(acceptedFiles)}>
@@ -114,8 +116,8 @@ function Profile() {
                             <div {...getRootProps()}>
                                 <input {...getInputProps()} />
                                 <div className="relative w-24 h-24">
-                                    <Avatar className="w-full h-full">
-                                        <AvatarImage className='object-cover' src={avatar ? avatar : userData?.user?.avatar || ''} />
+                                    <Avatar className="w-full h-full rounded-full overflow-hidden border-2 border-gray-200">
+                                        <AvatarImage className='h-full w-full object-cover' src={avatar ? avatar : userData?.user?.avatar || ''} />
                                     </Avatar>
                                     <button
                                         type="button"
@@ -203,6 +205,7 @@ function Profile() {
                 </div>
             </CardContent>
         </Card>
+        </div>
     );
 }
 
