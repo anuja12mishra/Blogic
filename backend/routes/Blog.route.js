@@ -13,6 +13,9 @@ import {
 } from '../controllers/Blog.controller.js';
 import upload from '../config/multer.config.js';
 import { authenticate } from '../middleware/authenticate.js';
+import rateLimitGenerateContent from '../utils/rateLimiters.js';
+
+
 
 const BlogRoute = express.Router();
 
@@ -21,7 +24,8 @@ BlogRoute.post('/add',authenticate, upload.single('featuredImage'), AddBlog);
 BlogRoute.put('/edit/:blogId',authenticate, upload.single('featuredImage'), EditBlog);
 BlogRoute.delete('/delete/:blogId',authenticate, DeleteBlog);
 BlogRoute.get('/protect-get-all-blogs',authenticate,GetAllBlogProtect);
-BlogRoute.post('/genrate-content', authenticate, GenerateContent);
+BlogRoute.post('/genrate-content', authenticate, rateLimitGenerateContent, GenerateContent);
+// BlogRoute.post('/genrate-content', authenticate, GenerateContent);
 
 
 BlogRoute.get('/get-a-blog/:blogId', GetABlog);
