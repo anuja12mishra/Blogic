@@ -16,7 +16,7 @@ function BlogCard({
 
     return (
         <Link to={RouteSingleBlogDetails(props.blog.category.slug,props.blog.slug,props.blog._id)}>
-            <Card className="h-full">
+            <Card className="h-full hover:scale-105 transition-transform duration-300 hover:border-purple-600 hover:border-1.5">
                 <CardHeader className="h-full flex flex-col">
                     <div className="flex flex-col max-md:flex-row justify-between w-full gap-2 mb-2">
                         <div className="flex items-center gap-1.5">

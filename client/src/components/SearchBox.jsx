@@ -27,7 +27,7 @@ function SearchBox() {
                 value={query}
                 onChange={handleInputChange} 
                 placeholder='Search here...' 
-                className='h-9 rounded-full border-purple-900 border-2'
+                className='h-9 rounded-full border-purple-600 border-2'
             />
         </form>
     )

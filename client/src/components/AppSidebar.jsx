@@ -34,7 +34,7 @@ export function AppSidebar() {
 
     return (
         // <Sidebar className="bg-gradient-to-r from-purple-500 via-purple-400 via-purple-300 to-white text-white border-none">
-        <Sidebar className='pt-16'>
+        <Sidebar className='pt-16 border-purple-200' >
             <SidebarHeader className='text-2xl font-bold text-purple-600 items-start pt-5'>
                 <h2>Control Panel</h2>
             </SidebarHeader>
@@ -43,7 +43,7 @@ export function AppSidebar() {
                     <SidebarMenu>
                         <SidebarMenuItem>
                             <Link to={RouteIndex}>
-                                <SidebarMenuButton className='hover:bg-purple-300'>
+                                <SidebarMenuButton className='hover:bg-purple-500 hover:text-white'>
                                     <IoHomeOutline />
                                     Home
                                 </SidebarMenuButton>
@@ -54,7 +54,7 @@ export function AppSidebar() {
                                 <>
                                     <SidebarMenuItem>
                                         <Link to={RouteComment}>
-                                            <SidebarMenuButton className='hover:bg-purple-300'>
+                                            <SidebarMenuButton className='hover:bg-purple-500 hover:text-white'>
                                                 <LiaComments />
                                                 Comments
                                             </SidebarMenuButton>
@@ -62,7 +62,7 @@ export function AppSidebar() {
                                     </SidebarMenuItem>
                                     <SidebarMenuItem>
                                         <Link to={RouteLike}>
-                                            <SidebarMenuButton className='hover:bg-purple-300'>
+                                            <SidebarMenuButton className='hover:bg-purple-500 hover:text-white'>
                                                 <TbFileLike />
                                                 Likes
                                             </SidebarMenuButton>
@@ -70,7 +70,7 @@ export function AppSidebar() {
                                     </SidebarMenuItem>
                                     <SidebarMenuItem>
                                         <Link to={RouteBlog}>
-                                            <SidebarMenuButton className='hover:bg-purple-300'>
+                                            <SidebarMenuButton className='hover:bg-purple-500 hover:text-white'>
                                                 <TbLogs />
                                                 Blogs
                                             </SidebarMenuButton>
@@ -85,7 +85,7 @@ export function AppSidebar() {
                                 <>
                                     <SidebarMenuItem>
                                         <Link to={RouteCategoryDetails}>
-                                            <SidebarMenuButton className='hover:bg-purple-300'>
+                                            <SidebarMenuButton className='hover:bg-purple-500 hover:text-white'>
                                                 <BiCategoryAlt />
                                                 Categories
                                             </SidebarMenuButton>
@@ -93,7 +93,7 @@ export function AppSidebar() {
                                     </SidebarMenuItem>
                                     <SidebarMenuItem>
                                         <Link to={RouteUser}>
-                                            <SidebarMenuButton className='hover:bg-purple-300'>
+                                            <SidebarMenuButton className='hover:bg-purple-500 hover:text-white'>
                                                 <FaRegUser />
                                                 User
                                             </SidebarMenuButton>
@@ -113,7 +113,7 @@ export function AppSidebar() {
                                     return (
                                         <SidebarMenuItem key={index}>
                                             <Link to={RouteBlogByCategory(category.slug)}>
-                                                <SidebarMenuButton className='hover:bg-purple-300'>
+                                                <SidebarMenuButton className='hover:bg-purple-500 hover:text-white'>
                                                     <GoDot />
                                                     {category.name}
                                                 </SidebarMenuButton>
