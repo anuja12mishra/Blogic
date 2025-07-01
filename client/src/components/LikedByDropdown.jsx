@@ -50,7 +50,7 @@ const LikedByDropdown = ({ props: blogId }) => {
         <div className="relative inline-block text-left" ref={dropdownRef}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="text-sm text-blue-600 underline hover:text-blue-800 transition cursor-pointer"
+                className="text-sm text-black underline hover:text-blue-600 transition cursor-pointer"
             >
                 {/* Show full text on medium and above */}
                 <span className="hidden md:inline">
@@ -71,11 +71,6 @@ const LikedByDropdown = ({ props: blogId }) => {
                     <div className="py-2 px-4 max-h-60 overflow-y-auto ">
                         {likeData.map((like) => (
                             <div key={like._id} className="flex items-center gap-2 justify-between border-b-2">
-                                {/* <img
-                                    src={like.authorId?.avatar || "/default-avatar.png"}
-                                    alt={like.authorId?.name}
-                                    className="w-6 h-6 rounded-full border"
-                                /> */}
                                 <span className="text-sm">{like.authorId?.name}</span>
                                 <span className="text-sm">{getTimeAgo(like.createdAt)}</span>
                             </div>

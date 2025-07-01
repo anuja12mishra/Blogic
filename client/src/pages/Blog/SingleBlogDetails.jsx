@@ -2,10 +2,10 @@ import Loading from '@/components/Loading';
 import { getEnv } from '@/helpers/getEnv';
 import { useFetch } from '@/hooks/useFetch';
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
-import { Badge } from '@/components/ui/badge'; // Added missing import
-import React from 'react'
+import { Badge } from '@/components/ui/badge';
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
-import moment from 'moment'; // Added for date formatting
+import moment from 'moment';
 import { decode } from 'entities'
 import Comments from '@/components/Comments';
 import { FaRegComment } from "react-icons/fa";
@@ -14,22 +14,36 @@ import BlogLike from '@/components/BlogLike';
 import RelatedBlog from '@/components/RelatedBlog';
 import ViewsCount from '@/components/ViewsCount';
 import LikedByDropdown from '@/components/LikedByDropdown';
+
 function SingleBlogDetails() {
     const { blog_id } = useParams();
+    const [shouldSkipViewIncrement, setShouldSkipViewIncrement] = useState(null); 
 
+
+    useEffect(() => {
+        const viewedBlogs = JSON.parse(sessionStorage.getItem('viewedBlogs') || '[]');
+        const hasBeenViewed = viewedBlogs.includes(blog_id);
+        setShouldSkipViewIncrement(hasBeenViewed);
+        
+        if (!hasBeenViewed) {
+            viewedBlogs.push(blog_id);
+            sessionStorage.setItem('viewedBlogs', JSON.stringify(viewedBlogs));
+        }
+    }, [blog_id]);
+
+    // Custom fetch hook that conditionally increments views
     const { data: blogData, loading: blogLoading } = useFetch(
-        `${getEnv('VITE_API_URL')}/api/blog/get-a-blog/${blog_id}`,
+        shouldSkipViewIncrement !== null 
+            ? `${getEnv('VITE_API_URL')}/api/blog/get-a-blog/${blog_id}${shouldSkipViewIncrement ? '?skipViewIncrement=true' : ''}`
+            : null, 
         { method: 'GET', credentials: 'include' },
-        [blog_id]
+        [blog_id, shouldSkipViewIncrement]
     );
 
-    //console.log('blogData',blogData);
-
-    if (blogLoading) {
+    if (shouldSkipViewIncrement === null || blogLoading) {
         return <Loading />
     }
 
-    // Handle case when blogData is not available
     if (!blogData || !blogData.blog) {
         return <div>Blog not found</div>
     }
@@ -62,14 +76,11 @@ function SingleBlogDetails() {
                         </Avatar>
                         <div className='flex gap-4 justify-end items-center'>
                             <BlogLike props={blogData.blog._id} />
-                           
-                            {/* <BlogLikeWithDropdown blogId={blogData.blog._id} /> */}
                             <CommentCount props={blogData.blog._id} />
                             <ViewsCount props={blogData.blog.views}/>
                         </div>
                     </div>
 
-                    {/* Fixed the condition - removed props reference */}
                     {blog.author.role === "admin" && (
                         <div className="flex justify-start md:justify-center items-center hover:cursor-default">
                             <Badge
@@ -83,17 +94,6 @@ function SingleBlogDetails() {
                 </div>
 
                 {/* Featured Image */}
-                {/* {blog.featuredImage && (
-                    <div className="mb-2 flex justify-center">
-                        <div className="bg-gray-300 p-2 rounded-lg">
-                            <img
-                                src={blog.featuredImage}
-                                alt={blog.title}
-                                className="w-full h-64 object-contain rounded-lg bg-gray-100"
-                            />
-                        </div>
-                    </div>
-                )} */}
                 {blog.featuredImage && (
                     <div className="mb-2">
                         <img
@@ -127,7 +127,6 @@ function SingleBlogDetails() {
 
             <div className='border-2 rounded w-full md:w-[30%] p-4 h-fit'>
                 <h2 className="text-xl font-bold mb-4">Related Blogs</h2>
-                {/* Related blog content will go here */}
                 <RelatedBlog props={{ category: blogData.blog?.category?._id, currentBlogSlug: blogData.blog?.slug }} />
             </div>
         </div>
@@ -135,5 +134,3 @@ function SingleBlogDetails() {
 }
 
 export default SingleBlogDetails;
-
-

@@ -192,22 +192,24 @@ export const GetAllBlogProtect = async (req, res, next) => {
         next(handleError(500, error.message));
     }
 }
-
 export const GetABlog = async (req, res, next) => {
     try {
-        const {
-            blogId
-        } = req.params;
+        const { blogId } = req.params;
+        const { skipViewIncrement } = req.query;
+        
         const blog = await Blog.findById(blogId)
-            .populate('author', 'name avatar')
+            .populate('author', 'name avatar role')
             .populate('category', 'name');
+            
         if (!blog) {
             return next(handleError(404, 'blog not found'));
         }
 
-        //increase the views of the blog
-        blog.views = (blog.views || 0) + 1;
-        await blog.save();
+        // Only increment views if skipViewIncrement is not true
+        if (skipViewIncrement !== 'true') {
+            blog.views = (blog.views || 0) + 1;
+            await blog.save();
+        }
 
         res.status(200).json({
             success: true,
