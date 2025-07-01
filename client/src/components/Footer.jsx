@@ -11,7 +11,7 @@ function Footer() {
     <footer className="text-white">
       {/* Bottom Bar */}
       <div className="border-t border-purple-200 bg-purple-50">
-        <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="max-w-6xl mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="space-y-2">
               <h3 className="flex text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-black bg-clip-text">
