@@ -56,7 +56,8 @@ function Topbar() {
       dispatch(removeUser());
       const successMessage = data.message || 'Logout successful!';
       showtoast('success', successMessage);
-      navigate(RouteIndex);
+      //navigate(RouteIndex);
+      navigate(RouteIndex, { replace: true });
 
     } catch (err) {
       showtoast('error', 'Network error: Unable to connect to server');
