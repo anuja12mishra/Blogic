@@ -9,11 +9,14 @@ import { RouteIndex } from '@/helpers/RouteName';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setUser } from '@/redux/user/user.slice';
+import Loading from './Loading';
 
-function GoogleLogin() {
+function GoogleLogin({loading,setLoading}) {
+    // const [loading, setLoading] = React.useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const handleLogin = async () => {
+        setLoading(true);
         const googleRes = await signInWithPopup(auth, provider);
         console.log(googleRes);
         const user  = googleRes.user;
@@ -51,12 +54,18 @@ function GoogleLogin() {
         } catch (err) {
             // console.error('Request failed:', err);
             showtoast('error', 'Network error: Unable to connect to server');
+        }finally{
+            setLoading(false);
         }
     }
     return (
         <Button className='w-full' onClick={handleLogin}>
-            <FcGoogle />
-            Continue with Google
+            {loading ? <Loading /> : (
+                <>
+                    <FcGoogle />
+                    Continue with Google
+                </>
+            )}
         </Button>
     )
 }

@@ -11,6 +11,7 @@ import { RouteSignIn } from '@/helpers/RouteName';
 import { getEnv } from '@/helpers/getEnv';
 import { showtoast } from '@/helpers/showtoast';
 import GoogleLogin from '../components/GoogleLogin';
+import Loading from '@/components/Loading';
 
 const formSchema = z.object({
     name: z.string().min(3, 'Name should have a minimum length of 3'),
@@ -24,6 +25,7 @@ const formSchema = z.object({
 
 const Signup = () => {
     const navigate = useNavigate();
+    const [loading, setLoading] = React.useState(false);
 
     const form = useForm({
         resolver: zodResolver(formSchema),
@@ -37,7 +39,7 @@ const Signup = () => {
 
     async function onSubmit(values) {
         // console.log('Form values:', values);
-
+        setLoading(true);
         try {
             const res = await fetch(`${getEnv('VITE_API_URL')}/api/auth/register`, {
                 method: 'POST',
@@ -64,8 +66,12 @@ const Signup = () => {
         } catch (err) {
             // console.error('Request failed:', err);
             showtoast('error', 'Network error: Unable to connect to server');
+        }finally{
+            setLoading(false);
         }
     }
+
+    if (loading) return <Loading />;
 
     return (
         <div className="flex flex-col justify-center items-center min-h-screen p-6 maze-background relative">
@@ -141,7 +147,7 @@ const Signup = () => {
                     </div>
 
                     <div className='w-full p-0'>
-                        <GoogleLogin />
+                        <GoogleLogin loading={loading} setLoading={setLoading} />
                     </div>
                 </form>
             </Form>

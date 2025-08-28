@@ -1,5 +1,5 @@
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { set, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import logo from '@/assets/logo.png'
@@ -13,6 +13,7 @@ import { getEnv } from '@/helpers/getEnv';
 import { useDispatch } from 'react-redux';
 import { setUser } from '@/redux/user/user.slice';
 import GoogleLogin from '@/components/GoogleLogin';
+import Loading from '@/components/Loading';
 
 const formSchema = z.object({
     email: z.string().email("Please enter a valid email address"),
@@ -20,6 +21,8 @@ const formSchema = z.object({
 });
 
 const SignIn = () => {
+
+    const [loading, setLoading] = React.useState(false);
 
     const dispatch = useDispatch();
 
@@ -34,6 +37,7 @@ const SignIn = () => {
 
     async function onSubmit(values) {
         //console.log(values);
+        setLoading(true);
         try {
             const res = await fetch(`${getEnv('VITE_API_URL')}/api/auth/login`, {
                 method: 'POST',
@@ -63,8 +67,12 @@ const SignIn = () => {
         } catch (err) {
             // console.error('Request failed:', err);
             showtoast('error', 'Network error: Unable to connect to server');
+        }finally{
+            setLoading(false);
         }
     }
+
+    if (loading) return <Loading />;
 
     return (
         <div className="flex flex-col justify-center items-center min-h-screen p-6 maze-background relative">
@@ -117,7 +125,7 @@ const SignIn = () => {
                     </div>
 
                     <div className='w-full p-0'>
-                        <GoogleLogin />
+                        <GoogleLogin loading={loading} setLoading={setLoading} />
                     </div>
                 </form>
             </Form>
