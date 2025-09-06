@@ -42,7 +42,7 @@ export function AppSidebar() {
 
     return (
         // <Sidebar className="bg-gradient-to-r from-purple-500 via-purple-400 via-purple-300 to-white text-white border-none">
-        <Sidebar className='pt-16 border-purple-200 h-fit' >
+        <Sidebar className='pt-16 border-purple-200 min-h-max' >
             <SidebarHeader className='text-2xl font-bold text-purple-600 items-start pt-5'>
                 <h2>Control Panel</h2>
             </SidebarHeader>
