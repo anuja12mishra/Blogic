@@ -27,24 +27,22 @@ function Footer() {
                   © 2025 Your Blog. Made with
                   <FaHeart className="text-red-500 mx-1" size={12} />
                   by <a href="https://www.linkedin.com/in/anuja-mishra-1193a2245/" className="font-semibold text-purple-600 hover:text-purple-700 transition-colors duration-300 ml-1">Anuj</a>
+                  <a href="https://www.linkedin.com/in/anuja-mishra-1193a2245/" className="text-gray-500 hover:text-blue-400 transition-colors duration-300 p-2">
+                    <FaLinkedin size={20} />
+                  </a>
                 </p>
-              </div>
-              <div className="flex space-x-4">
-                <a href="https://www.linkedin.com/in/anuja-mishra-1193a2245/" className="text-gray-500 hover:text-blue-400 transition-colors duration-300">
-                  <FaLinkedin size={20} />
-                </a>
               </div>
             </div>
 
             {/* Back to Top Button */}
             <div>
-            <button
-              onClick={scrollToTop}
-              className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors duration-300 text-sm font-medium shadow-md hover:shadow-lg"
-            >
-              <FaArrowUp size={12} />
-              <span>Back to Top</span>
-            </button>
+              <button
+                onClick={scrollToTop}
+                className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors duration-300 text-sm font-medium shadow-md hover:shadow-lg"
+              >
+                <FaArrowUp size={12} />
+                <span>Back to Top</span>
+              </button>
             </div>
           </div>
         </div>

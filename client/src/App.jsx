@@ -21,24 +21,10 @@ import {
   RouteSingleBlogDetails,
   RouteUser
 } from "./helpers/RouteName"
-// import Index from "./pages/index.jsx"
-// import SignIn from "./pages/SignIn";
-// import SignUp from "./pages/SignUp";
-// import Profile from "./pages/Profile";
-// import AddCategory from "./pages/Category/AddCategory";
-// import CategoryDetails from "./pages/Category/CategoryDetails";
-// import EditCategory from "./pages/Category/EditCategory";
-// import AddBlog from "./pages/Blog/AddBlog";
-// import EditBlog from "./pages/Blog/EditBlog";
-// import BlogDetails from "./pages/Blog/BlogDetails";
-// import SingleBlogDetails from "./pages/Blog/SingleBlogDetails";
-// import BlogByCategory from "./pages/Blog/BlogByCategory";
-// import SerachResult from "./pages/SerachResult";
-// import CommentDashboard from "./pages/CommentDashboard";
-// import UsersDashboard from "./pages/UsersDashboard";
+
 import AuthRouteProtection from "./components/Protected Routes/AuthRouteProtection";
 import OnlyAdminAllowed from "./components/Protected Routes/OnlyAdminAllowed";
-// import LikeDashboard from "./pages/LikeDashboard";
+import Loading from "./components/Loading";
 
 const Index = lazy(() => import("./pages/index.jsx"));
 const SignIn = lazy(() => import("./pages/SignIn"));
@@ -63,7 +49,7 @@ const LikeDashboard = lazy(() => import("./pages/LikeDashboard"));
 function App() {
   return (
     <BrowserRouter>
-      <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+      <Suspense fallback={<div className="text-center mt-10"><Loading/></div>}>
         <Routes>
           <Route path={RouteIndex} element={<Layout />}>
             <Route index element={<Index />} />

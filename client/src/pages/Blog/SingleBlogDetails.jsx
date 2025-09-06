@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom';
 import moment from 'moment';
 import { decode } from 'entities'
 import Comments from '@/components/Comments';
-import { FaRegComment } from "react-icons/fa";
+
 import CommentCount from '@/components/CommentCount';
 import BlogLike from '@/components/BlogLike';
 import RelatedBlog from '@/components/RelatedBlog';
