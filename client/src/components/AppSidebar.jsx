@@ -17,7 +17,15 @@ import { FaRegUser } from "react-icons/fa";
 import { LiaComments } from "react-icons/lia";
 import { TbFileLike } from "react-icons/tb";
 import { GoDot } from "react-icons/go";
-import { RouteBlog, RouteBlogByCategory, RouteCategoryDetails, RouteComment, RouteIndex, RouteLike, RouteUser } from "@/helpers/RouteName";
+import {
+    RouteBlog,
+    RouteBlogByCategory,
+    RouteCategoryDetails,
+    RouteComment,
+    RouteIndex,
+    RouteLike,
+    RouteUser
+} from "@/helpers/RouteName";
 import { useFetch } from "@/hooks/useFetch";
 import { getEnv } from "@/helpers/getEnv";
 import { useSelector } from "react-redux";
@@ -34,7 +42,7 @@ export function AppSidebar() {
 
     return (
         // <Sidebar className="bg-gradient-to-r from-purple-500 via-purple-400 via-purple-300 to-white text-white border-none">
-        <Sidebar className='pt-16 border-purple-200' >
+        <Sidebar className='pt-16 border-purple-200 h-fit' >
             <SidebarHeader className='text-2xl font-bold text-purple-600 items-start pt-5'>
                 <h2>Control Panel</h2>
             </SidebarHeader>

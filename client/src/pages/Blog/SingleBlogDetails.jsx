@@ -8,23 +8,39 @@ import { useParams } from 'react-router-dom';
 import moment from 'moment';
 import { decode } from 'entities'
 import Comments from '@/components/Comments';
-
+import { Share2 } from "lucide-react";
 import CommentCount from '@/components/CommentCount';
 import BlogLike from '@/components/BlogLike';
 import RelatedBlog from '@/components/RelatedBlog';
 import ViewsCount from '@/components/ViewsCount';
 import LikedByDropdown from '@/components/LikedByDropdown';
-
+import { showtoast } from '@/helpers/showtoast';
 function SingleBlogDetails() {
     const { blog_id } = useParams();
-    const [shouldSkipViewIncrement, setShouldSkipViewIncrement] = useState(null); 
+    const [shouldSkipViewIncrement, setShouldSkipViewIncrement] = useState(null);
 
+
+    function handleShare(blog) {
+        const blogUrl = `${window.location.origin}/blog/${blog.slug}`;
+        if (navigator.share) {
+            navigator
+                .share({
+                    title: blog.title,
+                    text: "Check out this blog!",
+                    url: blogUrl,
+                })
+                .catch((err) => console.log("Share canceled", err));
+        } else {
+            navigator.clipboard.writeText(blogUrl);
+            showtoast('success',"Blog link copied to clipboard!");
+        }
+    }
 
     useEffect(() => {
         const viewedBlogs = JSON.parse(sessionStorage.getItem('viewedBlogs') || '[]');
         const hasBeenViewed = viewedBlogs.includes(blog_id);
         setShouldSkipViewIncrement(hasBeenViewed);
-        
+
         if (!hasBeenViewed) {
             viewedBlogs.push(blog_id);
             sessionStorage.setItem('viewedBlogs', JSON.stringify(viewedBlogs));
@@ -33,9 +49,9 @@ function SingleBlogDetails() {
 
     // Custom fetch hook that conditionally increments views
     const { data: blogData, loading: blogLoading } = useFetch(
-        shouldSkipViewIncrement !== null 
+        shouldSkipViewIncrement !== null
             ? `${getEnv('VITE_API_URL')}/api/blog/get-a-blog/${blog_id}${shouldSkipViewIncrement ? '?skipViewIncrement=true' : ''}`
-            : null, 
+            : null,
         { method: 'GET', credentials: 'include' },
         [blog_id, shouldSkipViewIncrement]
     );
@@ -51,7 +67,7 @@ function SingleBlogDetails() {
     const blog = blogData.blog;
 
     return (
-        <div className='flex flex-col w-full md:flex-row justify-between gap-6 md:gap-16 p-4'>
+        <div className='flex flex-col w-full md:flex-row justify-between gap-6 md:gap-16 p-4 select-none'>
             <div className='border-2 rounded w-full md:w-[70%] p-5'>
                 {/* Blog Title */}
                 <h1 className='text-3xl font-bold mb-4'>{blog.title}</h1>
@@ -77,7 +93,15 @@ function SingleBlogDetails() {
                         <div className='flex gap-4 justify-end items-center'>
                             <BlogLike props={blogData.blog._id} />
                             <CommentCount props={blogData.blog._id} />
-                            <ViewsCount props={blogData.blog.views}/>
+                            <ViewsCount props={blogData.blog.views} />
+                            {/* Share Button */}
+                            <button
+                                onClick={() => handleShare(blog)}
+                                className=""
+                                title="Share Blog"
+                            >
+                                <Share2 className="w-5 h-5 text-gray-600" />
+                            </button>
                         </div>
                     </div>
 
@@ -109,7 +133,7 @@ function SingleBlogDetails() {
                     <Badge variant="outline" className="">
                         {blog.category.name}
                     </Badge>
-                     <LikedByDropdown props={blogData.blog._id}/>
+                    <LikedByDropdown props={blogData.blog._id} />
                 </div>
 
                 {/* Blog Content */}
