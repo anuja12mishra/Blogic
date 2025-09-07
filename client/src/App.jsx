@@ -25,6 +25,7 @@ import {
 import AuthRouteProtection from "./components/Protected Routes/AuthRouteProtection";
 import OnlyAdminAllowed from "./components/Protected Routes/OnlyAdminAllowed";
 import Loading from "./components/Loading";
+import NotFound from "./pages/Notfound";
 
 const Index = lazy(() => import("./pages/index.jsx"));
 const SignIn = lazy(() => import("./pages/SignIn"));
@@ -78,6 +79,7 @@ function App() {
               <Route path={RouteEditCategory()} element={<EditCategory />} />
               <Route path={RouteUser} element={<UsersDashboard />} />
             </Route>
+            <Route path="*" element={<NotFound />} />
           </Route>
           <Route path={RouteSignIn} element={<SignIn />} />
           <Route path={RouteSignUp} element={<SignUp />} />
@@ -87,56 +89,5 @@ function App() {
   );
 }
 
-
-// function App() {
-//   return (
-//     <BrowserRouter>
-//       <Routes>
-//         <Route path={RouteIndex} element={<Layout />}>
-//           <Route index element={<Index />}></Route>
-//           {/* Blog routes */}
-//           <Route path={RouteSingleBlogDetails()} element={<SingleBlogDetails />}></Route>
-//           <Route path={RouteBlogByCategory()} element={<BlogByCategory />}></Route>
-//           {/* Search routes */}
-//           <Route path={RouteSearch()} element={<SerachResult />}></Route>
-
-//           <Route element={<AuthRouteProtection />}>
-//             <Route path={RouteProfile} element={<Profile />}></Route>
-//             {/* Blog routes */}
-//             <Route path={RouteAddBlog} element={<AddBlog />}></Route>
-//             <Route path={RouteBlog} element={<BlogDetails />}></Route>
-//             <Route path={RouteEditBlog()} element={<EditBlog />}></Route>
-//             {/* comments page */}
-//             <Route path={RouteComment} element={<CommentDashboard />}></Route>
-//             {/* like page */}
-//             <Route path={RouteLike} element={<LikeDashboard />}></Route>
-//           </Route>
-
-//           <Route element={<OnlyAdminAllowed/>}>
-//             <Route path={RouteProfile} element={<Profile />}></Route>
-
-//             {/* Blog routes */}
-//             <Route path={RouteAddBlog} element={<AddBlog />}></Route>
-//             <Route path={RouteBlog} element={<BlogDetails />}></Route>
-//             <Route path={RouteEditBlog()} element={<EditBlog />}></Route>
-//             {/* comments page */}
-//             <Route path={RouteComment} element={<CommentDashboard />}></Route>
-//             {/* like page */}
-//             <Route path={RouteLike} element={<LikeDashboard />}></Route>
-//             {/* Category routes */}
-//             <Route path={RouteAddCategory} element={<AddCategory />}></Route>
-//             <Route path={RouteCategoryDetails} element={<CategoryDetails />}></Route>
-//             <Route path={RouteEditCategory()} element={<EditCategory />}></Route>
-//             {/* users page */}
-//             <Route path={RouteUser} element={<UsersDashboard />}></Route>
-//           </Route>
-
-//         </Route>
-//         <Route element={<SignIn />} path={RouteSignIn} />
-//         <Route element={<SignUp />} path={RouteSignUp} />
-//       </Routes>
-//     </BrowserRouter>
-//   )
-// }
 
 export default App
