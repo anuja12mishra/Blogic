@@ -15,7 +15,7 @@ import RelatedBlog from '@/components/RelatedBlog';
 import ViewsCount from '@/components/ViewsCount';
 import LikedByDropdown from '@/components/LikedByDropdown';
 import { showtoast } from '@/helpers/showtoast';
-
+import BlogSkeleton from '@/pages/Blog/loading/BlogSkeleton';
 function SingleBlogDetails() {
     const { blog_id } = useParams();
     const [shouldSkipViewIncrement, setShouldSkipViewIncrement] = useState(null);
@@ -73,11 +73,11 @@ function SingleBlogDetails() {
         [blog_id, shouldSkipViewIncrement]
     );
 
-    if (shouldSkipViewIncrement === null || blogLoading) {
-        return <Loading />
+    if (shouldSkipViewIncrement === null || blogLoading || !blogData) {
+        return <BlogSkeleton />
     }
 
-    if (!blogData || !blogData.blog) {
+    if (!blogData.blog) {
         return <div>Blog not found</div>
     }
 
