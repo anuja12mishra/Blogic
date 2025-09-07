@@ -21,7 +21,7 @@ function SingleBlogDetails() {
 
 
     function handleShare(blog) {
-        const blogUrl = `${window.location.origin}/blog/${blog.slug}`;
+        const blogUrl = window.location.href;
         if (navigator.share) {
             navigator
                 .share({
@@ -32,9 +32,10 @@ function SingleBlogDetails() {
                 .catch((err) => console.log("Share canceled", err));
         } else {
             navigator.clipboard.writeText(blogUrl);
-            showtoast('success',"Blog link copied to clipboard!");
+            showtoast('success', "Blog link copied to clipboard!");
         }
     }
+
 
     useEffect(() => {
         const viewedBlogs = JSON.parse(sessionStorage.getItem('viewedBlogs') || '[]');
