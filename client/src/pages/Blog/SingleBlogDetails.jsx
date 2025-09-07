@@ -15,6 +15,7 @@ import RelatedBlog from '@/components/RelatedBlog';
 import ViewsCount from '@/components/ViewsCount';
 import LikedByDropdown from '@/components/LikedByDropdown';
 import { showtoast } from '@/helpers/showtoast';
+
 function SingleBlogDetails() {
     const { blog_id } = useParams();
     const [shouldSkipViewIncrement, setShouldSkipViewIncrement] = useState(null);
@@ -22,20 +23,35 @@ function SingleBlogDetails() {
 
     function handleShare(blog) {
         const blogUrl = window.location.href;
-        if (navigator.share) {
-            navigator
-                .share({
-                    title: blog.title,
-                    text: "Check out this blog!",
-                    url: blogUrl,
-                })
-                .catch((err) => console.log("Share canceled", err));
-        } else {
-            navigator.clipboard.writeText(blogUrl);
-            showtoast('success', "Blog link copied to clipboard!");
+        const customMessage = `Check out this blog: ${blog.title}\n${blogUrl}`;
+        try {
+            if (navigator.share) {
+                navigator
+                    .share({
+                        title: blog.title,
+                        text: "Check out this blog!",
+                        url: blogUrl,
+                    }).then(() => {
+                        showtoast('success', "Blog link copied to clipboard!");
+                    })
+                    .catch((err) => {
+                        showtoast('error', "Share canceled");
+                        console.log("Share canceled", err)
+                    });
+            } else {
+                navigator.clipboard.writeText(customMessage)
+                    .then(() => {
+                        showtoast('success', "Blog link copied to clipboard!");
+                    })
+                    .catch(() => {
+                        showtoast('error', "can't copy blog link");
+                    });
+            }
+        } catch (error) {
+            showtoast('error', "can't share the blog");
+            console.log('error in share', error);
         }
     }
-
 
     useEffect(() => {
         const viewedBlogs = JSON.parse(sessionStorage.getItem('viewedBlogs') || '[]');
@@ -73,9 +89,12 @@ function SingleBlogDetails() {
                 {/* Blog Title */}
                 <h1 className='text-3xl font-bold mb-4'>{blog.title}</h1>
 
+
                 {/* Author and Admin Badge Section */}
-                <div className="flex flex-col md:flex-row md:justify-between md:items-center w-full gap-2 mb-2">
-                    <div className="flex items-center justify-between gap-8">
+                <div className="flex flex-col md:flex-row md:justify-between md:items-center w-full gap-2 mb-2 overflow-hidden">
+
+                    {/* Left side: Avatar, Author Name, Admin Badge */}
+                    <div className="flex items-center gap-4">
                         <Avatar className="flex items-center gap-2">
                             <AvatarImage
                                 src={blog.author.avatar || '/default-avatar.png'}
@@ -91,32 +110,36 @@ function SingleBlogDetails() {
                                 </p>
                             </div>
                         </Avatar>
-                        <div className='flex gap-4 justify-end items-center'>
-                            <BlogLike props={blogData.blog._id} />
-                            <CommentCount props={blogData.blog._id} />
-                            <ViewsCount props={blogData.blog.views} />
-                            {/* Share Button */}
-                            <button
-                                onClick={() => handleShare(blog)}
-                                className=""
-                                title="Share Blog"
-                            >
-                                <Share2 className="w-5 h-5 text-gray-600" />
-                            </button>
-                        </div>
-                    </div>
 
-                    {blog.author.role === "admin" && (
-                        <div className="flex justify-start md:justify-center items-center hover:cursor-default">
+                        {blog.author.role === "admin" && (
                             <Badge
                                 variant="secondary"
                                 className="bg-blue-500 text-white dark:bg-blue-600 rounded-lg px-3 py-1"
                             >
                                 Admin
                             </Badge>
-                        </div>
-                    )}
+                        )}
+                    </div>
+
+                    {/* Right side: Like, Comment, Views, Share */}
+                    <div className="flex gap-4 justify-start items-center">
+                        <BlogLike props={blogData.blog._id} />
+                        <CommentCount props={blogData.blog._id} />
+                        <ViewsCount props={blogData.blog.views} />
+                        <button
+                            onClick={() => handleShare(blog)}
+                            className=""
+                            title="Share Blog"
+                        >
+                            <Share2 className="w-5 h-5 text-gray-600" />
+                        </button>
+                    </div>
+
                 </div>
+
+
+                {/* Author and Admin Badge Section */}
+               
 
                 {/* Featured Image */}
                 {blog.featuredImage && (
