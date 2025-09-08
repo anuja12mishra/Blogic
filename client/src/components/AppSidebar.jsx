@@ -29,6 +29,7 @@ import {
 import { useFetch } from "@/hooks/useFetch";
 import { getEnv } from "@/helpers/getEnv";
 import { useSelector } from "react-redux";
+import { Ellipsis } from 'lucide-react';
 export function AppSidebar() {
     const user = useSelector((state => state.user));
     // Pass refresh as a dependency to trigger re-fetch
@@ -39,7 +40,6 @@ export function AppSidebar() {
 
     // console.log('categoriesdata',categoriesdata);
     const categories = categoriesdata?.categories || [];
-
     return (
         // <Sidebar className="bg-gradient-to-r from-purple-500 via-purple-400 via-purple-300 to-white text-white border-none">
         <Sidebar className='pt-16 border-purple-200 min-h-max' >
@@ -116,19 +116,27 @@ export function AppSidebar() {
                     <SidebarGroupLabel>Categories</SidebarGroupLabel>
                     <SidebarMenu >
                         {
-                            categories.length > 0 ?
-                                categories?.map((category, index) => {
-                                    return (
-                                        <SidebarMenuItem key={index}>
-                                            <Link to={RouteBlogByCategory(category.slug)}>
-                                                <SidebarMenuButton className='hover:bg-purple-500 hover:text-white'>
-                                                    <GoDot />
-                                                    {category.name}
-                                                </SidebarMenuButton>
-                                            </Link>
-                                        </SidebarMenuItem>
-                                    )
-                                }) : <SidebarGroupLabel>No category found</SidebarGroupLabel>
+                            loading ?
+                                <div className="flex w-full h-full justify-center items-center text-primary">
+                                    <div className="animate-spin">
+                                        <Ellipsis size={64} />
+                                    </div>
+                                </div>
+
+                                :
+                                (categories.length > 0 ?
+                                    categories?.map((category, index) => {
+                                        return (
+                                            <SidebarMenuItem key={index}>
+                                                <Link to={RouteBlogByCategory(category.slug)}>
+                                                    <SidebarMenuButton className='hover:bg-purple-500 hover:text-white'>
+                                                        <GoDot />
+                                                        {category.name}
+                                                    </SidebarMenuButton>
+                                                </Link>
+                                            </SidebarMenuItem>
+                                        )
+                                    }) : <SidebarGroupLabel>No category found</SidebarGroupLabel>)
                         }
 
                     </SidebarMenu>
