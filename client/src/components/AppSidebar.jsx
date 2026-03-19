@@ -29,7 +29,7 @@ import {
 import { useFetch } from "@/hooks/useFetch";
 import { getEnv } from "@/helpers/getEnv";
 import { useSelector } from "react-redux";
-import { Ellipsis } from 'lucide-react';
+import { Skeleton } from "@/components/ui/skeleton"
 export function AppSidebar() {
     const user = useSelector((state => state.user));
     // Pass refresh as a dependency to trigger re-fetch
@@ -47,7 +47,7 @@ export function AppSidebar() {
                 <h2>Control Panel</h2>
             </SidebarHeader>
             <SidebarContent >
-                <SidebarGroup>
+                <SidebarGroup > 
                     <SidebarMenu>
                         <SidebarMenuItem>
                             <Link to={RouteIndex}>
@@ -117,11 +117,16 @@ export function AppSidebar() {
                     <SidebarMenu >
                         {
                             loading ?
-                                <div className="flex w-full h-full justify-center items-center text-primary">
-                                    <div className="animate-spin">
-                                        <Ellipsis size={64} />
-                                    </div>
-                                </div>
+                                <>
+                                    {[...Array(5)].map((_, i) => (
+                                        <SidebarMenuItem key={i}>
+                                            <SidebarMenuButton disabled className="py-2">
+                                                <Skeleton className="h-4 w-4 rounded-full bg-purple-100" />
+                                                <Skeleton className="h-4 w-24 bg-purple-100" />
+                                            </SidebarMenuButton>
+                                        </SidebarMenuItem>
+                                    ))}
+                                </>
 
                                 :
                                 (categories.length > 0 ?
