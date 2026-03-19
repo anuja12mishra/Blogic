@@ -22,6 +22,7 @@ import { showtoast } from '@/helpers/showtoast';
 import { getEnv } from '@/helpers/getEnv';
 import { IoMenu } from "react-icons/io5";
 import { useSidebar } from './ui/sidebar';
+import { ModeToggle } from './ModeToggle';
 
 function Topbar() {
   const navigate = useNavigate();
@@ -74,13 +75,13 @@ function Topbar() {
 
 
   return (
-    <div className="flex justify-between items-center gap-2 w-full fixed bg-white h-16 z-20 px-5 md:px-16 lg:px-20 border-b-2 border-gray-200">
+    <div className="flex justify-between items-center gap-2 w-full fixed bg-background h-16 z-20 px-5 md:px-16 lg:px-20 border-b-2 border-border">
       <div className="flex justify-center items-center gap-2">
         <button onClick={handleMenuClick}>
           <IoMenu size={25} />
         </button>
         <Link to={RouteIndex}>
-          <h1 className="flex text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold bg-black bg-clip-text">
+          <h1 className="flex text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-foreground bg-clip-text">
             b<p className='text-purple-600 font-extrabold'>L</p>ogic
           </h1>
         </Link>
@@ -92,7 +93,8 @@ function Topbar() {
       </div>
 
 
-      <div className="flex items-center">
+      <div className="flex items-center gap-4">
+        <ModeToggle />
         {
           !user.isLoggedIn ?
             <Button asChild>
@@ -104,13 +106,13 @@ function Topbar() {
             :
             <DropdownMenu className='bg-amber-700'>
               <DropdownMenuTrigger>
-                <Avatar className="inline-block h-10 w-10 rounded-full overflow-hidden border-2 border-gray-200">
+                <Avatar className="inline-block h-10 w-10 rounded-full overflow-hidden border-2 border-border">
                   <AvatarImage
                     className="h-full w-full object-cover"
                     src={user.user.avatar}
                     alt={user.user.name}
                   />
-                  <AvatarFallback className="bg-gray-300 text-sm text-gray-700 flex items-center justify-center h-full w-full">
+                  <AvatarFallback className="bg-muted text-sm text-muted-foreground flex items-center justify-center h-full w-full">
                     {(user?.user?.name || "")
                       .trim()
                       .split(/\s+/)
