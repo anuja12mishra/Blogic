@@ -326,7 +326,7 @@ export default function Editor({
     };
 
     return (
-        <div className="main-container">
+        <div className="main-container pt-0">
             <div
                 className="editor-container editor-container_classic-editor editor-container_include-block-toolbar editor-container_include-fullscreen"
                 ref={editorContainerRef}

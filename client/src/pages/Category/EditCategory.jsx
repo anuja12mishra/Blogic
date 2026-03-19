@@ -103,7 +103,7 @@ function EditCategory() {
     <div className="container mx-auto p-4">
       <Card className='max-w-screen-md mx-auto'>
         <CardHeader>
-          <h1 className='text-xl text-center border-b-2 pb-2 border-gray-300'>
+          <h1 className='text-xl text-center border-b-2 pb-2 border-border'>
             Edit a Category
           </h1>
         </CardHeader>
@@ -142,7 +142,7 @@ function EditCategory() {
                         />
                       </FormControl>
                       <FormMessage />
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-muted-foreground">
                         The slug is automatically generated from the category name
                       </p>
                     </FormItem>

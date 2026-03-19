@@ -266,7 +266,7 @@ function AddBlog() {
         <div className="container flex justify-center items-center mx-auto p-4">
             <Card>
                 <CardHeader>
-                    <h1 className='text-2xl font-bold text-left border-b-2 pb-2 border-gray-300'>
+                    <h1 className='text-2xl font-bold text-left border-b-2 pb-2 border-border'>
                         Add a New Blog
                     </h1>
                 </CardHeader>
@@ -286,14 +286,14 @@ function AddBlog() {
                                                         <SelectValue placeholder="Select Category" />
                                                     </SelectTrigger>
                                                 </FormControl>
-                                                <SelectContent className='bg-white'>
+                                                <SelectContent className='bg-background'>
                                                     {
                                                         categoriesdata && categoriesdata?.categories.length > 0 ?
                                                             categoriesdata.categories.map((category, index) => {
                                                                 return <SelectItem key={index} value={category._id}>{category.name}</SelectItem>
                                                             })
                                                             :
-                                                            <div className="px-2 py-1.5 text-sm text-gray-500">No categories available</div>
+                                                            <div className="px-2 py-1.5 text-sm text-muted-foreground">No categories available</div>
                                                     }
                                                 </SelectContent>
                                             </Select>
@@ -329,12 +329,12 @@ function AddBlog() {
                                                     placeholder="Auto-generated from title"
                                                     disabled={isSubmitting || isGenerating}
                                                     readOnly
-                                                    className="bg-gray-100 cursor-not-allowed"
+                                                    className="bg-muted cursor-not-allowed"
                                                     {...field}
                                                 />
                                             </FormControl>
                                             <FormMessage />
-                                            <p className="text-sm text-gray-500">
+                                            <p className="text-sm text-muted-foreground">
                                                 The slug is automatically generated from the blog title
                                             </p>
                                         </FormItem>
@@ -353,9 +353,9 @@ function AddBlog() {
                                         {({ getRootProps, getInputProps, isDragActive }) => (
                                             <div {...getRootProps()}>
                                                 <input {...getInputProps()} />
-                                                <div className={`flex justify-center items-center w-full lg:w-72 h-56 border-2 border-dashed rounded cursor-pointer transition-colors ${isDragActive ? 'border-blue-400 bg-blue-50' :
-                                                    (isSubmitting || isGenerating) ? 'border-gray-200 bg-gray-50 cursor-not-allowed' :
-                                                        'border-gray-300 hover:border-gray-400'
+                                                <div className={`flex justify-center items-center w-full lg:w-72 h-56 border-2 border-dashed rounded cursor-pointer transition-colors ${isDragActive ? 'border-primary bg-primary/10' :
+                                                    (isSubmitting || isGenerating) ? 'border-border bg-muted cursor-not-allowed' :
+                                                        'border-border hover:border-primary'
                                                     }`}>
                                                     {avatar ? (
                                                         <img
@@ -364,7 +364,7 @@ function AddBlog() {
                                                             className="max-w-full max-h-full object-contain rounded"
                                                         />
                                                     ) : (
-                                                        <div className="text-center text-gray-500">
+                                                        <div className="text-center text-muted-foreground">
                                                             <p>Drag & drop an image here, or click to select</p>
                                                             <p className="text-sm mt-1">Supports: JPG, PNG, WebP</p>
                                                         </div>
@@ -411,38 +411,38 @@ function AddBlog() {
 
                                                     {/* Tooltip/Guide Popup */}
                                                     {showGuide && (
-                                                        <div
-                                                            ref={guideRef}
-                                                            className="absolute right-0 top-8 z-50 w-80 p-4 bg-white border border-gray-200 rounded-lg shadow-lg text-sm text-gray-700"
-                                                            style={{ boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)' }}
-                                                        >
-                                                            <div className="flex justify-between items-start mb-2">
-                                                                <p className='font-semibold text-gray-800'>AI Content Generation Guide:</p>
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => setShowGuide(false)}
-                                                                    className="text-gray-400 hover:text-gray-600 ml-2"
-                                                                    aria-label="Close guide"
-                                                                >
-                                                                    ×
-                                                                </button>
+                                                            <div
+                                                                ref={guideRef}
+                                                                className="absolute right-0 top-8 z-50 w-80 p-4 bg-popover border border-border rounded-lg shadow-lg text-sm text-popover-foreground"
+                                                                style={{ boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)' }}
+                                                            >
+                                                                <div className="flex justify-between items-start mb-2">
+                                                                    <p className='font-semibold text-foreground'>AI Content Generation Guide:</p>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => setShowGuide(false)}
+                                                                        className="text-muted-foreground hover:text-foreground ml-2"
+                                                                        aria-label="Close guide"
+                                                                    >
+                                                                        ×
+                                                                    </button>
+                                                                </div>
+                                                                <ul className='list-disc ml-4 space-y-1.5 text-muted-foreground'>
+                                                                    <li>Enter a descriptive title for your blog post first.</li>
+                                                                    <li>Select a category that matches your content.</li>
+                                                                    <li>Click "Generate with AI" to create initial content.</li>
+                                                                    <li>Edit and refine the generated content as needed.</li>
+                                                                    <li>The AI will create a structured blog post based on your title.</li>
+                                                                    <li>You have <strong>5</strong> free AI generations per day.</li>
+                                                                </ul>
+                                                                {/* Small arrow pointing to the info icon */}
+                                                                <div className="absolute -top-2 right-6 w-4 h-4 bg-popover border-l border-t border-border transform rotate-45"></div>
                                                             </div>
-                                                            <ul className='list-disc ml-4 space-y-1.5 text-gray-600'>
-                                                                <li>Enter a descriptive title for your blog post first.</li>
-                                                                <li>Select a category that matches your content.</li>
-                                                                <li>Click "Generate with AI" to create initial content.</li>
-                                                                <li>Edit and refine the generated content as needed.</li>
-                                                                <li>The AI will create a structured blog post based on your title.</li>
-                                                                <li>You have <strong>5</strong> free AI generations per day.</li>
-                                                            </ul>
-                                                            {/* Small arrow pointing to the info icon */}
-                                                            <div className="absolute -top-2 right-6 w-4 h-4 bg-white border-l border-t border-gray-200 transform rotate-45"></div>
-                                                        </div>
-                                                    )}
+                                                        )}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <FormControl>
-                                                <div className="w-full max-w-full h-fit overflow-hidden rounded border border-gray-300">
+                                                <FormControl>
+                                                    <div className="w-full max-w-full h-fit overflow-hidden rounded border border-border">
                                                     <Editor
                                                         onChange={(data) => {
                                                             field.onChange(data);
@@ -454,7 +454,7 @@ function AddBlog() {
                                                     />
                                                 </div>
                                             </FormControl>
-                                            <p className="text-xs text-black">
+                                            <p className="text-xs text-muted-foreground mt-2">
                                                 <strong>Note:</strong> Please click the <em>Full Screen</em> button in the toolbar to enable full view.
                                             </p>
                                             <FormMessage />

@@ -116,12 +116,12 @@ function Profile() {
                             <div {...getRootProps()}>
                                 <input {...getInputProps()} />
                                 <div className="relative w-24 h-24">
-                                    <Avatar className="w-full h-full rounded-full overflow-hidden border-2 border-gray-200">
+                                    <Avatar className="w-full h-full rounded-full overflow-hidden border-2 border-border">
                                         <AvatarImage className='h-full w-full object-cover' src={avatar ? avatar : userData?.user?.avatar || ''} />
                                     </Avatar>
                                     <button
                                         type="button"
-                                        className="absolute bottom-1 right-1 bg-white p-1 rounded-full shadow hover:bg-gray-200 cursor-pointer"
+                                        className="absolute bottom-1 right-1 bg-background p-1 rounded-full shadow hover:bg-muted cursor-pointer"
                                     >
                                         <IoCameraReverseOutline size={20} />
                                     </button>
@@ -161,7 +161,7 @@ function Profile() {
                                                 placeholder="Enter your email"
                                                 {...field}
                                                 readOnly
-                                                className="bg-gray-200 cursor-not-allowed"
+                                                className="bg-muted cursor-not-allowed"
                                             />
                                         </FormControl>
                                         <FormMessage />

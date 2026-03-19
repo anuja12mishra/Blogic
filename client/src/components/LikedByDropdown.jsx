@@ -50,7 +50,7 @@ const LikedByDropdown = ({ props: blogId }) => {
         <div className="relative inline-block text-left" ref={dropdownRef}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="text-sm text-black underline hover:text-blue-600 transition cursor-pointer"
+                className="text-sm text-foreground underline hover:text-blue-600 transition cursor-pointer"
             >
                 {/* Show full text on medium and above */}
                 <span className="hidden md:inline">
@@ -67,7 +67,7 @@ const LikedByDropdown = ({ props: blogId }) => {
             </button>
 
             {isOpen && (
-                <div className="absolute mt-2 w-56 z-10 origin-top-right bg-white border border-gray-200 rounded-md shadow-lg">
+                <div className="absolute mt-2 w-56 z-10 origin-top-right bg-popover text-popover-foreground border border-border rounded-md shadow-lg">
                     <div className="py-2 px-4 max-h-60 overflow-y-auto ">
                         {likeData.map((like) => (
                             <div key={like._id} className="flex items-center gap-2 justify-between border-b-2">

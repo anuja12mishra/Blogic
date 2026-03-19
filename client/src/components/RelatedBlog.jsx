@@ -23,7 +23,7 @@ function RelatedBlog({ props }) {
                     relatedBlog.blog.map((data) => {
                         return (
                             <Link key={data._id} to={RouteSingleBlogDetails(props.category,data.slug,data._id)}>
-                                <div className='flex items-center gap-2 m-2 bg-gray-200 w-full rounded-sm p-2'>
+                                <div className='flex items-center gap-2 m-2 bg-muted w-full rounded-sm p-2'>
                                     <img className='w-16 h-16 object-cover rounded-sm' src={data.featuredImage} />
                                     <div className='flex-row justify-between items-center'>
                                         <h4 className='font-semibold line-clamp-1'>{data.title}</h4>

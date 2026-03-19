@@ -8,26 +8,26 @@ function Footer() {
   }
 
   return (
-    <footer className="text-white">
+    <footer className="text-foreground">
       {/* Bottom Bar */}
-      <div className="border-t border-purple-200 bg-purple-50">
+      <div className="border-t border-border bg-muted">
         <div className="max-w-6xl mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="space-y-2">
-              <h3 className="flex text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-black bg-clip-text">
+              <h3 className="flex text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-foreground bg-clip-text">
                 b<p className='text-purple-600 font-extrabold'>L</p>ogic
               </h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
+              <p className="text-muted-foreground text-sm leading-relaxed">
                 Sharing thoughts, ideas, and stories through engaging content.
                 Join our community of readers and writers.
               </p>
               {/* Copyright */}
               <div className="text-center md:text-left">
-                <p className="text-gray-600 text-sm flex items-center justify-center md:justify-start">
+                <p className="text-muted-foreground text-sm flex items-center justify-center md:justify-start">
                   © 2025 Your Blog. Made with
                   <FaHeart className="text-red-500 mx-1" size={12} />
                   by <a href="https://www.linkedin.com/in/anuja-mishra-1193a2245/" className="font-semibold text-purple-600 hover:text-purple-700 transition-colors duration-300 ml-1">Anuj</a>
-                  <a href="https://www.linkedin.com/in/anuja-mishra-1193a2245/" className="text-gray-500 hover:text-blue-400 transition-colors duration-300 p-2">
+                  <a href="https://www.linkedin.com/in/anuja-mishra-1193a2245/" className="text-muted-foreground hover:text-blue-400 transition-colors duration-300 p-2">
                     <FaLinkedin size={20} />
                   </a>
                 </p>

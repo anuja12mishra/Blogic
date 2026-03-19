@@ -159,9 +159,9 @@ function EditBlog() {
 
   return (
     <div className="container mx-auto p-4">
-      <Card className='max-w-screen-md mx-auto'>
+      <Card className=''>
         <CardHeader>
-          <h1 className='text-2xl font-bold text-left border-b-2 pb-2 border-gray-300'>
+          <h1 className='text-2xl font-bold text-left border-b-2 pb-2 border-border'>
             Edit Blog Post
           </h1>
         </CardHeader>
@@ -184,7 +184,7 @@ function EditBlog() {
                           <SelectValue placeholder="Select Category" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className='bg-white'>
+                      <SelectContent className='bg-background'>
                         {categoriesData?.categories?.length > 0 ? (
                           categoriesData.categories.map((category) => (
                             <SelectItem key={category._id} value={category._id}>
@@ -192,7 +192,7 @@ function EditBlog() {
                             </SelectItem>
                           ))
                         ) : (
-                          <div className="px-2 py-1.5 text-sm text-gray-500">
+                          <div className="px-2 py-1.5 text-sm text-muted-foreground">
                             No categories available
                           </div>
                         )}
@@ -232,7 +232,7 @@ function EditBlog() {
                         placeholder="Auto-generated from title"
                         disabled={isSubmitting}
                         readOnly
-                        className="bg-gray-100 cursor-not-allowed"
+                        className="bg-muted cursor-not-allowed"
                         {...field}
                       />
                     </FormControl>
@@ -254,7 +254,7 @@ function EditBlog() {
                   {({ getRootProps, getInputProps, isDragActive }) => (
                     <div {...getRootProps()}>
                       <input {...getInputProps()} />
-                      <div className={`flex justify-center items-center w-full lg:w-72 h-56 border-2 border-dashed rounded cursor-pointer transition-colors ${isDragActive ? 'border-blue-400 bg-blue-50' : 'border-gray-300 hover:border-gray-400'
+                      <div className={`flex justify-center items-center w-full lg:w-72 h-56 border-2 border-dashed rounded cursor-pointer transition-colors ${isDragActive ? 'border-primary bg-primary/10' : 'border-border hover:border-primary'
                         }`}>
                         {avatar ? (
                           <img
@@ -263,7 +263,7 @@ function EditBlog() {
                             className="max-w-full max-h-full object-contain rounded"
                           />
                         ) : (
-                          <div className="text-center text-gray-500">
+                          <div className="text-center text-muted-foreground">
                             <p>Drag & drop an image here, or click to select</p>
                             <p className="text-sm mt-1">Supports: JPG, PNG, WebP</p>
                           </div>
@@ -272,7 +272,7 @@ function EditBlog() {
                     </div>
                   )}
                 </Dropzone>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   {file ? 'New image selected' : 'Current image will be kept if no new image is selected'}
                 </p>
               </div>
@@ -284,7 +284,7 @@ function EditBlog() {
                   <FormItem>
                     <FormLabel>Blog Content</FormLabel>
                     <FormControl>
-                      <div className="w-full max-w-full min-h-[300px] overflow-hidden rounded border border-gray-300">
+                      <div className="w-full max-w-full min-h-[300px] overflow-hidden rounded border border-border">
                         <Editor
                           onChange={field.onChange}
                           value={field.value}

@@ -105,7 +105,7 @@ function SingleBlogDetails() {
                             </AvatarFallback>
                             <div className="flex flex-col">
                                 <p className="font-medium text-sm">{blog.author.name}</p>
-                                <p className="text-xs text-gray-500">
+                                <p className="text-xs text-muted-foreground">
                                     {moment(blog.createdAt).format('MMM DD, YYYY')}
                                 </p>
                             </div>
@@ -131,7 +131,7 @@ function SingleBlogDetails() {
                             className=""
                             title="Share Blog"
                         >
-                            <Share2 className="w-5 h-5 text-gray-600" />
+                            <Share2 className="w-5 h-5 text-muted-foreground" />
                         </button>
                     </div>
 
@@ -147,7 +147,7 @@ function SingleBlogDetails() {
                         <img
                             src={blog.featuredImage}
                             alt={blog.title}
-                            className="w-full h-64 object-contain bg-gray-100 rounded-lg"
+                            className="w-full h-64 object-contain bg-muted rounded-lg"
                         />
                     </div>
                 )}
@@ -162,7 +162,7 @@ function SingleBlogDetails() {
 
                 {/* Blog Content */}
                 <div
-                    className="border-t-2 border-b-2 py-4 prose max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-blue-600 prose-strong:text-gray-900 prose-ul:text-gray-700 prose-ol:text-gray-700"
+                    className="border-t-2 border-b-2 py-4 prose max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-blue-600 prose-strong:text-gray-900 prose-ul:text-gray-700 prose-ol:text-gray-700 dark:prose-headings:text-gray-200 dark:prose-p:text-gray-300 dark:prose-strong:text-gray-200 dark:prose-ul:text-gray-300 dark:prose-ol:text-gray-300"
                     dangerouslySetInnerHTML={{
                         __html: decode(blog.blogContent)
                     }}
