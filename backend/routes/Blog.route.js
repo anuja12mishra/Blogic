@@ -9,7 +9,8 @@ import {
     GetAllBlogProtect,
     GetBlogByCategory,
     GetBlogByCategoryOnly,
-    Search
+    Search,
+    UploadContentImage
 } from '../controllers/Blog.controller.js';
 import upload from '../config/multer.config.js';
 import { authenticate } from '../middleware/authenticate.js';
@@ -25,6 +26,7 @@ BlogRoute.put('/edit/:blogId',authenticate, upload.single('featuredImage'), Edit
 BlogRoute.delete('/delete/:blogId',authenticate, DeleteBlog);
 BlogRoute.get('/protect-get-all-blogs',authenticate,GetAllBlogProtect);
 BlogRoute.post('/genrate-content', authenticate, rateLimitGenerateContent, GenerateContent);
+BlogRoute.post('/upload-content-image', authenticate, upload.single('image'), UploadContentImage);
 // BlogRoute.post('/genrate-content', authenticate, GenerateContent);
 
 

@@ -196,11 +196,11 @@ export const GetABlog = async (req, res, next) => {
     try {
         const { blogId } = req.params;
         const { skipViewIncrement } = req.query;
-        
+
         const blog = await Blog.findById(blogId)
             .populate('author', 'name avatar role')
             .populate('category', 'name');
-            
+
         if (!blog) {
             return next(handleError(404, 'blog not found'));
         }
@@ -341,26 +341,26 @@ export const Search = async (req, res, next) => {
 
         // Fixed: $options instead of $option, and added search in content as well
         const blog = await Blog.find({
-                $or: [{
-                        title: {
-                            $regex: q.trim(),
-                            $options: 'i'
-                        }
-                    },
-                    {
-                        blogContent: {
-                            $regex: q.trim(),
-                            $options: 'i'
-                        }
-                    },
-                    {
-                        slug: {
-                            $regex: q.trim(),
-                            $options: 'i'
-                        }
-                    }
-                ]
-            })
+            $or: [{
+                title: {
+                    $regex: q.trim(),
+                    $options: 'i'
+                }
+            },
+            {
+                blogContent: {
+                    $regex: q.trim(),
+                    $options: 'i'
+                }
+            },
+            {
+                slug: {
+                    $regex: q.trim(),
+                    $options: 'i'
+                }
+            }
+            ]
+        })
             .populate('author', 'name avatar role')
             .populate('category', 'name slug')
             .sort({
@@ -387,7 +387,7 @@ export const GenerateContent = async (req, res, next) => {
         // Debug: Log the request body to see what's being received
         // console.log('Request body:', req.body);
         // console.log('Content-Type:', req.headers['content-type']);
-        
+
         // Check if req.body exists
         if (!req.body) {
             return res.status(400).json({
@@ -397,8 +397,8 @@ export const GenerateContent = async (req, res, next) => {
         }
 
         // Extract title and category from request body (sent from frontend)
-        const { title,body } = req.body;
-        
+        const { title, body } = req.body;
+
         // Validate required fields
         if (!title || !title.trim()) {
             return res.status(400).json({
@@ -456,7 +456,7 @@ export const GenerateContent = async (req, res, next) => {
 
         // Call your AI function with the constructed prompt
         const content = await main(prompt);
-        
+
         // Validate that content was generated
         if (!content || content.trim().length === 0) {
             return res.status(500).json({
@@ -473,14 +473,14 @@ export const GenerateContent = async (req, res, next) => {
 
     } catch (error) {
         console.error('Error in GenerateContent:', error);
-        
+
         // Provide more specific error messages
         let errorMessage = 'Failed to generate blog content';
-        
+
         if (error.message) {
             errorMessage = error.message;
         }
-        
+
         // Handle different types of errors
         if (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND') {
             errorMessage = 'AI service is currently unavailable. Please try again later.';
@@ -489,7 +489,26 @@ export const GenerateContent = async (req, res, next) => {
         } else if (error.response && error.response.status === 401) {
             errorMessage = 'AI service authentication failed. Please check configuration.';
         }
-        
+
         next(handleError(500, errorMessage));
+    }
+}
+
+export const UploadContentImage = async (req, res, next) => {
+    try {
+        if (!req.file) {
+            return next(handleError(400, 'No image file provided'));
+        }
+
+        const uploadResult = await uploadToR2(req.file, 'content-images');
+
+        res.status(200).json({
+            success: true,
+            url: uploadResult.url,
+            message: 'Image uploaded successfully'
+        });
+    } catch (error) {
+        console.error('UploadContentImage error:', error);
+        next(handleError(500, `Image upload failed: ${error.message}`));
     }
 }
