@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 dotenv.config()
 
 import User from '../models/user.model.js';
@@ -320,6 +321,80 @@ export const DeleteUser = async (req, res, next) => {
         next(handleError(500, error.message));
     }
 };
+
+export const getUserAnalytics = async (req, res, next) => {
+    try {
+        const { userId } = req.params;
+
+        // 1. Total Views
+        const totalViewsResult = await Blog.aggregate([
+            { $match: { author: new mongoose.Types.ObjectId(userId) } },
+            { $group: { _id: null, totalViews: { $sum: "$views" } } }
+        ]);
+        const totalViews = totalViewsResult.length > 0 ? totalViewsResult[0].totalViews : 0;
+
+        // 2. Total Likes
+        // First get all blog IDs of the user
+        const userBlogs = await Blog.find({ author: userId }).select('_id');
+        const blogIds = userBlogs.map(blog => blog._id);
+
+        const totalLikes = await BlogLike.countDocuments({ blogId: { $in: blogIds } });
+
+        // 3. Top 5 Viewed Blogs
+        const topViewedBlogs = await Blog.find({ author: userId })
+            .populate('category', 'slug')
+            .sort({ views: -1 })
+            .limit(5)
+            .select('title views slug category');
+
+        // 4. Top 5 Liked Blogs
+        const topLikedBlogsResult = await BlogLike.aggregate([
+            { $match: { blogId: { $in: blogIds } } },
+            { $group: { _id: "$blogId", likeCount: { $sum: 1 } } },
+            { $sort: { likeCount: -1 } },
+            { $limit: 5 },
+            {
+                $lookup: {
+                    from: 'blogs',
+                    localField: '_id',
+                    foreignField: '_id',
+                    as: 'blogDetails'
+                }
+            },
+            { $unwind: "$blogDetails" },
+            {
+                $lookup: {
+                    from: 'categories',
+                    localField: 'blogDetails.category',
+                    foreignField: '_id',
+                    as: 'categoryDetails'
+                }
+            },
+            { $unwind: "$categoryDetails" },
+            {
+                $project: {
+                    _id: 1,
+                    likeCount: 1,
+                    title: "$blogDetails.title",
+                    slug: "$blogDetails.slug",
+                    categorySlug: "$categoryDetails.slug"
+                }
+            }
+        ]);
+
+        res.status(200).json({
+            success: true,
+            analytics: {
+                totalViews,
+                totalLikes,
+                topViewedBlogs,
+                topLikedBlogs: topLikedBlogsResult
+            }
+        });
+    } catch (error) {
+        next(handleError(500, error.message));
+    }
+}
 // export const DeleteUser= async(req,res,next)=>{
 //     try {
 //         const {userId} = req.params;
