@@ -2,6 +2,8 @@ import { getEnv } from '@/helpers/getEnv';
 import { useFetch } from '@/hooks/useFetch';
 import moment from 'moment';
 import React, { useEffect, useRef, useState } from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { cn } from '@/lib/utils';
 
 const getTimeAgo = (timestamp) => {
     const now = moment();
@@ -11,14 +13,14 @@ const getTimeAgo = (timestamp) => {
     const days = now.diff(created, 'days');
 
     if (minutes < 1) return 'just now';
-    if (minutes < 60) return `${minutes} min ago`;
-    if (hours < 24) return `${hours} hr ago`;
-    return `${days} day${days > 1 ? 's' : ''} ago`;
+    if (minutes < 60) return `${minutes}m`;
+    if (hours < 24) return `${hours}h`;
+    return `${days}d`;
 };
 
 const LikedByDropdown = ({ props: blogId }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const dropdownRef = useRef(null); // ref for the dropdown container
+    const dropdownRef = useRef(null);
 
     const { data: AllLikeData, loading } = useFetch(
         `${getEnv('VITE_API_URL')}/api/like/get-like-by-blog/${blogId}`,
@@ -26,10 +28,8 @@ const LikedByDropdown = ({ props: blogId }) => {
         [blogId]
     );
 
-
     const likeData = AllLikeData?.like || [];
 
-    // Close dropdown on outside click
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -44,35 +44,72 @@ const LikedByDropdown = ({ props: blogId }) => {
     }, []);
 
     if (loading || likeData.length === 0) return null;
-    console.log('likeData', likeData)
+
+    // Get up to 3 avatars for the stack
+    const displayLikes = likeData.slice(0, 3);
 
     return (
         <div className="relative inline-block text-left" ref={dropdownRef}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="text-sm text-foreground underline hover:text-blue-600 transition cursor-pointer"
+                className="group flex items-center gap-2.5 hover:opacity-80 transition-all cursor-pointer"
             >
-                {/* Show full text on medium and above */}
-                <span className="hidden md:inline">
-                    Liked by {likeData[0]?.authorId?.name}
-                    {likeData.length > 1 &&
-                        ` and ${likeData.length - 1} other${likeData.length - 1 > 1 ? 's' : ''}`}
-                </span>
+                {/* Avatar Stack */}
+                <div className="flex -space-x-3 overflow-hidden">
+                    {displayLikes.map((like, i) => (
+                        <Avatar 
+                            key={like._id} 
+                            className={cn(
+                                "size-7 border-2 border-background ring-1 ring-border/20 transition-transform group-hover:translate-x-1",
+                                i === 0 ? "z-30" : i === 1 ? "z-20" : "z-10"
+                            )}
+                        >
+                            <AvatarImage src={like.authorId?.avatar} className="object-cover" />
+                            <AvatarFallback className="text-[10px] font-bold bg-purple-100 text-purple-700">
+                                {like.authorId?.name?.charAt(0)}
+                            </AvatarFallback>
+                        </Avatar>
+                    ))}
+                </div>
 
-                {/* Show short text (first 4 characters) on small screens */}
-                <span className="inline md:hidden">
-                    {`Liked by ${likeData[0]?.authorId?.name?.slice(0, 4)}${likeData.length > 1 ? '...' : ''
-                        }`}
-                </span>
+                {/* Text Summary */}
+                <div className="text-sm font-medium text-foreground/80 group-hover:text-purple-600 transition-colors">
+                    <span className="hidden sm:inline">
+                        Liked by <span className="font-bold text-foreground">{likeData[0]?.authorId?.name}</span>
+                        {likeData.length > 1 &&
+                            <> and <span className="font-bold text-foreground">{likeData.length - 1} other{likeData.length - 1 > 1 ? 's' : ''}</span></>}
+                    </span>
+                    <span className="inline sm:hidden font-bold text-foreground">
+                        {likeData.length} like{likeData.length > 1 ? 's' : ''}
+                    </span>
+                </div>
             </button>
 
             {isOpen && (
-                <div className="absolute mt-2 w-56 z-10 origin-top-right bg-popover text-popover-foreground border border-border rounded-md shadow-lg">
-                    <div className="py-2 px-4 max-h-60 overflow-y-auto ">
+                <div className="absolute left-0 mt-3 w-64 z-50 origin-top-left bg-popover text-popover-foreground border border-border rounded-xl shadow-2xl animate-in fade-in zoom-in duration-200">
+                    <div className="p-1 max-h-72 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-muted">
+                        <div className="px-3 py-2 border-b border-border/50">
+                            <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Liked by</h4>
+                        </div>
                         {likeData.map((like) => (
-                            <div key={like._id} className="flex items-center gap-2 justify-between border-b-2">
-                                <span className="text-sm">{like.authorId?.name}</span>
-                                <span className="text-sm">{getTimeAgo(like.createdAt)}</span>
+                            <div 
+                                key={like._id} 
+                                className="flex items-center gap-3 p-2 hover:bg-secondary/50 rounded-lg transition-colors group/item"
+                            >
+                                <Avatar className="size-8">
+                                    <AvatarImage src={like.authorId?.avatar} className="object-cover" />
+                                    <AvatarFallback className="text-xs font-bold">
+                                        {like.authorId?.name?.charAt(0)}
+                                    </AvatarFallback>
+                                </Avatar>
+                                <div className="flex flex-col flex-1 min-w-0">
+                                    <span className="text-sm font-semibold truncate group-hover/item:text-purple-600 transition-colors">
+                                        {like.authorId?.name}
+                                    </span>
+                                    <span className="text-[10px] text-muted-foreground uppercase font-medium">
+                                        {getTimeAgo(like.createdAt)}
+                                    </span>
+                                </div>
                             </div>
                         ))}
                     </div>

@@ -24,6 +24,10 @@ import Editor from '@/components/Editor';
 import { useSelector } from 'react-redux';
 import { decode } from 'entities'
 import Loading from '@/components/Loading';
+import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
+import { FaSpinner } from 'react-icons/fa';
+
 const formSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters long"),
   category: z.string().min(1, "Please select a category"),
@@ -39,7 +43,6 @@ function EditBlog() {
 
   const [avatar, setAvatar] = useState(null);
   const [file, setFile] = useState(null);
-  const [initialContent, setInitialContent] = useState('');
 
   // Fetch categories for dropdown
   const { data: categoriesData } = useFetch(
@@ -76,7 +79,6 @@ function EditBlog() {
         blogcontent: decode(blogContent)
       });
 
-      setInitialContent(blogContent);
       setAvatar(featuredImage);
     }
   }, [blogData, form]);
@@ -108,19 +110,11 @@ function EditBlog() {
       formData.append('slug', values.slug);
       formData.append('blogContent', values.blogcontent.trim());
 
-      console.log(
-        'title', values.title.trim(),
-        'category', values.category,
-        'slug', values.slug,
-        'blogContent', values.blogcontent.trim
-      )
-
       // Only append file if a new one was selected
       if (file) {
         formData.append('featuredImage', file);
       }
       
-      //updating the edited data 
       const res = await fetch(`${getEnv('VITE_API_URL')}/api/blog/edit/${blog_id}`, {
         method: 'PUT',
         credentials: 'include',
@@ -154,142 +148,187 @@ function EditBlog() {
   };
 
   if (blogLoading) {
-    return <Loading />
+    return <div className="h-screen flex items-center justify-center"><Loading /></div>
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <Card className=''>
-        <CardHeader>
-          <h1 className='text-2xl font-bold text-left border-b-2 pb-2 border-border'>
-            Edit Blog Post
-          </h1>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Category</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      disabled={isSubmitting}
-                    >
+    <div className="max-w-5xl mx-auto px-4 py-12">
+      <div className="flex flex-col gap-8">
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border/50 pb-8">
+          <div>
+            <h1 className='text-4xl font-extrabold tracking-tight text-foreground mb-2'>
+              Edit Blog Post
+            </h1>
+            <p className="text-muted-foreground text-lg italic">
+              Refine your masterpiece.
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              asChild
+              disabled={isSubmitting}
+            >
+              <Link to={RouteBlog}>Cancel</Link>
+            </Button>
+          </div>
+        </div>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-12">
+            {/* Top Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+              <div className="lg:col-span-12 space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <FormField
+                    control={form.control}
+                    name="category"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                          Category
+                          <span className="text-purple-600 font-black">*</span>
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                          disabled={isSubmitting}
+                        >
+                          <FormControl>
+                            <SelectTrigger className='h-12 border-border/50 bg-secondary/20 focus:ring-purple-500/20'>
+                              <SelectValue placeholder="Select Category" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent className='bg-background border-border shadow-2xl'>
+                            {categoriesData?.categories?.length > 0 ? (
+                              categoriesData.categories.map((category) => (
+                                <SelectItem key={category._id} value={category._id}>
+                                  {category.name}
+                                </SelectItem>
+                              ))
+                            ) : (
+                              <div className="px-2 py-1.5 text-sm text-muted-foreground">
+                                No categories available
+                              </div>
+                            )}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                          Post Title
+                          <span className="text-purple-600 font-black">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter the title"
+                            className="h-12 border-border/50 bg-secondary/20 focus:ring-purple-500/20 text-lg font-medium"
+                            disabled={isSubmitting}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="slug"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Permalink Slug</FormLabel>
                       <FormControl>
-                        <SelectTrigger className='w-full'>
-                          <SelectValue placeholder="Select Category" />
-                        </SelectTrigger>
+                        <Input
+                          placeholder="Auto-generated-slug"
+                          disabled={true}
+                          readOnly
+                          className="bg-muted/50 border-none h-9 text-xs font-mono text-muted-foreground"
+                          {...field}
+                        />
                       </FormControl>
-                      <SelectContent className='bg-background'>
-                        {categoriesData?.categories?.length > 0 ? (
-                          categoriesData.categories.map((category) => (
-                            <SelectItem key={category._id} value={category._id}>
-                              {category.name}
-                            </SelectItem>
-                          ))
-                        ) : (
-                          <div className="px-2 py-1.5 text-sm text-muted-foreground">
-                            No categories available
-                          </div>
-                        )}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter the title"
-                        disabled={isSubmitting}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="slug"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Slug</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Auto-generated from title"
-                        disabled={isSubmitting}
-                        readOnly
-                        className="bg-muted cursor-not-allowed"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div>
-                <FormLabel className='mb-2 block'>Featured Image</FormLabel>
+              {/* Featured Image Row */}
+              <div className="lg:col-span-12">
+                <FormLabel className='text-sm font-bold uppercase tracking-widest text-muted-foreground mb-4 block'>
+                  Featured Image
+                </FormLabel>
                 <Dropzone
                   onDrop={handleFileUpload}
-                  accept={{
-                    'image/*': ['.jpeg', '.jpg', '.png', '.webp']
-                  }}
+                  accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
                   maxFiles={1}
                   disabled={isSubmitting}
                 >
                   {({ getRootProps, getInputProps, isDragActive }) => (
-                    <div {...getRootProps()}>
+                    <div {...getRootProps()} className="group outline-none">
                       <input {...getInputProps()} />
-                      <div className={`flex justify-center items-center w-full lg:w-72 h-56 border-2 border-dashed rounded cursor-pointer transition-colors ${isDragActive ? 'border-primary bg-primary/10' : 'border-border hover:border-primary'
-                        }`}>
+                      <div className={cn(
+                        "relative flex flex-col justify-center items-center w-full min-h-[300px] border-2 border-dashed rounded-3xl cursor-pointer transition-all duration-300",
+                        isDragActive ? "border-purple-600 bg-purple-50/50 scale-[0.99]" : 
+                        avatar ? "border-transparent bg-secondary/20" : "border-border/50 hover:border-purple-400 hover:bg-secondary/20"
+                      )}>
                         {avatar ? (
-                          <img
-                            src={typeof avatar === 'string' ? avatar : URL.createObjectURL(avatar)}
-                            alt="Preview"
-                            className="max-w-full max-h-full object-contain rounded"
-                          />
+                          <div className="relative w-full h-full p-4 group">
+                            <img
+                              src={typeof avatar === 'string' ? avatar : URL.createObjectURL(avatar)}
+                              alt="Preview"
+                              className="w-full max-h-[500px] object-cover rounded-2xl shadow-2xl transition-transform duration-500 group-hover:scale-[1.01]"
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl">
+                              <p className="text-white font-bold px-6 py-2 bg-white/20 backdrop-blur-md rounded-full border border-white/50">Change Image</p>
+                            </div>
+                          </div>
                         ) : (
-                          <div className="text-center text-muted-foreground">
-                            <p>Drag & drop an image here, or click to select</p>
-                            <p className="text-sm mt-1">Supports: JPG, PNG, WebP</p>
+                          <div className="text-center space-y-4 p-12">
+                            <div className="mx-auto w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center text-purple-600">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                            </div>
+                            <p className="text-xl font-bold text-foreground">Change image</p>
+                            <p className="text-muted-foreground text-sm">Drag and drop or click here.</p>
                           </div>
                         )}
                       </div>
                     </div>
                   )}
                 </Dropzone>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {file ? 'New image selected' : 'Current image will be kept if no new image is selected'}
+                <p className="text-xs text-muted-foreground mt-4 italic">
+                  {file ? 'New image selected.' : 'Current image will be preserved unless you upload a new one.'}
                 </p>
               </div>
+            </div>
 
+            {/* Content Area */}
+            <div className="space-y-6">
+              <div className='pb-2 border-b border-border/50'>
+                <FormLabel className="text-lg font-extrabold text-foreground font-heading">Content Editor</FormLabel>
+                <p className="text-sm text-muted-foreground">Everything you write is auto-saved locally.</p>
+              </div>
               <FormField
                 control={form.control}
                 name="blogcontent"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Blog Content</FormLabel>
                     <FormControl>
-                      <div className="w-full max-w-full min-h-[300px] overflow-hidden rounded border border-border">
+                      <div className="w-full max-w-full min-h-[500px] overflow-hidden rounded-3xl border border-border/50 bg-secondary/5 shadow-inner">
                         <Editor
                           onChange={field.onChange}
-                          value={field.value}
-                          // initialData={field.value|| initialContent}
-                          props={{ initialData: decode(field.value) }}
+                          props={{ initialData: field.value }}
                           disabled={isSubmitting}
                         />
                       </div>
@@ -298,30 +337,28 @@ function EditBlog() {
                   </FormItem>
                 )}
               />
+            </div>
 
-              <div className="flex gap-4">
-                <Button
-                  type="submit"
-                  className="flex-1"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? 'Updating...' : 'Update Blog'}
-                </Button>
-              </div>
-
-              <div className="text-center">
-                <Button asChild variant="outline">
-                  <Link to={RouteBlog}>
-                    Back to All Blogs
-                  </Link>
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+            <div className="pt-8 border-t border-border/50 flex justify-end">
+              <Button
+                type="submit"
+                size="lg"
+                className="px-12 py-7 rounded-2xl text-lg font-bold bg-purple-600 hover:bg-purple-700 shadow-xl shadow-purple-600/20"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <FaSpinner className="animate-spin mr-2" />
+                    Updating...
+                  </>
+                ) : 'Save Changes'}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </div>
     </div>
   );
 }
 
-export default EditBlog;
+export default EditBlog;

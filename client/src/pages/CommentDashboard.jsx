@@ -78,7 +78,7 @@ function CommentDashboard() {
 
   return (
     <div>
-      <Card className='md:w-6xl'>
+      <Card>
         <CardHeader>
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold">Comments</h2>
