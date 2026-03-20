@@ -156,30 +156,30 @@ function Comments(props) {
                                 </div>
                                 {commentData.comment.map((data) => {
                                     return (
-                                        <div key={data._id} className="mb-6 p-4 bg-gray-200 rounded-xl border-b border-gray-200 last:border-b-0">
+                                        <div key={data._id} className="mb-6 p-4 bg-muted rounded-xl border-b border-border last:border-b-0">
                                             <div className="flex items-start gap-3">
                                                 <Avatar className="flex-shrink-0">
                                                     <AvatarImage
                                                         src={data.authorId?.avatar || '/default-avatar.png'}
                                                         alt={data.authorId?.name || 'User'}
-                                                        className="h-10 w-10 rounded-full object-cover border-1 border-black"
+                                                        className="h-10 w-10 rounded-full object-cover border border-border"
                                                     />
-                                                    <AvatarFallback className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium">
+                                                    <AvatarFallback className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-sm font-medium">
                                                         {data.authorId?.name?.charAt(0)?.toUpperCase() || 'A'}
                                                     </AvatarFallback>
                                                 </Avatar>
 
                                                 <div className="flex flex-col w-full max-w-full overflow-x-auto">
                                                     <div className="flex justify-between items-center gap-1 mb-1">
-                                                        <p className="font-medium text-sm text-gray-900">
+                                                        <p className="font-medium text-sm text-foreground">
                                                             {data.authorId?.name || 'Anonymous'}
                                                         </p>
-                                                        <p className="text-xs text-gray-500">
+                                                        <p className="text-xs text-muted-foreground">
                                                             {getTimeAgo(data.createdAt)}
                                                         </p>
                                                     </div>
                                                     <div>
-                                                        <p className="text-gray-700 text-sm leading-relaxed break-words">
+                                                        <p className="text-foreground text-sm leading-relaxed break-words">
                                                             {data.comment}
                                                         </p>
                                                     </div>
@@ -191,7 +191,7 @@ function Comments(props) {
                                 })}
                             </div>
                             :
-                            <p className="text-gray-500 text-center py-8">No comments yet. Be the first to comment!</p>
+                            <p className="text-muted-foreground text-center py-8">No comments yet. Be the first to comment!</p>
                 }
             </div>
 

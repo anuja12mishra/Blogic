@@ -1,9 +1,19 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Button } from './ui/button'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { PiSignOutBold } from "react-icons/pi";
 import SearchBox from './SearchBox';
-import { RouteAddBlog, RouteIndex, RouteProfile, RouteSignIn } from '@/helpers/RouteName';
+import { 
+  RouteAddBlog, 
+  RouteIndex, 
+  RouteProfile, 
+  RouteSignIn,
+  RouteComment,
+  RouteLike,
+  RouteBlog,
+  RouteCategoryDetails,
+  RouteUser
+} from '@/helpers/RouteName';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   DropdownMenu,
@@ -15,21 +25,21 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { FaRegUser } from "react-icons/fa";
-import { MdLogout } from "react-icons/md";
+import { MdLogout, MdOutlineDashboard } from "react-icons/md";
 import { FaPlus } from "react-icons/fa";
+import { IoHomeOutline } from "react-icons/io5";
+import { LiaComments } from "react-icons/lia";
+import { TbFileLike, TbLogs } from "react-icons/tb";
+import { BiCategoryAlt } from "react-icons/bi";
 import { removeUser } from '@/redux/user/user.slice';
 import { showtoast } from '@/helpers/showtoast';
 import { getEnv } from '@/helpers/getEnv';
-import { IoMenu } from "react-icons/io5";
-import { useSidebar } from './ui/sidebar';
+import { ModeToggle } from './ModeToggle';
 
 function Topbar() {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
-  const { toggleSidebar } = useSidebar(false);
-
-  
 
   const handleLogout = async () => {
     try {
@@ -40,10 +50,8 @@ function Topbar() {
 
       let data = {};
       try {
-        // Attempt to parse JSON only if response body exists
         data = await res.json();
       } catch (err) {
-        // If parsing fails (e.g., empty body), default to fallback
         data = { message: 'Logged out' };
       }
 
@@ -56,7 +64,6 @@ function Topbar() {
       dispatch(removeUser());
       const successMessage = data.message || 'Logout successful!';
       showtoast('success', successMessage);
-      //navigate(RouteIndex);
       navigate(RouteIndex, { replace: true });
 
     } catch (err) {
@@ -64,53 +71,101 @@ function Topbar() {
     }
   };
 
-
-
-  const handleMenuClick = () => {
-    if (toggleSidebar) {
-      toggleSidebar();
-    }
-  };
-
-
   return (
-    <div className="flex justify-between items-center gap-2 w-full fixed bg-white h-16 z-20 px-5 md:px-16 lg:px-20 border-b-2 border-gray-200">
-      <div className="flex justify-center items-center gap-2">
-        <button onClick={handleMenuClick}>
-          <IoMenu size={25} />
-        </button>
-        <Link to={RouteIndex}>
-          <h1 className="flex text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold bg-black bg-clip-text">
-            b<p className='text-purple-600 font-extrabold'>L</p>ogic
+    <div className="flex justify-between items-center gap-2 w-[calc(100%-2rem)] max-w-7xl fixed top-4 left-1/2 -translate-x-1/2 bg-background/80 backdrop-blur-md h-16 z-50 px-5 md:px-10 rounded-full border border-border shadow-xl">
+      <div className="flex justify-center items-center gap-4">
+        <Link to={RouteIndex} className="hover:opacity-80 transition-opacity">
+          <h1 className="flex text-lg sm:text-xl md:text-2xl font-bold text-foreground">
+            b<span className='text-purple-600 font-extrabold'>L</span>ogic
           </h1>
         </Link>
-        {/* <img src={name} className='h-72 w-72 object object-cover'/>  */}
+        
+        <div className="hidden md:flex items-center gap-1">
+           <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="flex items-center gap-2 text-muted-foreground hover:text-purple-600">
+                <MdOutlineDashboard size={20} />
+                <span className="font-medium">Dashboard</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-56 mt-2">
+              <DropdownMenuLabel>Menu</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link to={RouteIndex} className="flex items-center gap-2">
+                  <IoHomeOutline /> Home
+                </Link>
+              </DropdownMenuItem>
+              
+              {user && user.isLoggedIn && (
+                <>
+                  <DropdownMenuItem asChild>
+                    <Link to={RouteComment} className="flex items-center gap-2">
+                      <LiaComments /> Comments
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to={RouteLike} className="flex items-center gap-2">
+                      <TbFileLike /> Likes
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to={RouteBlog} className="flex items-center gap-2">
+                      <TbLogs /> Blogs
+                    </Link>
+                  </DropdownMenuItem>
+                </>
+              )}
+
+              {user && user.user?.role === 'admin' && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel>Admin</DropdownMenuLabel>
+                  <DropdownMenuItem asChild>
+                    <Link to={RouteCategoryDetails} className="flex items-center gap-2">
+                      <BiCategoryAlt /> Categories
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to={RouteUser} className="flex items-center gap-2">
+                      <FaRegUser /> Users
+                    </Link>
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
-      <div className="w-40 sm:w-60 md:w-80 lg:w-[400px]">
+      <div className="flex-1 max-w-md px-4">
         <SearchBox />
       </div>
 
 
-      <div className="flex items-center">
+      <div className="flex items-center gap-2 md:gap-4">
+        <div className="hidden sm:block">
+          <ModeToggle />
+        </div>
+        
         {
           !user.isLoggedIn ?
-            <Button asChild>
+            <Button asChild className="rounded-full px-6">
               <Link to={RouteSignIn}>
-                <PiSignOutBold className="mr-1 hidden md:block" />
-                Sign up
+                <PiSignOutBold className="mr-2 hidden md:block" />
+                Sign in
               </Link>
             </Button>
             :
-            <DropdownMenu className='bg-amber-700'>
-              <DropdownMenuTrigger>
-                <Avatar className="inline-block h-10 w-10 rounded-full overflow-hidden border-2 border-gray-200">
+            <DropdownMenu>
+              <DropdownMenuTrigger className="focus:outline-none">
+                <Avatar className="h-10 w-10 border-2 border-purple-100 hover:border-purple-300 transition-colors">
                   <AvatarImage
-                    className="h-full w-full object-cover"
+                    className="object-cover"
                     src={user.user.avatar}
                     alt={user.user.name}
                   />
-                  <AvatarFallback className="bg-gray-300 text-sm text-gray-700 flex items-center justify-center h-full w-full">
+                  <AvatarFallback className="bg-purple-50 text-purple-700">
                     {(user?.user?.name || "")
                       .trim()
                       .split(/\s+/)
@@ -121,42 +176,37 @@ function Topbar() {
                   </AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>
-                  <p className='text-lg'>{user.user.name}</p>
-                  <p className="text-sm ">{user.user.email}</p>
+              <DropdownMenuContent align="end" className="w-64 mt-2">
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{user.user.name}</p>
+                    <p className="text-xs leading-none text-muted-foreground">{user.user.email}</p>
+                  </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link to={RouteProfile}>
-                    <FaRegUser />
+                  <Link to={RouteProfile} className="flex items-center gap-2">
+                    <FaRegUser className="text-muted-foreground" />
                     Profile
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link to={RouteAddBlog}>
-                    <FaPlus />
+                  <Link to={RouteAddBlog} className="flex items-center gap-2">
+                    <FaPlus className="text-muted-foreground" />
                     Create Blog
                   </Link>
                 </DropdownMenuItem>
-                {/* <DropdownMenuItem>Subscription</DropdownMenuItem> */}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout}>
-                  <MdLogout color='red' />
+                <DropdownMenuItem onClick={handleLogout} className="text-red-500 focus:text-red-500">
+                  <MdLogout className="mr-2" />
                   Logout
-                  {/* <Button onClick={handleLogout} className="w-full">
-                    <MdLogout color='red' />
-                    Logout
-                  </Button> */}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
         }
-
       </div>
     </div>
-
   )
 }
 
-export default Topbar
+export default Topbar

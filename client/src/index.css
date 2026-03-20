@@ -123,12 +123,181 @@ body{
   --sidebar-ring: oklch(0.606 0.25 292.717);
 }
 
+.dark {
+  --background: oklch(0.141 0.005 285.823);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.141 0.005 285.823);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.141 0.005 285.823);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.606 0.25 292.717);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.274 0.006 286.033);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.274 0.006 286.033);
+  --muted-foreground: oklch(0.705 0.015 286.067);
+  --accent: oklch(0.274 0.006 286.033);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --border: oklch(0.274 0.006 286.033);
+  --input: oklch(0.274 0.006 286.033);
+  --ring: oklch(0.606 0.25 292.717);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.21 0.006 285.885);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.606 0.25 292.717);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.274 0.006 286.033);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.274 0.006 286.033);
+  --sidebar-ring: oklch(0.606 0.25 292.717);
+
+  /* CKEditor Dark Mode Variables */
+  --ck-color-base-background: var(--background);
+  --ck-color-base-border: var(--border);
+  --ck-color-base-text: var(--foreground);
+  --ck-color-toolbar-background: var(--muted);
+  --ck-color-toolbar-border: var(--border);
+  
+  --ck-color-dropdown-panel-background: var(--popover);
+  --ck-color-dropdown-panel-border: var(--border);
+  
+  --ck-color-input-background: var(--background);
+  --ck-color-input-border: var(--border);
+  --ck-color-input-text: var(--foreground);
+
+  --ck-color-button-default-background: transparent;
+  --ck-color-button-default-hover-background: rgba(255, 255, 255, 0.1);
+  --ck-color-button-default-active-background: rgba(255, 255, 255, 0.2);
+  
+  --ck-color-button-on-background: rgba(255, 255, 255, 0.1);
+  --ck-color-button-on-hover-background: rgba(255, 255, 255, 0.2);
+  --ck-color-button-on-active-background: rgba(255, 255, 255, 0.3);
+
+  --ck-color-panel-background: var(--popover);
+  --ck-color-panel-border: var(--border);
+
+  --ck-color-list-background: var(--popover);
+  --ck-color-list-button-hover-background: rgba(255, 255, 255, 0.1);
+  --ck-color-list-button-on-background: rgba(255, 255, 255, 0.2);
+
+  --ck-color-editor-base-background: var(--background);
+}
+
+/* Force CKEditor Dark Mode Overrides */
+.dark .ck.ck-editor__main,
+.dark .ck-editor__editable,
+.dark .ck.ck-editor__main > .ck-editor__editable,
+.dark .editor-container_include-fullscreen,
+.dark .editor-container_include-fullscreen .ck-editor__main,
+.dark .editor-container_include-fullscreen .ck-editor__editable,
+.dark .editor-container_classic-editor,
+.dark .ck-fullscreen_main-wrapper {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+  border-color: var(--border) !important;
+}
+
+.dark .ck.ck-editor__main > .ck-editor__editable:not(.ck-editor__nested-editable).ck-focused,
+.dark .ck-editor__editable:not(.ck-editor__nested-editable).ck-focused {
+  border-color: var(--ring) !important;
+  box-shadow: 0 0 0 1px var(--ring) !important;
+}
+
+.dark .ck.ck-toolbar,
+.dark .ck.ck-fullscreen_top-wrapper,
+.dark .ck.ck-fullscreen_menu-bar,
+.dark .ck.ck-fullscreen_toolbar,
+.dark .ck.ck-menu-bar {
+  background-color: var(--muted) !important;
+  border-color: var(--border) !important;
+}
+
+.dark .ck.ck-button,
+.dark .ck.ck-menu-bar .ck-button,
+.dark .ck.ck-menu-bar__menu__button,
+.dark .ck-fullscreen_menu-bar .ck-button,
+.dark .ck-body-wrapper .ck-button,
+.dark .ck-body-wrapper .ck-menu-bar__menu__button {
+  color: var(--foreground) !important;
+  background-color: transparent !important;
+}
+
+.dark .ck.ck-button:hover,
+.dark .ck.ck-button.ck-on,
+.dark .ck.ck-menu-bar__menu__button:hover,
+.dark .ck-body-wrapper .ck-button:hover,
+.dark .ck-body-wrapper .ck-menu-bar__menu__button:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: var(--foreground) !important;
+}
+
+.dark .ck.ck-dropdown__panel {
+  background-color: var(--popover) !important;
+  border-color: var(--border) !important;
+}
+
+.dark .ck.ck-list {
+  background-color: var(--popover) !important;
+}
+
+.dark .ck.ck-list__item > .ck-button {
+  color: var(--foreground) !important;
+}
+
+.dark .ck.ck-list__item > .ck-button:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .ck.ck-input {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+  border-color: var(--border) !important;
+}
+
+.dark .ck.ck-labeled-field-view__input-wrapper .ck.ck-input {
+  background-color: var(--background) !important;
+}
+
+/* Ensure CKEditor covers Topbar (z-20) in fullscreen */
+.ck-body-wrapper,
+.editor-container_include-fullscreen {
+  z-index: 9999 !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground overflow-x-hidden;
+  }
+
+  ::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/50 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
 

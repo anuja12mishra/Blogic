@@ -23,6 +23,8 @@ import Dropzone from 'react-dropzone';
 import Editor from '@/components/Editor';
 import { useSelector } from 'react-redux';
 import { FaInfoCircle, FaSpinner } from 'react-icons/fa';
+import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
 
 const formSchema = z.object({
     title: z.string().min(3, "Title must be at least 3 characters long"),
@@ -263,237 +265,286 @@ function AddBlog() {
     }
 
     return (
-        <div className="container flex justify-center items-center mx-auto p-4">
-            <Card>
-                <CardHeader>
-                    <h1 className='text-2xl font-bold text-left border-b-2 pb-2 border-gray-300'>
-                        Add a New Blog
-                    </h1>
-                </CardHeader>
-                <CardContent>
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)}>
-                            <div className="space-y-6">
-                                <FormField
-                                    control={form.control}
-                                    name="category"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Category</FormLabel>
-                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+        <div className="max-w-5xl mx-auto px-4 py-12">
+            <div className="flex flex-col gap-8">
+                {/* Header Section */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border/50 pb-8">
+                    <div>
+                        <h1 className='text-4xl font-extrabold tracking-tight text-foreground mb-2'>
+                            Create New Post
+                        </h1>
+                        <p className="text-muted-foreground text-lg italic">
+                            Share your thoughts with the world.
+                        </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <Button
+                            variant="outline"
+                            asChild
+                            disabled={isSubmitting || isGenerating}
+                        >
+                            <Link to={RouteBlog}>Cancel</Link>
+                        </Button>
+                        <Button 
+                            onClick={handleClearForm}
+                            variant="ghost" 
+                            className="text-muted-foreground hover:text-destructive"
+                            disabled={isSubmitting || isGenerating}
+                        >
+                            Clear
+                        </Button>
+                    </div>
+                </div>
+
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-12">
+                        {/* Top Section: Category & Featured Image */}
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                            {/* Left Column: Form Fields */}
+                            <div className="lg:col-span-12 space-y-8">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <FormField
+                                        control={form.control}
+                                        name="category"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="text-sm font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                                                    Category
+                                                    <span className="text-purple-600 font-black">*</span>
+                                                </FormLabel>
+                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                    <FormControl>
+                                                        <SelectTrigger className='h-12 border-border/50 bg-secondary/20 focus:ring-purple-500/20'>
+                                                            <SelectValue placeholder="Where does this belong?" />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent className='bg-background border-border shadow-2xl'>
+                                                        {categoriesdata && categoriesdata?.categories.length > 0 ?
+                                                            categoriesdata.categories.map((category) => (
+                                                                <SelectItem key={category._id} value={category._id}>
+                                                                    {category.name}
+                                                                </SelectItem>
+                                                            )) :
+                                                            <div className="px-2 py-1.5 text-sm text-muted-foreground">No categories found</div>
+                                                        }
+                                                    </SelectContent>
+                                                </Select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="title"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="text-sm font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                                                    Post Title
+                                                    <span className="text-purple-600 font-black">*</span>
+                                                </FormLabel>
                                                 <FormControl>
-                                                    <SelectTrigger className='w-full'>
-                                                        <SelectValue placeholder="Select Category" />
-                                                    </SelectTrigger>
+                                                    <Input
+                                                        placeholder="An evocative title..."
+                                                        className="h-12 border-border/50 bg-secondary/20 focus:ring-purple-500/20 text-lg font-medium"
+                                                        disabled={isSubmitting || isGenerating}
+                                                        {...field}
+                                                    />
                                                 </FormControl>
-                                                <SelectContent className='bg-white'>
-                                                    {
-                                                        categoriesdata && categoriesdata?.categories.length > 0 ?
-                                                            categoriesdata.categories.map((category, index) => {
-                                                                return <SelectItem key={index} value={category._id}>{category.name}</SelectItem>
-                                                            })
-                                                            :
-                                                            <div className="px-2 py-1.5 text-sm text-gray-500">No categories available</div>
-                                                    }
-                                                </SelectContent>
-                                            </Select>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="title"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Title</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder="Enter the title"
-                                                    disabled={isSubmitting || isGenerating}
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+
                                 <FormField
                                     control={form.control}
                                     name="slug"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Slug</FormLabel>
+                                            <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground/60">Permalink Slug</FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder="Auto-generated from title"
-                                                    disabled={isSubmitting || isGenerating}
-                                                    readOnly
-                                                    className="bg-gray-100 cursor-not-allowed"
+                                                    placeholder="auto-generated-slug"
+                                                    disabled={true}
+                                                    className="bg-muted/50 border-none h-9 text-xs font-mono text-muted-foreground"
                                                     {...field}
                                                 />
                                             </FormControl>
-                                            <FormMessage />
-                                            <p className="text-sm text-gray-500">
-                                                The slug is automatically generated from the blog title
-                                            </p>
                                         </FormItem>
                                     )}
                                 />
-                                <div>
-                                    <FormLabel className='mb-2 block'>Featured Image</FormLabel>
-                                    <Dropzone
-                                        onDrop={acceptedFiles => handleFileUpload(acceptedFiles)}
-                                        accept={{
-                                            'image/*': ['.jpeg', '.jpg', '.png', '.webp']
-                                        }}
-                                        maxFiles={1}
-                                        disabled={isSubmitting || isGenerating}
-                                    >
-                                        {({ getRootProps, getInputProps, isDragActive }) => (
-                                            <div {...getRootProps()}>
-                                                <input {...getInputProps()} />
-                                                <div className={`flex justify-center items-center w-full lg:w-72 h-56 border-2 border-dashed rounded cursor-pointer transition-colors ${isDragActive ? 'border-blue-400 bg-blue-50' :
-                                                    (isSubmitting || isGenerating) ? 'border-gray-200 bg-gray-50 cursor-not-allowed' :
-                                                        'border-gray-300 hover:border-gray-400'
-                                                    }`}>
-                                                    {avatar ? (
+                            </div>
+
+                            {/* Featured Image Full Width */}
+                            <div className="lg:col-span-12">
+                                <FormLabel className='text-sm font-bold uppercase tracking-widest text-muted-foreground mb-4 block'>
+                                    Featured Image
+                                    <span className="text-purple-600 font-black ml-1">*</span>
+                                </FormLabel>
+                                <Dropzone
+                                    onDrop={acceptedFiles => handleFileUpload(acceptedFiles)}
+                                    accept={{ 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] }}
+                                    maxFiles={1}
+                                    disabled={isSubmitting || isGenerating}
+                                >
+                                    {({ getRootProps, getInputProps, isDragActive }) => (
+                                        <div {...getRootProps()} className="group outline-none">
+                                            <input {...getInputProps()} />
+                                            <div className={cn(
+                                                "relative flex flex-col justify-center items-center w-full min-h-[300px] border-2 border-dashed rounded-3xl cursor-pointer transition-all duration-300",
+                                                isDragActive ? "border-purple-600 bg-purple-50/50 scale-[0.99]" : 
+                                                avatar ? "border-transparent bg-secondary/20" : "border-border/50 hover:border-purple-400 hover:bg-secondary/20"
+                                            )}>
+                                                {avatar ? (
+                                                    <div className="relative w-full h-full p-4 group">
                                                         <img
                                                             src={avatar}
                                                             alt="Preview"
-                                                            className="max-w-full max-h-full object-contain rounded"
+                                                            className="w-full max-h-[500px] object-cover rounded-2xl shadow-2xl transition-transform duration-500 group-hover:scale-[1.01]"
                                                         />
-                                                    ) : (
-                                                        <div className="text-center text-gray-500">
-                                                            <p>Drag & drop an image here, or click to select</p>
-                                                            <p className="text-sm mt-1">Supports: JPG, PNG, WebP</p>
+                                                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl">
+                                                            <p className="text-white font-bold px-6 py-2 bg-white/20 backdrop-blur-md rounded-full border border-white/50">Change Image</p>
                                                         </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        )}
-                                    </Dropzone>
-                                </div>
-                                <FormField
-                                    control={form.control}
-                                    name="blogcontent"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <div className='flex justify-between items-center mb-2'>
-                                                <FormLabel>Blog Content</FormLabel>
-
-                                                <div className='flex items-center gap-2 relative'>
-                                                    <Button
-                                                        type="button"
-                                                        className='w-fit flex items-center gap-2'
-                                                        onClick={generateContent}
-                                                        disabled={isSubmitting || isGenerating}
-                                                    >
-                                                        {isGenerating ? (
-                                                            <>
-                                                                <FaSpinner className="animate-spin" size={14} />
-                                                                Generating...
-                                                            </>
-                                                        ) : (
-                                                            '✦ Generate with AI ✦'
-                                                        )}
-                                                    </Button>
-                                                    {/* Info Icon */}
-                                                    <button
-                                                        type="button"
-                                                        onClick={handleInfoClick}
-                                                        className='text-blue-600 hover:text-blue-800 p-1 rounded-full hover:bg-blue-50 transition-colors disabled:opacity-50'
-                                                        aria-label="Show AI generation guide"
-                                                        disabled={isSubmitting || isGenerating}
-                                                    >
-                                                        <FaInfoCircle size={16} />
-                                                    </button>
-
-                                                    {/* Tooltip/Guide Popup */}
-                                                    {showGuide && (
-                                                        <div
-                                                            ref={guideRef}
-                                                            className="absolute right-0 top-8 z-50 w-80 p-4 bg-white border border-gray-200 rounded-lg shadow-lg text-sm text-gray-700"
-                                                            style={{ boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)' }}
-                                                        >
-                                                            <div className="flex justify-between items-start mb-2">
-                                                                <p className='font-semibold text-gray-800'>AI Content Generation Guide:</p>
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => setShowGuide(false)}
-                                                                    className="text-gray-400 hover:text-gray-600 ml-2"
-                                                                    aria-label="Close guide"
-                                                                >
-                                                                    ×
-                                                                </button>
-                                                            </div>
-                                                            <ul className='list-disc ml-4 space-y-1.5 text-gray-600'>
-                                                                <li>Enter a descriptive title for your blog post first.</li>
-                                                                <li>Select a category that matches your content.</li>
-                                                                <li>Click "Generate with AI" to create initial content.</li>
-                                                                <li>Edit and refine the generated content as needed.</li>
-                                                                <li>The AI will create a structured blog post based on your title.</li>
-                                                                <li>You have <strong>5</strong> free AI generations per day.</li>
-                                                            </ul>
-                                                            {/* Small arrow pointing to the info icon */}
-                                                            <div className="absolute -top-2 right-6 w-4 h-4 bg-white border-l border-t border-gray-200 transform rotate-45"></div>
+                                                    </div>
+                                                ) : (
+                                                    <div className="text-center space-y-4 p-12">
+                                                        <div className="mx-auto w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 group-hover:scale-110 transition-transform">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                            </svg>
                                                         </div>
-                                                    )}
-                                                </div>
+                                                        <div className="space-y-2">
+                                                            <p className="text-xl font-bold text-foreground">Click or drag image here</p>
+                                                            <p className="text-muted-foreground">High resolution images work best for bLogic posts.</p>
+                                                        </div>
+                                                        <div className="flex justify-center gap-2">
+                                                            <Badge variant="outline" className="bg-secondary/50 border-border/50">JPG</Badge>
+                                                            <Badge variant="outline" className="bg-secondary/50 border-border/50">PNG</Badge>
+                                                            <Badge variant="outline" className="bg-secondary/50 border-border/50">WEBP</Badge>
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
-                                            <FormControl>
-                                                <div className="w-full max-w-full h-fit overflow-hidden rounded border border-gray-300">
-                                                    <Editor
-                                                        onChange={(data) => {
-                                                            field.onChange(data);
-                                                        }}
-                                                        props={{ initialData: field.value }}
-                                                        generatedContent={generatedContent}
-                                                        shouldUpdateContent={shouldUpdateEditor}
-                                                        onContentUpdated={handleContentUpdated}
-                                                    />
-                                                </div>
-                                            </FormControl>
-                                            <p className="text-xs text-black">
-                                                <strong>Note:</strong> Please click the <em>Full Screen</em> button in the toolbar to enable full view.
-                                            </p>
-                                            <FormMessage />
-                                        </FormItem>
+                                        </div>
                                     )}
-                                />
+                                </Dropzone>
+                            </div>
+                        </div>
 
-                                <div className="flex gap-4">
-                                    <Button
-                                        type="submit"
-                                        className="flex-1"
-                                        disabled={isSubmitting || isGenerating}
-                                    >
-                                        {isSubmitting ? 'Adding Blog...' : 'Add Blog'}
-                                    </Button>
+                        {/* Content Area */}
+                        <div className="space-y-6">
+                            <div className='flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 border-b border-border/50'>
+                                <div>
+                                    <FormLabel className="text-lg font-extrabold text-foreground">Content Editor</FormLabel>
+                                    <p className="text-sm text-muted-foreground">Use the toolbar to style your story.</p>
+                                </div>
+
+                                <div className='flex items-center gap-3 relative'>
                                     <Button
                                         type="button"
-                                        variant="outline"
-                                        className="flex-1"
-                                        onClick={handleClearForm}
+                                        className='relative overflow-hidden bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white border-none px-6 py-6 rounded-2xl shadow-lg shadow-purple-500/20 group animate-pulse hover:animate-none'
+                                        onClick={generateContent}
                                         disabled={isSubmitting || isGenerating}
                                     >
-                                        Clear Form
+                                        {isGenerating ? (
+                                            <>
+                                                <FaSpinner className="animate-spin mr-2" size={16} />
+                                                Magically writing...
+                                            </>
+                                        ) : (
+                                            <span className="flex items-center gap-2 font-bold tracking-tight">
+                                                ✦ Generate with AI ✦
+                                            </span>
+                                        )}
                                     </Button>
-                                </div>
+                                    
+                                    <button
+                                        type="button"
+                                        onClick={handleInfoClick}
+                                        className='text-muted-foreground hover:text-purple-600 p-2 rounded-xl hover:bg-purple-50 transition-all'
+                                        aria-label="Show AI generation guide"
+                                    >
+                                        <FaInfoCircle size={20} />
+                                    </button>
 
-                                {/* Link to view Blogs */}
-                                <div className="text-center">
-                                    <Button asChild variant="outline" disabled={isSubmitting || isGenerating}>
-                                        <Link to={RouteBlog}>
-                                            View All Blogs
-                                        </Link>
-                                    </Button>
+                                    {showGuide && (
+                                        <div
+                                            ref={guideRef}
+                                            className="absolute right-0 top-20 z-50 w-80 p-6 bg-background/95 backdrop-blur-md border border-border shadow-2xl rounded-3xl animate-in fade-in zoom-in duration-300"
+                                        >
+                                            <div className="flex justify-between items-start mb-4">
+                                                <h4 className='font-bold text-lg text-foreground'>Magic Writing ✦</h4>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowGuide(false)}
+                                                    className="text-muted-foreground hover:text-foreground p-1 transition-colors"
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            <ul className='space-y-3 text-sm text-foreground/80 leading-relaxed font-medium'>
+                                                <li className="flex gap-2"><span>1.</span> Enter a descriptive title first.</li>
+                                                <li className="flex gap-2"><span>2.</span> Select a matching category.</li>
+                                                <li className="flex gap-2"><span>3.</span> Let bLogic AI draft the story.</li>
+                                                <li className="flex gap-2"><span>4.</span> Refine and add your personal touch.</li>
+                                            </ul>
+                                            <div className="mt-6 pt-4 border-t border-border/50 flex justify-center">
+                                                <Badge className="bg-purple-600/10 text-purple-600 border-purple-200">5 Daily Generations Free</Badge>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
-                        </form>
-                    </Form>
-                </CardContent>
-            </Card>
+
+                            <FormField
+                                control={form.control}
+                                name="blogcontent"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormControl>
+                                            <div className="w-full max-w-full min-h-[500px] overflow-hidden rounded-3xl border border-border/50 bg-secondary/5 shadow-inner">
+                                                <Editor
+                                                    onChange={field.onChange}
+                                                    props={{ initialData: field.value }}
+                                                    generatedContent={generatedContent}
+                                                    shouldUpdateContent={shouldUpdateEditor}
+                                                    onContentUpdated={handleContentUpdated}
+                                                />
+                                            </div>
+                                        </FormControl>
+                                        <div className="flex items-center justify-between px-2">
+                                            <p className="text-xs text-muted-foreground">
+                                                Tip: Use the <strong>Full Screen</strong> button in the toolbar for an immersive writing experience.
+                                            </p>
+                                            <FormMessage />
+                                        </div>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        {/* Submit Actions */}
+                        <div className="pt-8 border-t border-border/50 flex flex-col sm:flex-row gap-4 justify-end">
+                            <Button
+                                type="submit"
+                                size="lg"
+                                className="px-12 py-7 rounded-2xl text-lg font-bold bg-purple-600 hover:bg-purple-700 shadow-xl shadow-purple-600/20"
+                                disabled={isSubmitting || isGenerating}
+                            >
+                                {isSubmitting ? (
+                                    <>
+                                        <FaSpinner className="animate-spin mr-2" />
+                                        Publishing...
+                                    </>
+                                ) : 'Publish Post'}
+                            </Button>
+                        </div>
+                    </form>
+                </Form>
+            </div>
         </div>
     );
 }

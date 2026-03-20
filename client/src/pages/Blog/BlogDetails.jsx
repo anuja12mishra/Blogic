@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { RouteAddBlog, RouteBlog, RouteEditBlog, RouteSignIn } from '@/helpers/RouteName'
+import { RouteAddBlog, RouteBlog, RouteEditBlog, RouteSignIn, RouteSingleBlogDetails } from '@/helpers/RouteName'
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
@@ -79,7 +79,7 @@ function BlogDetails() {
     const blogs = blogsData?.blog || [];
     return (
         <div>
-            <Card className='md:w-6xl'>
+            <Card className=' w-content'>
                 <CardHeader>
                     <div className="flex justify-between items-center">
                         <h2 className="text-2xl font-bold">Blogs</h2>
@@ -158,11 +158,11 @@ function BlogDetails() {
                                                     variant="outline"
                                                     size="sm"
                                                     asChild
-                                                    aria-label={`Edit ${data.name}`}
+                                                    aria-label={`View ${data.title}`}
                                                 >
-                                                    <Link to={RouteBlog}>
+                                                    <Link to={RouteSingleBlogDetails(data.category?.slug, data.slug, data._id)}>
                                                         <MdOutlineRemoveRedEye size={16} />
-                                                        <span className="sr-only">view {data.name}</span>
+                                                        <span className="sr-only">view {data.title}</span>
                                                     </Link>
                                                 </Button>
                                                 <Button

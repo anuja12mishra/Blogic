@@ -20,7 +20,7 @@ export default function SerachResult() {
 
     return (
         <div className="w-full">
-            <div className='flex justify-start items-center gap-2 text-purple-600  p-2 border-b-2 border-gray-300' >
+            <div className='flex justify-start items-center gap-2 text-purple-600  p-2 border-b-2 border-border' >
                 <IoSearch size={30} />
                 <h4 className='text-2xl font-bold'>Search Result for: {q}</h4>
             </div>
@@ -37,7 +37,7 @@ export default function SerachResult() {
                     </div>
                 ) : (
                     <div className="text-center py-12">
-                        <p className="text-gray-500 text-lg">No blogs found.</p>
+                        <p className="text-muted-foreground text-lg">No blogs found.</p>
                     </div>
                 )}
             </div>

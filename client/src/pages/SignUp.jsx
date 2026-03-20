@@ -76,11 +76,11 @@ const Signup = () => {
     return (
         <div className="flex flex-col justify-center items-center min-h-screen p-6 maze-background relative">
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="w-[270px] sm:w-[350px] md:w-[450px] space-y-6 border-2 border-gray-300 rounded-lg p-6 bg-white relative z-50">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="w-[270px] sm:w-[350px] md:w-[450px] space-y-6 border-2 border-border rounded-lg p-6 bg-card relative z-50">
                     <div className="flex justify-center mb-3">
                         <img src={logo} alt="logo-image" width={65} className="bg-transparent drop-shadow-lg" />
                     </div>
-                    <h1 className='text-2xl text-center py-1 border-b-2 border-gray-300'>Create your Account</h1>
+                    <h1 className='text-2xl text-center py-1 border-b-2 border-border'>Create your Account</h1>
                     <FormField
                         control={form.control}
                         name="name"
@@ -141,9 +141,9 @@ const Signup = () => {
                         <Link className='font-bold text-xs text-blue-600' to={RouteSignIn}> Sign In</Link>
                     </div>
                     <div className="flex items-center gap-2 my-4">
-                        <hr className="flex-grow border-t border-gray-300" />
+                        <hr className="flex-grow border-t border-border" />
                         <p className="text-xs font-bold text-center">Or</p>
-                        <hr className="flex-grow border-t border-gray-300" />
+                        <hr className="flex-grow border-t border-border" />
                     </div>
 
                     <div className='w-full p-0'>
