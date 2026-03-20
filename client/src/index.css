@@ -3,7 +3,7 @@
 body{
   font-family: "Nunito", sans-serif;
 }
-/* ck editor style */
+/* Tiptap Editor Styles */
 
 @media print {
 	body {
@@ -11,26 +11,172 @@ body{
 	}
 }
 
-.main-container {
-  font-family: 'Lato';
+.tiptap-wrapper {
   width: 100%;
-  margin: 0;
+}
+
+/* Tiptap Content Area & Blog Display */
+.tiptap,
+.blog-content {
+  font-family: 'Lato', sans-serif;
+  line-height: 1.8;
+  word-break: break-word;
+  color: var(--foreground);
+}
+
+.tiptap:focus {
+  outline: none;
+}
+
+/* Placeholder */
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--muted-foreground);
+  pointer-events: none;
+  height: 0;
+  font-style: italic;
+}
+
+/* Headings */
+.tiptap h1, .blog-content h1 { font-size: 2.25rem; font-weight: 800; margin: 1.5rem 0 0.75rem; line-height: 1.2; }
+.tiptap h2, .blog-content h2 { font-size: 1.75rem; font-weight: 700; margin: 1.25rem 0 0.625rem; line-height: 1.3; }
+.tiptap h3, .blog-content h3 { font-size: 1.375rem; font-weight: 600; margin: 1rem 0 0.5rem; line-height: 1.35; }
+.tiptap h4, .blog-content h4 { font-size: 1.125rem; font-weight: 600; margin: 0.875rem 0 0.5rem; line-height: 1.4; }
+
+/* Paragraphs */
+.tiptap p,
+.blog-content p {
+  margin: 0.5rem 0;
+}
+
+/* Lists */
+.tiptap ul, .blog-content ul { list-style-type: disc; padding-left: 1.5rem; margin: 0.5rem 0; }
+.tiptap ol, .blog-content ol { list-style-type: decimal; padding-left: 1.5rem; margin: 0.5rem 0; }
+.tiptap li, .blog-content li { margin: 0.25rem 0; }
+.tiptap li p, .blog-content li p { margin: 0; }
+
+/* Blockquote */
+.tiptap blockquote,
+.blog-content blockquote {
+  border-left: 4px solid #9333ea;
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+  background: rgba(147, 51, 234, 0.05);
+  border-radius: 0 0.5rem 0.5rem 0;
+  font-style: italic;
+  color: var(--foreground);
+}
+
+/* Code Block */
+.tiptap pre,
+.blog-content pre {
+  background: #1e1e2e;
+  color: #cdd6f4;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  margin: 1rem 0;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+.tiptap pre code,
+.blog-content pre code {
+  background: none;
+  color: inherit;
   padding: 0;
+  font-size: inherit;
 }
 
-.ck-content {
-	font-family: 'Lato';
-	line-height: 1.6;
-	word-break: break-word;
-}
-.editor-container__editor {
-  width: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
+/* Inline Code */
+.tiptap code,
+.blog-content code {
+  background: var(--muted);
+  color: #9333ea;
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
 }
 
-.editor-container_include-block-toolbar {
-	margin-left: 0;
+/* Horizontal Rule */
+.tiptap hr,
+.blog-content hr {
+  border: none;
+  border-top: 2px solid var(--border);
+  margin: 1.5rem 0;
+}
+
+/* Links */
+.tiptap a,
+.tiptap .tiptap-link,
+.blog-content a {
+  color: #9333ea;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.tiptap a:hover,
+.blog-content a:hover { color: #7c22ce; }
+
+/* Images */
+.tiptap img,
+.tiptap .tiptap-image,
+.blog-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+  margin: 1rem 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Tables */
+.tiptap table,
+.blog-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1rem 0;
+  overflow: hidden;
+  border-radius: 0.5rem;
+}
+.tiptap table td,
+.tiptap table th,
+.blog-content table td,
+.blog-content table th {
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.75rem;
+  vertical-align: top;
+  min-width: 80px;
+}
+.tiptap table th,
+.blog-content table th {
+  background: var(--muted);
+  font-weight: 700;
+  text-align: left;
+}
+
+/* Highlight */
+.tiptap mark,
+.blog-content mark {
+  background-color: #fef08a;
+  padding: 0.1rem 0.2rem;
+  border-radius: 0.15rem;
+}
+
+/* Toolbar heading dropdown dark mode */
+.dark .tiptap-toolbar select {
+  background-color: var(--muted);
+  color: var(--foreground);
+  border-color: var(--border);
+}
+
+/* Dark mode highlight */
+.dark .tiptap mark,
+.dark .blog-content mark {
+  background-color: rgba(250, 204, 21, 0.3);
+  color: var(--foreground);
 }
 
 
@@ -156,118 +302,35 @@ body{
   --sidebar-border: oklch(0.274 0.006 286.033);
   --sidebar-ring: oklch(0.606 0.25 292.717);
 
-  /* CKEditor Dark Mode Variables */
-  --ck-color-base-background: var(--background);
-  --ck-color-base-border: var(--border);
-  --ck-color-base-text: var(--foreground);
-  --ck-color-toolbar-background: var(--muted);
-  --ck-color-toolbar-border: var(--border);
-  
-  --ck-color-dropdown-panel-background: var(--popover);
-  --ck-color-dropdown-panel-border: var(--border);
-  
-  --ck-color-input-background: var(--background);
-  --ck-color-input-border: var(--border);
-  --ck-color-input-text: var(--foreground);
-
-  --ck-color-button-default-background: transparent;
-  --ck-color-button-default-hover-background: rgba(255, 255, 255, 0.1);
-  --ck-color-button-default-active-background: rgba(255, 255, 255, 0.2);
-  
-  --ck-color-button-on-background: rgba(255, 255, 255, 0.1);
-  --ck-color-button-on-hover-background: rgba(255, 255, 255, 0.2);
-  --ck-color-button-on-active-background: rgba(255, 255, 255, 0.3);
-
-  --ck-color-panel-background: var(--popover);
-  --ck-color-panel-border: var(--border);
-
-  --ck-color-list-background: var(--popover);
-  --ck-color-list-button-hover-background: rgba(255, 255, 255, 0.1);
-  --ck-color-list-button-on-background: rgba(255, 255, 255, 0.2);
-
-  --ck-color-editor-base-background: var(--background);
 }
 
-/* Force CKEditor Dark Mode Overrides */
-.dark .ck.ck-editor__main,
-.dark .ck-editor__editable,
-.dark .ck.ck-editor__main > .ck-editor__editable,
-.dark .editor-container_include-fullscreen,
-.dark .editor-container_include-fullscreen .ck-editor__main,
-.dark .editor-container_include-fullscreen .ck-editor__editable,
-.dark .editor-container_classic-editor,
-.dark .ck-fullscreen_main-wrapper {
-  background-color: var(--background) !important;
-  color: var(--foreground) !important;
-  border-color: var(--border) !important;
+/* Dark mode: code blocks */
+.dark .tiptap pre,
+.dark .blog-content pre {
+  background: #11111b;
 }
 
-.dark .ck.ck-editor__main > .ck-editor__editable:not(.ck-editor__nested-editable).ck-focused,
-.dark .ck-editor__editable:not(.ck-editor__nested-editable).ck-focused {
-  border-color: var(--ring) !important;
-  box-shadow: 0 0 0 1px var(--ring) !important;
+/* Dark mode: blockquote */
+.dark .tiptap blockquote,
+.dark .blog-content blockquote {
+  background: rgba(147, 51, 234, 0.1);
+  border-left-color: #a855f7;
 }
 
-.dark .ck.ck-toolbar,
-.dark .ck.ck-fullscreen_top-wrapper,
-.dark .ck.ck-fullscreen_menu-bar,
-.dark .ck.ck-fullscreen_toolbar,
-.dark .ck.ck-menu-bar {
-  background-color: var(--muted) !important;
-  border-color: var(--border) !important;
+/* Dark mode: inline code */
+.dark .tiptap code,
+.dark .blog-content code {
+  background: rgba(147, 51, 234, 0.15);
+  color: #c084fc;
 }
 
-.dark .ck.ck-button,
-.dark .ck.ck-menu-bar .ck-button,
-.dark .ck.ck-menu-bar__menu__button,
-.dark .ck-fullscreen_menu-bar .ck-button,
-.dark .ck-body-wrapper .ck-button,
-.dark .ck-body-wrapper .ck-menu-bar__menu__button {
-  color: var(--foreground) !important;
-  background-color: transparent !important;
+/* Dark mode: links */
+.dark .tiptap a,
+.dark .tiptap .tiptap-link,
+.dark .blog-content a {
+  color: #c084fc;
 }
-
-.dark .ck.ck-button:hover,
-.dark .ck.ck-button.ck-on,
-.dark .ck.ck-menu-bar__menu__button:hover,
-.dark .ck-body-wrapper .ck-button:hover,
-.dark .ck-body-wrapper .ck-menu-bar__menu__button:hover {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-  color: var(--foreground) !important;
-}
-
-.dark .ck.ck-dropdown__panel {
-  background-color: var(--popover) !important;
-  border-color: var(--border) !important;
-}
-
-.dark .ck.ck-list {
-  background-color: var(--popover) !important;
-}
-
-.dark .ck.ck-list__item > .ck-button {
-  color: var(--foreground) !important;
-}
-
-.dark .ck.ck-list__item > .ck-button:hover {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-.dark .ck.ck-input {
-  background-color: var(--background) !important;
-  color: var(--foreground) !important;
-  border-color: var(--border) !important;
-}
-
-.dark .ck.ck-labeled-field-view__input-wrapper .ck.ck-input {
-  background-color: var(--background) !important;
-}
-
-/* Ensure CKEditor covers Topbar (z-20) in fullscreen */
-.ck-body-wrapper,
-.editor-container_include-fullscreen {
-  z-index: 9999 !important;
-}
+.dark .tiptap a:hover { color: #a855f7; }
 
 @layer base {
   * {

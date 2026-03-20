@@ -31,7 +31,7 @@ function Footer() {
           <div className="flex flex-col items-start md:items-end justify-between h-full space-y-8 md:space-y-0 text-left md:text-right">
             <button
               onClick={scrollToTop}
-              className="group flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 rounded-full transition-all shadow-lg shadow-purple-200 hover:shadow-purple-300 active:scale-95"
+              className="group flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 rounded-full transition-all shadow-purple-200 hover:shadow-purple-300 active:scale-95"
             >
               <FaArrowUp size={14} className="group-hover:-translate-y-1 transition-transform" />
               <span className="font-semibold text-sm">Back to Top</span>

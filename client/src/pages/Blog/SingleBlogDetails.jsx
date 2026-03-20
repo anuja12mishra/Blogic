@@ -155,19 +155,7 @@ function SingleBlogDetails() {
                         </div>
                     )}
 
-                    {/* Blog Content with Drop Cap */}
-                    <style dangerouslySetInnerHTML={{ __html: `
-                        .blog-content p:first-of-type::first-letter {
-                            float: left;
-                            font-size: 5rem;
-                            line-height: 4rem;
-                            padding-top: 0.5rem;
-                            padding-right: 0.75rem;
-                            padding-left: 0.25rem;
-                            font-weight: 800;
-                            color: #9333ea;
-                        }
-                    `}} />
+                    {/* Blog Content */}
                     
                     <div
                         className="blog-content prose prose-lg md:prose-xl max-w-none dark:prose-invert prose-headings:font-bold prose-p:leading-relaxed prose-img:rounded-xl"

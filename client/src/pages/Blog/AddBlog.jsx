@@ -516,9 +516,6 @@ function AddBlog() {
                                             </div>
                                         </FormControl>
                                         <div className="flex items-center justify-between px-2">
-                                            <p className="text-xs text-muted-foreground">
-                                                Tip: Use the <strong>Full Screen</strong> button in the toolbar for an immersive writing experience.
-                                            </p>
                                             <FormMessage />
                                         </div>
                                     </FormItem>
