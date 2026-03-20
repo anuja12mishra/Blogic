@@ -84,98 +84,119 @@ function SingleBlogDetails() {
     const blog = blogData.blog;
 
     return (
-        <div className='flex flex-col w-full md:flex-row justify-between gap-6 md:gap-16 p-4 select-none'>
-            <div className='border-2 rounded w-full md:w-[70%] p-5'>
-                {/* Blog Title */}
-                <h1 className='text-3xl font-bold mb-4'>{blog.title}</h1>
+        <div className='max-w-7xl mx-auto px-4 py-8 select-none'>
+            <div className='flex flex-col lg:flex-row gap-12'>
+                {/* Main Content Area */}
+                <article className='flex-1 space-y-8'>
+                    {/* Category & Breadcrumb */}
+                    <div className="flex items-center gap-2 mb-4">
+                         <span className="text-xs font-bold uppercase tracking-widest text-purple-600">
+                            {blog.category.name}
+                        </span>
+                    </div>
 
+                    {/* Blog Title */}
+                    <h1 className='text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight text-foreground'>
+                        {blog.title}
+                    </h1>
 
-                {/* Author and Admin Badge Section */}
-                <div className="flex flex-col md:flex-row md:justify-between md:items-center w-full gap-2 mb-2 overflow-hidden">
-
-                    {/* Left side: Avatar, Author Name, Admin Badge */}
-                    <div className="flex items-center gap-4">
-                        <Avatar className="flex items-center gap-2">
-                            <AvatarImage
-                                src={blog.author.avatar || '/default-avatar.png'}
-                                className="h-10 w-10 rounded-full object-cover border-2"
-                            />
-                            <AvatarFallback className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
-                                {blog.author.name?.charAt(0)?.toUpperCase() || 'A'}
-                            </AvatarFallback>
+                    {/* Meta Info: Author & Stats */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-6 border-y border-border/50">
+                        <div className="flex items-center gap-3">
+                            <div className="relative">
+                                <img
+                                    src={blog.author.avatar || '/default-avatar.png'}
+                                    alt={blog.author.name}
+                                    className="h-12 w-12 rounded-full object-cover border-2 border-background ring-2 ring-purple-100"
+                                />
+                                {blog.author.role === "admin" && (
+                                    <div className="absolute -bottom-1 -right-1 bg-blue-500 text-[10px] font-bold text-white px-1.5 py-0.5 rounded-md border border-background">
+                                        PRO
+                                    </div>
+                                )}
+                            </div>
                             <div className="flex flex-col">
-                                <p className="font-medium text-sm">{blog.author.name}</p>
+                                <p className="font-semibold text-base text-foreground">{blog.author.name}</p>
                                 <p className="text-xs text-muted-foreground">
-                                    {moment(blog.createdAt).format('MMM DD, YYYY')}
+                                    {moment(blog.createdAt).format('MMMM DD, YYYY')} • {Math.ceil(decode(blog.blogContent).split(' ').length / 200)} min read
                                 </p>
                             </div>
-                        </Avatar>
+                        </div>
 
-                        {blog.author.role === "admin" && (
-                            <Badge
-                                variant="secondary"
-                                className="bg-blue-500 text-white dark:bg-blue-600 rounded-lg px-3 py-1"
+                        <div className="flex items-center gap-6 text-muted-foreground">
+                            <div className="flex items-center gap-6">
+                                <BlogLike props={blogData.blog._id} />
+                                <CommentCount props={blogData.blog._id} />
+                                <ViewsCount props={blogData.blog.views} />
+                            </div>
+                            <button
+                                onClick={() => handleShare(blog)}
+                                className="p-2 hover:bg-secondary rounded-full transition-colors"
+                                title="Share"
                             >
-                                Admin
-                            </Badge>
-                        )}
+                                <Share2 className="w-5 h-5" />
+                            </button>
+                        </div>
                     </div>
 
-                    {/* Right side: Like, Comment, Views, Share */}
-                    <div className="flex gap-4 justify-start items-center">
-                        <BlogLike props={blogData.blog._id} />
-                        <CommentCount props={blogData.blog._id} />
-                        <ViewsCount props={blogData.blog.views} />
-                        <button
-                            onClick={() => handleShare(blog)}
-                            className=""
-                            title="Share Blog"
-                        >
-                            <Share2 className="w-5 h-5 text-muted-foreground" />
-                        </button>
+                    {/* Social Proof: Liked By */}
+                    <div className="flex items-center gap-3 -mt-4 mb-2 px-2">
+                        <LikedByDropdown props={blogData.blog._id} />
                     </div>
 
-                </div>
+                    {/* Featured Image */}
+                    {blog.featuredImage && (
+                        <div className="relative aspect-video overflow-hidden rounded-2xl shadow-xl group">
+                            <img
+                                src={blog.featuredImage}
+                                alt={blog.title}
+                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                            />
+                        </div>
+                    )}
 
+                    {/* Blog Content with Drop Cap */}
+                    <style dangerouslySetInnerHTML={{ __html: `
+                        .blog-content p:first-of-type::first-letter {
+                            float: left;
+                            font-size: 5rem;
+                            line-height: 4rem;
+                            padding-top: 0.5rem;
+                            padding-right: 0.75rem;
+                            padding-left: 0.25rem;
+                            font-weight: 800;
+                            color: #9333ea;
+                        }
+                    `}} />
+                    
+                    <div
+                        className="blog-content prose prose-lg md:prose-xl max-w-none dark:prose-invert prose-headings:font-bold prose-p:leading-relaxed prose-img:rounded-xl"
+                        dangerouslySetInnerHTML={{
+                            __html: decode(blog.blogContent)
+                        }}
+                    />
 
-                {/* Author and Admin Badge Section */}
-               
+                    {/* Comments Section */}
+                    <section className='mt-16 pt-12 border-t border-border/50'>
+                        <h2 className="text-2xl font-bold mb-8">Discussion</h2>
+                        <Comments props={blogData.blog._id} />
+                    </section>
+                </article>
 
-                {/* Featured Image */}
-                {blog.featuredImage && (
-                    <div className="mb-2">
-                        <img
-                            src={blog.featuredImage}
-                            alt={blog.title}
-                            className="w-full h-64 object-contain bg-muted rounded-lg"
-                        />
+                {/* Sidebar: Related Blogs */}
+                <aside className='w-full lg:w-[320px] shrink-0'>
+                    <div className="sticky top-28 space-y-8">
+                        <div>
+                            <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
+                                <span className="h-1.5 w-1.5 rounded-full bg-purple-600"></span>
+                                Continue Reading
+                            </h2>
+                            <div className="space-y-6">
+                                <RelatedBlog props={{ category: blogData.blog?.category?._id, currentBlogSlug: blogData.blog?.slug }} />
+                            </div>
+                        </div>
                     </div>
-                )}
-
-                {/* Category */}
-                <div className="flex items-start mb-1 gap-3">
-                    <Badge variant="outline" className="">
-                        {blog.category.name}
-                    </Badge>
-                    <LikedByDropdown props={blogData.blog._id} />
-                </div>
-
-                {/* Blog Content */}
-                <div
-                    className="border-t-2 border-b-2 py-4 prose max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-blue-600 prose-strong:text-gray-900 prose-ul:text-gray-700 prose-ol:text-gray-700 dark:prose-headings:text-gray-200 dark:prose-p:text-gray-300 dark:prose-strong:text-gray-200 dark:prose-ul:text-gray-300 dark:prose-ol:text-gray-300"
-                    dangerouslySetInnerHTML={{
-                        __html: decode(blog.blogContent)
-                    }}
-                />
-                <div className='mt-4 rounded w-full p-2'>
-                    <Comments props={blogData.blog._id} />
-                </div>
-
-            </div>
-
-            <div className='border-2 rounded w-full md:w-[30%] p-4 h-fit'>
-                <h2 className="text-xl font-bold mb-4">Related Blogs</h2>
-                <RelatedBlog props={{ category: blogData.blog?.category?._id, currentBlogSlug: blogData.blog?.slug }} />
+                </aside>
             </div>
         </div>
     )
