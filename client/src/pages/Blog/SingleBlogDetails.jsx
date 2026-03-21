@@ -111,7 +111,7 @@ function SingleBlogDetails() {
                                 />
                                 {blog.author.role === "admin" && (
                                     <div className="absolute -bottom-1 -right-1 bg-blue-500 text-[10px] font-bold text-white px-1.5 py-0.5 rounded-md border border-background">
-                                        PRO
+                                        admin
                                     </div>
                                 )}
                             </div>
@@ -150,7 +150,7 @@ function SingleBlogDetails() {
                             <img
                                 src={blog.featuredImage}
                                 alt={blog.title}
-                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105"
                             />
                         </div>
                     )}

@@ -378,7 +378,7 @@ function Comments({ blogId, authorId }) {
                                                     <Textarea
                                                         placeholder="Share your thoughts with the community..."
                                                         disabled={isSubmitting}
-                                                        className="min-h-[120px] bg-transparent border-none focus-visible:ring-0 p-0 shadow-none resize-none text-base leading-relaxed placeholder:text-muted-foreground/60"
+                                                        className="min-h-[120px] bg-transparent border-none focus-visible:ring-0 p-2 shadow-none resize-none text-base leading-relaxed placeholder:text-muted-foreground/60"
                                                         {...field}
                                                     />
                                                 </FormControl>
@@ -496,7 +496,7 @@ function Comments({ blogId, authorId }) {
                                                                         <Textarea 
                                                                             placeholder={`Replying to ${data.authorId?.name}...`} 
                                                                             {...field} 
-                                                                            className="min-h-[80px] bg-transparent border-none focus-visible:ring-0 p-0 shadow-none resize-none text-sm"
+                                                                            className="min-h-[80px] bg-transparent border-none focus-visible:ring-0 p-2 shadow-none resize-none text-sm"
                                                                             autoFocus
                                                                         />
                                                                     </FormControl>
