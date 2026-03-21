@@ -8,7 +8,8 @@ export const AddComment = async (req, res, next) => {
         const {
             authorId,
             blogId,
-            comment
+            comment,
+            parentId
         } = req.body;
 
 
@@ -37,7 +38,8 @@ export const AddComment = async (req, res, next) => {
         const newComment = new Comment({
             authorId,
             blogId,
-            comment: comment.trim()
+            comment: comment.trim(),
+            parentId: parentId || null
         });
 
         await newComment.save();
@@ -56,16 +58,54 @@ export const AddComment = async (req, res, next) => {
 export const GetAllCommentByBlogId = async (req, res, next) => {
     try {
         const {blogId} = req.params;
-        // console.log('blogId',blogId)
-        const comments = await Comment.find({blogId:blogId}).populate('authorId', 'avatar name').sort({updatedAt:-1}).lean().exec();
-        // console.log('comments',comments)
+        const comments = await Comment.find({blogId:blogId})
+            .populate('authorId', 'avatar name')
+            .sort({createdAt: -1}) // Newest first by default
+            .lean()
+            .exec();
+
+        // Map comments to include likeCount
+        const processedComments = comments.map(c => ({
+            ...c,
+            likeCount: c.likes ? c.likes.length : 0
+        }));
+
         res.status(200).json({
             success: true,
             message: "Comments retrieved successfully",
-            comment: comments
+            comment: processedComments
         });
     } catch (error) {
         console.error(error.message);
+        next(handleError(500, error.message));
+    }
+};
+
+export const LikeComment = async (req, res, next) => {
+    try {
+        const { commentId } = req.params;
+        const userId = req.user.id;
+
+        const comment = await Comment.findById(commentId);
+        if (!comment) {
+            return next(handleError(404, 'Comment not found'));
+        }
+
+        const likeIndex = comment.likes.indexOf(userId);
+        if (likeIndex === -1) {
+            comment.likes.push(userId);
+        } else {
+            comment.likes.splice(likeIndex, 1);
+        }
+
+        await comment.save();
+
+        res.status(200).json({
+            success: true,
+            message: likeIndex === -1 ? "Liked" : "Unliked",
+            likes: comment.likes.length
+        });
+    } catch (error) {
         next(handleError(500, error.message));
     }
 };
@@ -91,7 +131,19 @@ export const CommentCount= async (req, res, next) => {
 export const GetAllComment = async (req, res, next) => {
     try {
         // console.log('blogId',blogId)
-        const comments = await Comment.find().populate('authorId', 'name').populate('blogId','title').sort({updatedAt:-1}).lean().exec();
+        const comments = await Comment.find()
+            .populate('authorId', 'name')
+            .populate({
+                path: 'blogId',
+                select: 'title slug category',
+                populate: {
+                    path: 'category',
+                    select: 'slug'
+                }
+            })
+            .sort({updatedAt:-1})
+            .lean()
+            .exec();
         // console.log('comments',comments)
         res.status(200).json({
             success: true,
@@ -111,10 +163,34 @@ export const ProtectedGetAllComment = async (req, res, next) => {
         const user=req.user;
         let comments
         if(user.role ==='admin'){
-            comments = await Comment.find().populate('authorId', 'name').populate('blogId','title').sort({updatedAt:-1}).lean().exec();
+            comments = await Comment.find()
+                .populate('authorId', 'name')
+                .populate({
+                    path: 'blogId',
+                    select: 'title slug category',
+                    populate: {
+                        path: 'category',
+                        select: 'slug'
+                    }
+                })
+                .sort({updatedAt:-1})
+                .lean()
+                .exec();
         }
         else{
-            comments = await Comment.find({authorId:user._id}).populate('authorId', 'name').populate('blogId','title').sort({updatedAt:-1}).lean().exec();
+            comments = await Comment.find({authorId:user._id})
+                .populate('authorId', 'name')
+                .populate({
+                    path: 'blogId',
+                    select: 'title slug category',
+                    populate: {
+                        path: 'category',
+                        select: 'slug'
+                    }
+                })
+                .sort({updatedAt:-1})
+                .lean()
+                .exec();
         }
         res.status(200).json({
             success: true,
@@ -128,16 +204,62 @@ export const ProtectedGetAllComment = async (req, res, next) => {
 };
 
 
+export const UpdateComment = async (req, res, next) => {
+    try {
+        const { commentId } = req.params;
+        const { comment } = req.body;
+
+        if (!commentId) {
+            return next(handleError(400, "Comment ID is required"));
+        }
+
+        if (!comment || !comment.trim()) {
+            return next(handleError(400, "Comment cannot be empty"));
+        }
+
+        const updatedComment = await Comment.findByIdAndUpdate(
+            commentId,
+            { comment: comment.trim() },
+            { new: true }
+        );
+
+        if (!updatedComment) {
+            return next(handleError(404, "Comment not found"));
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Comment updated successfully",
+            comment: updatedComment
+        });
+    } catch (error) {
+        console.error('UpdateComment error:', error.message);
+        next(handleError(500, error.message));
+    }
+};
+
 export const DeleteComment = async (req, res, next) => {
     try {
         const { commentId } = req.params;
         if (!commentId) {
-            return next(handleError(404, 'Category not found'));
+            return next(handleError(404, 'Comment not found'));
         }
+        
+        // Find the comment first to check if it exists
+        const comment = await Comment.findById(commentId);
+        if (!comment) {
+            return next(handleError(404, 'Comment not found'));
+        }
+
+        // Delete the comment
         await Comment.findByIdAndDelete(commentId);
+
+        // Also delete all replies if this is a parent comment
+        await Comment.deleteMany({ parentId: commentId });
+
         return res.status(200).json({
             success: true,
-            message: `Comment deleted successfully.`
+            message: `Comment and its replies deleted successfully.`
         });
     } catch (error) {
         console.error("DeleteComment:", error);

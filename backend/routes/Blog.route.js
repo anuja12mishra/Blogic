@@ -16,8 +16,6 @@ import upload from '../config/multer.config.js';
 import { authenticate } from '../middleware/authenticate.js';
 import rateLimitGenerateContent from '../utils/rateLimiters.js';
 
-
-
 const BlogRoute = express.Router();
 
 // Add the upload middleware before your controller
