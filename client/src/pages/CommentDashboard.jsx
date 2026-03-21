@@ -16,8 +16,9 @@ import { useFetch } from '@/hooks/useFetch'
 import { showtoast } from '@/helpers/showtoast'
 import { getEnv } from '@/helpers/getEnv'
 import Loading from '@/components/Loading'
-import { MdDeleteOutline } from "react-icons/md";
+import { MdDeleteOutline, MdOutlineRemoveRedEye } from "react-icons/md";
 import { FaRegEdit } from "react-icons/fa";
+import { RouteSingleBlogDetails } from '@/helpers/RouteName'
 import { handleCategoryDelete } from '@/helpers/handleCategoryDelete'
 import { useSelector } from 'react-redux'
 import moment from 'moment'
@@ -25,6 +26,9 @@ import moment from 'moment'
 function CommentDashboard() {
   const user = useSelector((state) => state.user)
   const [refresh, setRefresh] = useState(false);
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editValue, setEditValue] = useState('');
+  const [isUpdating, setIsUpdating] = useState(false);
 
   // Pass refresh as a dependency to trigger re-fetch
   const { data: CommentData, loading, error } = useFetch(
@@ -34,6 +38,7 @@ function CommentDashboard() {
   );
   //console.log('CommentData',CommentData)
   const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this comment?')) return;
     try {
       const deleteres = await handleCategoryDelete(
         `${getEnv('VITE_API_URL')}/api/comment/delete/${id}`
@@ -48,6 +53,33 @@ function CommentDashboard() {
     } catch (error) {
       console.error('Delete error:', error);
       showtoast('error', 'An error occurred while deleting the Comment');
+    }
+  };
+
+  const handleEdit = async (commentId) => {
+    if (!editValue.trim()) return;
+    setIsUpdating(true);
+    try {
+      const res = await fetch(`${getEnv('VITE_API_URL')}/api/comment/update/${commentId}`, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ comment: editValue })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showtoast('success', 'Comment updated successfully');
+        setEditingCommentId(null);
+        setRefresh(prev => !prev);
+      } else {
+        showtoast('error', data.message || 'Failed to update');
+      }
+    } catch (error) {
+      showtoast('error', 'An error occurred while updating');
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -121,6 +153,21 @@ function CommentDashboard() {
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-2 justify-end">
+                        <Link to={RouteSingleBlogDetails(comment.blogId?.category?.slug, comment.blogId?.slug, comment.blogId?._id)}>
+                          <Button size="sm" variant="outline" className='hover:cursor-pointer'>
+                            <MdOutlineRemoveRedEye size={16} />
+                          </Button>
+                        </Link>
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            setEditingCommentId(comment._id);
+                            setEditValue(comment.comment);
+                          }}
+                          className='hover:cursor-pointer'
+                        >
+                          <FaRegEdit size={16} />
+                        </Button>
                         <Button
                           variant="destructive"
                           size="sm"
@@ -142,6 +189,31 @@ function CommentDashboard() {
           </Table>
         </CardContent>
       </Card>
+
+      {/* Edit Modal/Dialog */}
+      {editingCommentId && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <h3 className="text-xl font-bold">Edit Comment</h3>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <textarea
+                className="w-full p-3 border rounded-md min-h-[100px] bg-background text-foreground"
+                value={editValue}
+                onChange={(e) => setEditValue(e.target.value)}
+                placeholder="Edit your comment..."
+              />
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={() => setEditingCommentId(null)}>Cancel</Button>
+                <Button disabled={isUpdating} onClick={() => handleEdit(editingCommentId)}>
+                  {isUpdating ? 'Updating...' : 'Update Comment'}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   )
 }

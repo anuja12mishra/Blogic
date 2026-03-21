@@ -164,10 +164,9 @@ function SingleBlogDetails() {
                         }}
                     />
 
-                    {/* Comments Section */}
+                    {/* Discussion Section */}
                     <section className='mt-16 pt-12 border-t border-border/50'>
-                        <h2 className="text-2xl font-bold mb-8">Discussion</h2>
-                        <Comments props={blogData.blog._id} />
+                        <Comments blogId={blogData.blog._id} authorId={blogData.blog.author._id} />
                     </section>
                 </article>
 
