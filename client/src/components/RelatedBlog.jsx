@@ -15,7 +15,6 @@ function RelatedBlog({ props }) {
     if (ralatedBlogLoding) {
         return <Loading />
     }
-    //console.log('relatedBlog',relatedBlog)
     return (
         <div>
             {
@@ -34,7 +33,7 @@ function RelatedBlog({ props }) {
                         )
                     })
                 ) : (
-                    <h1>There is no related blogs</h1>
+                    <h1 className='text-center text-muted-foreground '>There is no related blogs</h1>
                 )
             }
         </div>

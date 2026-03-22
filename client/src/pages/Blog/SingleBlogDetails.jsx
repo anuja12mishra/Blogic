@@ -146,7 +146,7 @@ function SingleBlogDetails() {
 
                     {/* Featured Image */}
                     {blog.featuredImage && (
-                        <div className="relative aspect-video overflow-hidden rounded-2xl shadow-xl group">
+                        <div className="relative aspect-video overflow-hidden rounded-2xl shadow-lg group">
                             <img
                                 src={blog.featuredImage}
                                 alt={blog.title}

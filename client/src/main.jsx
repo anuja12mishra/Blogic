@@ -8,16 +8,25 @@ import { persistor, store } from './store';
 import { PersistGate } from 'redux-persist/integration/react';
 import { ThemeProvider } from './components/ThemeProvider.jsx'
 
+import { useTheme } from './components/ThemeProvider.jsx'
+
+function ThemedToastContainer() {
+  const { theme } = useTheme();
+  return <ToastContainer
+    theme={theme === "light" ? "light" : "dark"} />;
+}
+
 createRoot(document.getElementById('root')).render(
   // <StrictMode>
-    <Provider store={store}>
-      <PersistGate loading = {<div>loding....</div>} persistor={persistor}>  
-        <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-          <ToastContainer />
-          <App />
-        </ThemeProvider>
-      </PersistGate>
-    </Provider>
+  <Provider store={store}>
+    <PersistGate loading={<div>loding....</div>} persistor={persistor}>
+      <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+        <ThemedToastContainer />
+        <App />
+      </ThemeProvider>
+    </PersistGate>
+  </Provider>
   //</StrictMode>
   ,
 )
+

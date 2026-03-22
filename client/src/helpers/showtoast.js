@@ -1,16 +1,15 @@
-import { toast, Bounce } from "react-toastify"
+import { toast, Bounce, Slide } from "react-toastify"
 
 export const showtoast = (type, message) => {
     const config = {
-        position: "top-right",
+        position: "bottom-right",
         autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: false,
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        theme: "light",
-        transition: Bounce,
+        transition: Slide,
     }
     
     if (type === 'success') {

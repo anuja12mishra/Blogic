@@ -72,7 +72,7 @@ function Topbar() {
   };
 
   return (
-    <div className="flex justify-between items-center gap-2 w-[calc(100%-2rem)] max-w-7xl fixed top-4 left-1/2 -translate-x-1/2 bg-background/80 backdrop-blur-md h-16 z-50 px-5 md:px-10 rounded-full border border-border shadow-xl">
+    <div className="flex justify-between items-center gap-2 w-[calc(100%-2rem)] max-w-7xl fixed top-4 left-1/2 -translate-x-1/2 bg-background/80 backdrop-blur-md h-16 z-50 px-5 md:px-10 rounded-full border border-border shadow-lg">
       <div className="flex justify-center items-center gap-4">
         <Link to={RouteIndex} className="hover:opacity-80 transition-opacity">
           <h1 className="flex text-lg sm:text-xl md:text-2xl font-bold text-foreground">
@@ -209,4 +209,4 @@ function Topbar() {
   )
 }
 
-export default Topbar
+export default Topbar
