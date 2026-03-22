@@ -103,7 +103,8 @@ export const LikeComment = async (req, res, next) => {
         res.status(200).json({
             success: true,
             message: likeIndex === -1 ? "Liked" : "Unliked",
-            likes: comment.likes.length
+            likeCount: comment.likes.length,
+            isLiked: likeIndex === -1
         });
     } catch (error) {
         next(handleError(500, error.message));
