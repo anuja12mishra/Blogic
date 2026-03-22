@@ -92,6 +92,7 @@ function AddBlog() {
                 body: JSON.stringify({
                     title: currentValues.title.trim(),
                     body: currentValues.blogcontent,
+                    category: categoriesdata.categories.find(cat => cat._id === currentValues.category)?.name,
                 }),
             });
 
@@ -179,6 +180,10 @@ function AddBlog() {
             showtoast('error', 'All fields are required');
             return;
         }
+        if (!values.category) {
+            showtoast('error', 'Category is required');
+            return;
+        }
 
         setIsSubmitting(true);
 
@@ -264,6 +269,21 @@ function AddBlog() {
         setShowGuide(!showGuide);
     }
 
+    const onInvalid = (errors) => {
+        if (errors.category) {
+            showtoast('error', 'Please select a category');
+            return;
+        }
+        if (errors.title) {
+            showtoast('error', 'Please enter a title');
+            return;
+        }
+        if (errors.blogcontent) {
+            showtoast('error', 'Please enter a blog content');
+            return;
+        }
+    };
+
     return (
         <div className="max-w-5xl mx-auto px-4 py-12">
             <div className="flex flex-col gap-8">
@@ -285,9 +305,9 @@ function AddBlog() {
                         >
                             <Link to={RouteBlog}>Cancel</Link>
                         </Button>
-                        <Button 
+                        <Button
                             onClick={handleClearForm}
-                            variant="ghost" 
+                            variant="ghost"
                             className="text-muted-foreground hover:text-destructive"
                             disabled={isSubmitting || isGenerating}
                         >
@@ -297,7 +317,7 @@ function AddBlog() {
                 </div>
 
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-12">
+                    <form onSubmit={form.handleSubmit(onSubmit, onInvalid)} className="space-y-12">
                         {/* Top Section: Category & Featured Image */}
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                             {/* Left Column: Form Fields */}
@@ -393,8 +413,8 @@ function AddBlog() {
                                             <input {...getInputProps()} />
                                             <div className={cn(
                                                 "relative flex flex-col justify-center items-center w-full min-h-[300px] border-2 border-dashed rounded-3xl cursor-pointer transition-all duration-300",
-                                                isDragActive ? "border-purple-600 bg-purple-50/50 scale-[0.99]" : 
-                                                avatar ? "border-transparent bg-secondary/20" : "border-border/50 hover:border-purple-400 hover:bg-secondary/20"
+                                                isDragActive ? "border-purple-600 bg-purple-50/50 scale-[0.99]" :
+                                                    avatar ? "border-transparent bg-secondary/20" : "border-border/50 hover:border-purple-400 hover:bg-secondary/20"
                                             )}>
                                                 {avatar ? (
                                                     <div className="relative w-full h-full p-4 group">
@@ -458,7 +478,7 @@ function AddBlog() {
                                             </span>
                                         )}
                                     </Button>
-                                    
+
                                     <button
                                         type="button"
                                         onClick={handleInfoClick}
@@ -530,6 +550,7 @@ function AddBlog() {
                                 size="lg"
                                 className="px-12 py-7 rounded-2xl text-lg font-bold bg-purple-600 hover:bg-purple-700 shadow-xl shadow-purple-600/20"
                                 disabled={isSubmitting || isGenerating}
+
                             >
                                 {isSubmitting ? (
                                     <>

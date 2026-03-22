@@ -21,12 +21,12 @@ import {
     Trash2, 
     X, 
     Send, 
-    Heart, 
     Smile, 
     ListFilter,
     Check
 } from 'lucide-react';
 import EmojiPicker from 'emoji-picker-react';
+import CommentLike from './CommentLike';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -58,7 +58,6 @@ const CommentItem = ({
     onReply, 
     onEdit, 
     onDelete, 
-    onLike,
     isEditing, 
     editValue, 
     setEditValue, 
@@ -123,13 +122,11 @@ const CommentItem = ({
 
                 {!isEditing && (
                     <div className="flex items-center gap-4 pt-1">
-                        <button 
-                            onClick={() => onLike(data._id)}
-                            className={`text-xs font-semibold flex items-center gap-1.5 transition-colors ${hasLiked ? 'text-red-500' : 'text-muted-foreground hover:text-red-500'}`}
-                        >
-                            <Heart size={14} className={hasLiked ? 'fill-current' : ''} /> 
-                            {data.likeCount > 0 && <span>{data.likeCount}</span>}
-                        </button>
+                        <CommentLike 
+                            commentId={data._id}
+                            initialLikeCount={data.likeCount}
+                            initialIsLiked={hasLiked}
+                        />
                         {onReply && (
                             <button 
                                 onClick={onReply}
@@ -238,23 +235,6 @@ function Comments({ blogId, authorId }) {
         }
     }
 
-    const handleLike = async (commentId) => {
-        if (!user.isLoggedIn) {
-            showtoast('error', 'Please sign in to like comments');
-            return;
-        }
-        try {
-            const res = await fetch(`${getEnv('VITE_API_URL')}/api/comment/like/${commentId}`, {
-                method: 'PUT',
-                credentials: 'include'
-            });
-            if (res.ok) {
-                setRefresh(prev => !prev);
-            }
-        } catch (err) {
-            showtoast('error', 'Error liking comment');
-        }
-    };
 
     const handleEdit = async (commentId) => {
         if (!editValue.trim()) return;
@@ -444,8 +424,7 @@ function Comments({ blogId, authorId }) {
                                 data={data} 
                                 user={user} 
                                 authorId={authorId}
-                                onReply={() => setReplyingTo(data._id)}
-                                onLike={handleLike}
+                                 onReply={() => setReplyingTo(data._id)}
                                 onEdit={() => {
                                     setEditingCommentId(data._id);
                                     setEditValue(data.comment);
@@ -467,7 +446,6 @@ function Comments({ blogId, authorId }) {
                                                 data={reply} 
                                                 user={user}
                                                 authorId={authorId}
-                                                onLike={handleLike}
                                                 onEdit={() => {
                                                     setEditingCommentId(reply._id);
                                                     setEditValue(reply.comment);

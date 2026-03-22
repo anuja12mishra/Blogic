@@ -6,7 +6,7 @@ const ai = new GoogleGenAI({apiKey : process.env.GEMINI_API});
 
 async function main(prompt) {
   const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
+    model: "gemini-2.5-flash-lite",
     contents: prompt,
   });
   // console.log(response.text);
@@ -22,5 +22,12 @@ async function main(prompt) {
 //   console.log(text);
 //   return text;
 // }
+
+// async function listModels() {
+//   const response = await ai.models.list();       // response is an object
+//   // const models = response.models;                // extract the array
+//   console.log(response);
+// }
+// listModels();
 
 export default main;
