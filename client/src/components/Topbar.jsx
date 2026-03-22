@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { FaRegUser } from "react-icons/fa";
-import { MdLogout, MdOutlineDashboard } from "react-icons/md";
+import { MdLogout } from "react-icons/md";
 import { FaPlus } from "react-icons/fa";
 import { IoHomeOutline } from "react-icons/io5";
 import { LiaComments } from "react-icons/lia";
@@ -80,62 +80,7 @@ function Topbar() {
           </h1>
         </Link>
         
-        <div className="hidden md:flex items-center gap-1">
-           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="flex items-center gap-2 text-muted-foreground hover:text-purple-600">
-                <MdOutlineDashboard size={20} />
-                <span className="font-medium">Dashboard</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-56 mt-2">
-              <DropdownMenuLabel>Menu</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link to={RouteIndex} className="flex items-center gap-2">
-                  <IoHomeOutline /> Home
-                </Link>
-              </DropdownMenuItem>
-              
-              {user && user.isLoggedIn && (
-                <>
-                  <DropdownMenuItem asChild>
-                    <Link to={RouteComment} className="flex items-center gap-2">
-                      <LiaComments /> Comments
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to={RouteLike} className="flex items-center gap-2">
-                      <TbFileLike /> Likes
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to={RouteBlog} className="flex items-center gap-2">
-                      <TbLogs /> Blogs
-                    </Link>
-                  </DropdownMenuItem>
-                </>
-              )}
 
-              {user && user.user?.role === 'admin' && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuLabel>Admin</DropdownMenuLabel>
-                  <DropdownMenuItem asChild>
-                    <Link to={RouteCategoryDetails} className="flex items-center gap-2">
-                      <BiCategoryAlt /> Categories
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to={RouteUser} className="flex items-center gap-2">
-                      <FaRegUser /> Users
-                    </Link>
-                  </DropdownMenuItem>
-                </>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
       </div>
 
       <div className="flex-1 max-w-md px-4">
@@ -185,9 +130,33 @@ function Topbar() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
+                  <Link to={RouteIndex} className="flex items-center gap-2">
+                    <IoHomeOutline className="text-muted-foreground" />
+                    Home
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Link to={RouteProfile} className="flex items-center gap-2">
                     <FaRegUser className="text-muted-foreground" />
                     Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to={RouteBlog} className="flex items-center gap-2">
+                    <TbLogs className="text-muted-foreground" />
+                    Blogs
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to={RouteComment} className="flex items-center gap-2">
+                    <LiaComments className="text-muted-foreground" />
+                    Comments
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to={RouteLike} className="flex items-center gap-2">
+                    <TbFileLike className="text-muted-foreground" />
+                    Likes
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
@@ -196,6 +165,28 @@ function Topbar() {
                     Create Blog
                   </Link>
                 </DropdownMenuItem>
+
+                {user && user.user?.role === 'admin' && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuLabel className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">
+                      Admin Panel
+                    </DropdownMenuLabel>
+                    <DropdownMenuItem asChild>
+                      <Link to={RouteCategoryDetails} className="flex items-center gap-2">
+                        <BiCategoryAlt className="text-muted-foreground" />
+                        Categories
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to={RouteUser} className="flex items-center gap-2">
+                        <FaRegUser className="text-muted-foreground" />
+                        Users
+                      </Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
+
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="text-red-500 focus:text-red-500">
                   <MdLogout className="mr-2" />
