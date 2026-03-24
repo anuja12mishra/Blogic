@@ -44,3 +44,7 @@ export const RouteComment = '/comments'
 export const RouteLike = '/likes'
 
 export const RouteUser = '/users'
+export const RoutePublicProfile = (username) => {
+    if (username) return `/u/${username}`
+    else return '/u/:username'
+}

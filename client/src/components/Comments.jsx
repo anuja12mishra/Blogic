@@ -7,7 +7,7 @@ import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { RouteSignIn } from '@/helpers/RouteName';
+import { RoutePublicProfile, RouteSignIn } from '@/helpers/RouteName';
 import { getEnv } from '@/helpers/getEnv';
 import { showtoast } from '@/helpers/showtoast';
 import { useFetch } from '@/hooks/useFetch';
@@ -69,22 +69,27 @@ const CommentItem = ({
 
     return (
         <div className="flex gap-4 group">
-            <Avatar className="flex-shrink-0 mt-1 h-9 w-9">
+        <Link to={RoutePublicProfile(data.authorId?.username)} className="flex-shrink-0 mt-1 h-9 w-9 group">
+            <Avatar className="h-full w-full">
                 <AvatarImage
                     src={data.authorId?.avatar || '/default-avatar.png'}
                     alt={data.authorId?.name || 'User'}
-                    className="rounded-full object-cover ring-2 ring-border/50"
+                    referrerPolicy="no-referrer"
+                    className="rounded-full object-cover ring-2 ring-border/50 group-hover:ring-purple-400 transition-all"
                 />
                 <AvatarFallback className="rounded-full bg-primary/10 flex items-center justify-center text-xs font-semibold text-primary h-full w-full">
                     {data.authorId?.name?.charAt(0)?.toUpperCase() || 'A'}
                 </AvatarFallback>
             </Avatar>
+        </Link>
 
             <div className="flex-1 space-y-1.5 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-bold text-sm tracking-tight text-foreground/90">
-                        {data.authorId?.name || 'Anonymous'}
-                    </span>
+                    <Link to={RoutePublicProfile(data.authorId?.username)}>
+                        <span className="font-bold text-sm tracking-tight text-foreground/90 hover:text-purple-600 transition-colors">
+                            {data.authorId?.name || 'Anonymous'}
+                        </span>
+                    </Link>
                     {isAuthor && (
                         <span className="bg-primary/10 text-primary text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-tighter">
                             Author
@@ -341,7 +346,7 @@ function Comments({ blogId, authorId }) {
                 <div className="bg-muted/30 p-4 rounded-3xl border border-border/40 mb-10 transition-all focus-within:ring-2 ring-primary/20">
                     <div className="flex gap-4">
                         <Avatar className="h-10 w-10 shrink-0">
-                            <AvatarImage src={user.user?.avatar} className="rounded-full object-cover" />
+                            <AvatarImage src={user.user?.avatar} referrerPolicy="no-referrer" className="rounded-full object-cover" />
                             <AvatarFallback className="bg-primary/10 text-primary text-sm font-bold h-full w-full flex items-center justify-center">
                                 {user.user?.name?.charAt(0)}
                             </AvatarFallback>

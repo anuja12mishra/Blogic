@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { FaRegCalendarAlt } from "react-icons/fa";
 import moment from 'moment';
 import { Link } from 'react-router-dom';
-import { RouteSingleBlogDetails } from '@/helpers/RouteName';
+import { RoutePublicProfile, RouteSingleBlogDetails } from '@/helpers/RouteName';
 function BlogCard({
     props
 }) {
@@ -20,11 +20,13 @@ function BlogCard({
                 <CardHeader className="h-full flex flex-col">
                     <div className="flex flex-col max-md:flex-row justify-between w-full gap-2 mb-2">
                         <div className="flex items-center gap-1.5">
-                            <Avatar className="flex items-center gap-1">
-                                <AvatarImage src={props?.blog?.author?.avatar} className="h-10 w-10 rounded-full object-cover border-2" />
-                                <p className="truncate">{props?.blog?.author?.name}</p>
-                                <AvatarFallback />
-                            </Avatar>
+                            <Link to={RoutePublicProfile(props?.blog?.author?.username)}>
+                                <Avatar className="flex items-center gap-1">
+                                    <AvatarImage src={props?.blog?.author?.avatar} referrerPolicy="no-referrer" className="h-10 w-10 rounded-full object-cover border-2" />
+                                    <p className="truncate hover:text-purple-600 transition-colors">{props?.blog?.author?.name}</p>
+                                    <AvatarFallback />
+                                </Avatar>
+                            </Link>
                         </div>
 
                         {props.blog.author && props.blog.author.role === "admin" ? (
@@ -52,6 +54,7 @@ function BlogCard({
                         <Avatar asChild className="w-full h-full">
                             <AvatarImage
                                 src={props.blog.featuredImage}
+                                referrerPolicy="no-referrer"
                                 className="rounded-md object-contain bg-gray-100 hover:scale-105 transition-transform duration-300"
                             />
                         </Avatar>

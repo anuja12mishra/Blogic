@@ -14,6 +14,8 @@ import BlogLike from '@/components/BlogLike';
 import RelatedBlog from '@/components/RelatedBlog';
 import ViewsCount from '@/components/ViewsCount';
 import LikedByDropdown from '@/components/LikedByDropdown';
+import { RoutePublicProfile } from '@/helpers/RouteName';
+import { Link } from 'react-router-dom';
 import { showtoast } from '@/helpers/showtoast';
 import BlogSkeleton from '@/pages/Blog/loading/BlogSkeleton';
 function SingleBlogDetails() {
@@ -102,12 +104,13 @@ function SingleBlogDetails() {
 
                     {/* Meta Info: Author & Stats */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-6 border-y border-border/50">
-                        <div className="flex items-center gap-3">
+                        <Link to={RoutePublicProfile(blog.author.username)} className="flex items-center gap-3 group">
                             <div className="relative">
                                 <img
                                     src={blog.author.avatar || '/default-avatar.png'}
-                                    alt={blog.author.name}
-                                    className="h-12 w-12 rounded-full object-cover border-2 border-background ring-2 ring-purple-100"
+                                    alt={blog.author.name }
+                                    referrerPolicy="no-referrer"
+                                    className="h-12 w-12 rounded-full object-cover border-2 border-background ring-2 ring-purple-100 group-hover:ring-purple-300 transition-all"
                                 />
                                 {blog.author.role === "admin" && (
                                     <div className="absolute -bottom-1 -right-1 bg-blue-500 text-[10px] font-bold text-white px-1.5 py-0.5 rounded-md border border-background">
@@ -116,12 +119,12 @@ function SingleBlogDetails() {
                                 )}
                             </div>
                             <div className="flex flex-col">
-                                <p className="font-semibold text-base text-foreground">{blog.author.name}</p>
+                                <p className="font-semibold text-base text-foreground group-hover:text-purple-600 transition-colors">{blog.author.name}</p>
                                 <p className="text-xs text-muted-foreground">
                                     {moment(blog.createdAt).format('MMMM DD, YYYY')} • {Math.ceil(decode(blog.blogContent).split(' ').length / 200)} min read
                                 </p>
                             </div>
-                        </div>
+                        </Link>
 
                         <div className="flex items-center gap-6 text-muted-foreground">
                             <div className="flex items-center gap-6">
