@@ -146,7 +146,7 @@ export const EditBlog = async (req, res, next) => {
 export const GetAllBlog = async (req, res, next) => {
     try {
 
-        const allBlogs = await Blog.find().populate('author', 'name avatar role').populate('category', 'name slug').sort({
+        const allBlogs = await Blog.find().populate('author', 'name avatar role username').populate('category', 'name slug').sort({
             updatedAt: -1
         }).lean().exec();
 
@@ -169,13 +169,13 @@ export const GetAllBlogProtect = async (req, res, next) => {
 
         let allBlogs;
         if (user.role === 'admin') {
-            allBlogs = await Blog.find().populate('author', 'name avatar role').populate('category', 'name slug').sort({
+            allBlogs = await Blog.find().populate('author', 'name avatar role username').populate('category', 'name slug').sort({
                 updatedAt: -1
             }).lean().exec();
         } else {
             allBlogs = await Blog.find({
                 author: user._id
-            }).populate('author', 'name avatar role').populate('category', 'name slug').sort({
+            }).populate('author', 'name avatar role username').populate('category', 'name slug').sort({
                 updatedAt: -1
             }).lean().exec();
         }
@@ -198,7 +198,7 @@ export const GetABlog = async (req, res, next) => {
         const { skipViewIncrement } = req.query;
 
         const blog = await Blog.findById(blogId)
-            .populate('author', 'name avatar role')
+            .populate('author', 'name avatar role username')
             .populate('category', 'name');
 
         if (!blog) {
@@ -306,7 +306,7 @@ export const GetBlogByCategoryOnly = async (req, res, next) => {
 
         const blog = await Blog.find({
             category: categoryId
-        }).populate('author', 'name avatar role').populate('category', 'name slug').sort({
+        }).populate('author', 'name avatar role username').populate('category', 'name slug').sort({
             updatedAt: -1
         }).lean().exec();
 
@@ -361,7 +361,7 @@ export const Search = async (req, res, next) => {
             }
             ]
         })
-            .populate('author', 'name avatar role')
+            .populate('author', 'name avatar role username')
             .populate('category', 'name slug')
             .sort({
                 title: 1

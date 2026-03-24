@@ -53,6 +53,7 @@ export const Register = async (req, res, next) => {
       name,
       email,
       password: hashPass,
+      username: email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '') + Math.floor(Math.random() * 1000)
     });
 
     await newUser.save();
@@ -152,7 +153,8 @@ export const GoogleLogin = async (req, res, next) => {
         email,
         avatar,
         name,
-        password: hashPass
+        password: hashPass,
+        username: email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '') + Math.floor(Math.random() * 1000)
       });
 
       user = await newUser.save();

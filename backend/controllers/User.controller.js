@@ -20,11 +20,18 @@ export const getUserDetails = async (req, res, next) => {
         const {
             userId
         } = req.params;
-        const user = await User.findOne({
+        let user = await User.findOne({
             _id: userId
         }).lean().exec();
         if (!user) {
             return next(handleError(404, "User not found"));
+        }
+
+        // Generate username if missing (for legacy users)
+        if (!user.username) {
+            const generatedUsername = user.email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '') + Math.floor(Math.random() * 1000);
+            await User.findByIdAndUpdate(userId, { username: generatedUsername });
+            user.username = generatedUsername;
         }
 
         // Do not send password
@@ -34,6 +41,31 @@ export const getUserDetails = async (req, res, next) => {
             success: true,
             message: "User data found",
             user
+        });
+    } catch (error) {
+        next(handleError(500, error.message));
+    }
+}
+
+export const getUserProfile = async (req, res, next) => {
+    try {
+        const { username } = req.params;
+        const user = await User.findOne({ username }).select('-password').lean().exec();
+        
+        if (!user) {
+            return next(handleError(404, "User not found"));
+        }
+
+        const blogs = await Blog.find({ author: user._id })
+            .populate('category', 'name slug')
+            .sort({ createdAt: -1 })
+            .lean()
+            .exec();
+
+        res.status(200).json({
+            success: true,
+            user,
+            blogs
         });
     } catch (error) {
         next(handleError(500, error.message));

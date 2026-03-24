@@ -59,7 +59,7 @@ export const GetAllCommentByBlogId = async (req, res, next) => {
     try {
         const {blogId} = req.params;
         const comments = await Comment.find({blogId:blogId})
-            .populate('authorId', 'avatar name')
+            .populate('authorId', 'avatar name username')
             .sort({createdAt: -1}) // Newest first by default
             .lean()
             .exec();
@@ -133,7 +133,7 @@ export const GetAllComment = async (req, res, next) => {
     try {
         // console.log('blogId',blogId)
         const comments = await Comment.find()
-            .populate('authorId', 'name')
+            .populate('authorId', 'name username')
             .populate({
                 path: 'blogId',
                 select: 'title slug category',
@@ -165,7 +165,7 @@ export const ProtectedGetAllComment = async (req, res, next) => {
         let comments
         if(user.role ==='admin'){
             comments = await Comment.find()
-                .populate('authorId', 'name')
+                .populate('authorId', 'name username')
                 .populate({
                     path: 'blogId',
                     select: 'title slug category',
@@ -180,7 +180,7 @@ export const ProtectedGetAllComment = async (req, res, next) => {
         }
         else{
             comments = await Comment.find({authorId:user._id})
-                .populate('authorId', 'name')
+                .populate('authorId', 'name username')
                 .populate({
                     path: 'blogId',
                     select: 'title slug category',
