@@ -1,13 +1,13 @@
-import multer from 'multer';
+import multer, { FileFilterCallback } from 'multer';
+import { Request } from 'express';
 
-// Use memory storage - no temporary files needed
 const storage = multer.memoryStorage();
 
-function fileFilter(req, file, cb) {
+function fileFilter(req: Request, file: Express.Multer.File, cb: FileFilterCallback) {
     const allowedTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'];
     
     if (!allowedTypes.includes(file.mimetype)) {
-        return cb(new Error("Only images are allowed"), false);
+        return cb(new Error("Only images are allowed") as any, false);
     }
     
     cb(null, true);

@@ -5,11 +5,9 @@ import { authenticate } from '../middleware/authenticate.js';
 const BlogLikeRoute = express.Router();
 
 BlogLikeRoute.get('/like-count/:blogId/:authorId', GetLikeCount);
-
-BlogLikeRoute.post('/update-like',authenticate, SetLike);
-BlogLikeRoute.get('/get-like-by-blog/:blogId',authenticate,GetAllLikesByBlog)
-BlogLikeRoute.get('/protected-get-likes',authenticate,ProtectedGetAllLike)
-BlogLikeRoute.delete('/delete-like/:likeId',authenticate,DeleteLike)
-
+BlogLikeRoute.post('/update-like', authenticate, SetLike);
+BlogLikeRoute.get('/get-like-by-blog/:blogId', authenticate, GetAllLikesByBlog);
+BlogLikeRoute.get('/protected-get-likes', authenticate, ProtectedGetAllLike);
+BlogLikeRoute.delete('/delete-like/:likeId', authenticate, DeleteLike);
 
 export default BlogLikeRoute;
