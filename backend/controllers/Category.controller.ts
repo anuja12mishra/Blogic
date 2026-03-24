@@ -1,50 +1,39 @@
-import {
-    handleError
-} from "../helpers/handleError.js";
+import { Request, Response, NextFunction } from "express";
+import { handleError } from "../helpers/handleError.js";
 import Category from "../models/category.model.js";
-import Blog from '../models/blog.model.js'
+import Blog from '../models/blog.model.js';
 import { deleteBlogWithRelatedData } from "../helpers/DeleteRelatedBlog.js";
-export const AddCategory = async (req, res, next) => {
+
+export const AddCategory = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const {
-            name,
-            slug
-        } = req.body;
+        const { name, slug } = req.body;
         
         if (!name || !slug) {
             return next(handleError(400, "All fields are required"));
         }
         
-        const isCategoryExit = await Category.findOne({
-            name
-        });
-        
+        const isCategoryExit = await Category.findOne({ name });
         if (isCategoryExit) {
             return next(handleError(409, 'Category already exists'));
         }
         
-        let newCategory = new Category({
-            name,
-            slug
-        });
-        
-        newCategory = await newCategory.save();
+        const newCategory = new Category({ name, slug });
+        await newCategory.save();
         
         res.status(201).json({
             success: true,
             message: "Category added successfully",
             category: newCategory
         });
-    } catch (error) {
+    } catch (error: any) {
         console.error(error.message);
         next(handleError(500, error.message));
     }
 };
 
-export const DeleteCategory = async (req, res, next) => {
+export const DeleteCategory = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { categoryId } = req.params;
-
         const existingCategory = await Category.findById(categoryId);
 
         if (!existingCategory) {
@@ -52,25 +41,19 @@ export const DeleteCategory = async (req, res, next) => {
         }
 
         const name = existingCategory.name;
-
-        // Find all blogs in this category
         const blogsInCategory = await Blog.find({ category: categoryId });
 
-        // Delete each blog with its related data
         const deletionPromises = blogsInCategory.map(blog => 
-            deleteBlogWithRelatedData(blog._id)
+            deleteBlogWithRelatedData(blog._id as string)
         );
 
-        // Wait for all blog deletions to complete
         const deletionResults = await Promise.all(deletionPromises);
-
-        // Log any failed deletions
         const failedDeletions = deletionResults.filter(result => !result.success);
+        
         if (failedDeletions.length > 0) {
             console.error(`Failed to delete ${failedDeletions.length} blogs when deleting category ${categoryId}`);
         }
 
-        // Delete the category itself
         await Category.findByIdAndDelete(categoryId);
 
         return res.status(200).json({
@@ -84,35 +67,11 @@ export const DeleteCategory = async (req, res, next) => {
     }
 };
 
-// export const DeleteCategory = async (req, res, next) => {
-//     try {
-//         const { categoryId } = req.params;
-
-//         const existingCategory = await Category.findById(categoryId);
-
-//         if (!existingCategory) {
-//             return next(handleError(404, 'Category not found'));
-//         }
-
-//         const name = existingCategory.name;
-//         await Category.findByIdAndDelete(categoryId);
-
-//         return res.status(200).json({
-//             success: true,
-//             message: `Category '${name}' deleted successfully.`
-//         });
-//     } catch (error) {
-//         console.error("Error in DeleteCategory:", error);
-//         return next(handleError(500, "Internal Server Error"));
-//     }
-// };
-
-
-export const GetACategory = async (req, res, next) => {
+export const GetACategory = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const {categoryId} = req.params;
-        const category = await Category.findById({_id:categoryId});
-        if(!category){
+        const { categoryId } = req.params;
+        const category = await Category.findById(categoryId);
+        if (!category) {
             return next(handleError(404, 'Category not found'));
         }
         res.status(200).json({
@@ -120,26 +79,27 @@ export const GetACategory = async (req, res, next) => {
             message: "Categories retrieved successfully",
             category: category
         });
-    } catch (error) {
-        console.error(error.message);
-        next(handleError(500, error.message));
-    }
-};
-export const GetAllCategory = async (req, res, next) => {
-    try {
-        const categories = await Category.find({}).sort({name:1}).lean().exec();
-        res.status(200).json({
-            success: true,
-            message: "Categories retrieved successfully",
-            categories: categories
-        });
-    } catch (error) {
+    } catch (error: any) {
         console.error(error.message);
         next(handleError(500, error.message));
     }
 };
 
-export const EditCategory = async (req, res, next) => {
+export const GetAllCategory = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const categories = await Category.find({}).sort({ name: 1 }).lean().exec();
+        res.status(200).json({
+            success: true,
+            message: "Categories retrieved successfully",
+            categories: categories
+        });
+    } catch (error: any) {
+        console.error(error.message);
+        next(handleError(500, error.message));
+    }
+};
+
+export const EditCategory = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { categoryId } = req.params;
         const { name, slug } = req.body;
@@ -149,12 +109,10 @@ export const EditCategory = async (req, res, next) => {
         }
         
         const isCategoryExit = await Category.findById(categoryId);
-        
         if (!isCategoryExit) {
             return next(handleError(404, 'Category not found'));
         }
         
-        // Check if another category with the same name exists (excluding current category)
         const duplicateCategory = await Category.findOne({
             name,
             _id: { $ne: categoryId }
@@ -166,7 +124,8 @@ export const EditCategory = async (req, res, next) => {
         
         const updatedCategory = await Category.findByIdAndUpdate(
             categoryId,
-            { name, slug }
+            { name, slug },
+            { new: true }
         );
         
         res.status(200).json({
@@ -174,7 +133,7 @@ export const EditCategory = async (req, res, next) => {
             message: "Category updated successfully",
             category: updatedCategory
         });
-    } catch (error) {
+    } catch (error: any) {
         console.error(error.message);
         next(handleError(500, error.message));
     }

@@ -64,7 +64,7 @@ const LikedByDropdown = ({ props: blogId }) => {
                                 i === 0 ? "z-30" : i === 1 ? "z-20" : "z-10"
                             )}
                         >
-                            <AvatarImage src={like.authorId?.avatar} className="object-cover" />
+                            <AvatarImage referrerPolicy="no-referrer" src={like.authorId?.avatar} className="object-cover" />
                             <AvatarFallback className="text-[10px] font-bold bg-purple-100 text-purple-700">
                                 {like.authorId?.name?.charAt(0)}
                             </AvatarFallback>
@@ -97,7 +97,7 @@ const LikedByDropdown = ({ props: blogId }) => {
                                 className="flex items-center gap-3 p-2 hover:bg-secondary/50 rounded-lg transition-colors group/item"
                             >
                                 <Avatar className="size-8">
-                                    <AvatarImage src={like.authorId?.avatar} className="object-cover" />
+                                    <AvatarImage referrerPolicy="no-referrer" src={like.authorId?.avatar} className="object-cover" />
                                     <AvatarFallback className="text-xs font-bold">
                                         {like.authorId?.name?.charAt(0)}
                                     </AvatarFallback>

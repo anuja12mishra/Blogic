@@ -18,7 +18,8 @@ import {
   RouteSignIn,
   RouteSignUp,
   RouteSingleBlogDetails,
-  RouteUser
+  RouteUser,
+  RoutePublicProfile
 } from "./helpers/RouteName"
 
 import AuthRouteProtection from "./components/Protected Routes/AuthRouteProtection";
@@ -45,6 +46,7 @@ const SerachResult = lazy(() => import("./pages/SerachResult"));
 const CommentDashboard = lazy(() => import("./pages/CommentDashboard"));
 const UsersDashboard = lazy(() => import("./pages/UsersDashboard"));
 const LikeDashboard = lazy(() => import("./pages/LikeDashboard"));
+const UserProfile = lazy(() => import("./pages/UserProfile"));
 
 function App() {
   return (
@@ -56,6 +58,7 @@ function App() {
             <Route path={RouteSingleBlogDetails()} element={<SingleBlogDetails />} />
             <Route path={RouteBlogByCategory()} element={<BlogByCategory />} />
             <Route path={RouteSearch()} element={<SerachResult />} />
+            <Route path={RoutePublicProfile()} element={<UserProfile />} />
 
             <Route element={<AuthRouteProtection />}>
               <Route path={RouteProfile} element={<Profile />} />

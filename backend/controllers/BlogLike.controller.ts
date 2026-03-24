@@ -1,15 +1,11 @@
+import { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
-import {
-    handleError
-} from "../helpers/handleError.js";
+import { handleError } from "../helpers/handleError.js";
 import BlogLike from "../models/blogLike.model.js";
-export const SetLike = async (req, res, next) => {
+
+export const SetLike = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const {
-            authorId,
-            blogId,
-            action
-        } = req.body;
+        const { authorId, blogId, action } = req.body;
 
         if (!authorId) return next(handleError(400, "Author ID is required"));
         if (!blogId) return next(handleError(400, "Blog ID is required"));
@@ -17,30 +13,19 @@ export const SetLike = async (req, res, next) => {
         let isLiked = false;
 
         if (action === 'like') {
-            const existingLike = await BlogLike.findOne({
-                authorId,
-                blogId
-            });
+            const existingLike = await BlogLike.findOne({ userId: authorId, blogId });
             if (!existingLike) {
-                await new BlogLike({
-                    authorId,
-                    blogId
-                }).save();
+                await new BlogLike({ userId: authorId, blogId }).save();
                 isLiked = true;
             }
         } else if (action === 'unlike') {
-            await BlogLike.findOneAndDelete({
-                authorId,
-                blogId
-            });
+            await BlogLike.findOneAndDelete({ userId: authorId, blogId });
             isLiked = false;
         } else {
             return next(handleError(400, "Invalid action"));
         }
 
-        const likeCount = await BlogLike.countDocuments({
-            blogId
-        });
+        const likeCount = await BlogLike.countDocuments({ blogId });
 
         res.status(200).json({
             success: true,
@@ -48,30 +33,21 @@ export const SetLike = async (req, res, next) => {
             isLiked
         });
 
-    } catch (error) {
+    } catch (error: any) {
         console.error('SetLike error:', error.message);
         next(handleError(500, error.message));
     }
 };
 
-
-export const GetLikeCount = async (req, res, next) => {
+export const GetLikeCount = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const {
-            blogId,
-            authorId
-        } = req.params;
+        const { blogId, authorId } = req.params;
 
-        const likeCount = await BlogLike.countDocuments({
-            blogId
-        });
+        const likeCount = await BlogLike.countDocuments({ blogId });
 
         let isUserLiked = false;
         if (authorId && authorId !== 'undefined' && authorId !== 'null') {
-            isUserLiked = await BlogLike.exists({
-                authorId,
-                blogId
-            });
+            isUserLiked = await BlogLike.exists({ userId: authorId, blogId }) as any;
         }
 
         res.status(200).json({
@@ -79,47 +55,42 @@ export const GetLikeCount = async (req, res, next) => {
             like: likeCount,
             isLiked: Boolean(isUserLiked)
         });
-    } catch (error) {
+    } catch (error: any) {
         console.error('GetLikeCount error:', error.message);
         next(handleError(500, error.message));
     }
 };
 
-export const GetAllLikesByBlog = async (req, res, next) => {
+export const GetAllLikesByBlog = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        const { blogId } = req.params;
 
-        const {
-            blogId
-        } = req.params;
-
-        if (!blogId || !mongoose.Types.ObjectId.isValid(blogId)) {
+        if (!blogId || !mongoose.Types.ObjectId.isValid(blogId as string)) {
             return next(handleError(400, "Valid Blog ID is required"));
         }
 
-        const allLikes = await BlogLike.find({
-            blogId: blogId
-        }).populate('authorId', 'name').lean().exec();
+        const allLikes = await BlogLike.find({ blogId: blogId }).populate('userId', 'name').lean().exec();
 
         res.status(200).json({
             success: true,
             like: allLikes
         });
-    } catch (error) {
+    } catch (error: any) {
         console.error('GetAllLikesByBlog error:', error.message);
         next(handleError(500, error.message));
     }
 }
 
-export const ProtectedGetAllLike = async (req, res, next) => {
+export const ProtectedGetAllLike = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const user = req.user;
+        const user = (req as any).user;
         if (!user || !user._id) {
             return next(handleError(401, "User authentication required"));
         }
         let allLikes;
         if (user.role === 'admin') {
             allLikes = await BlogLike.find()
-                .populate('authorId', 'name email')
+                .populate('userId', 'name email')
                 .populate({
                     path: 'blogId',
                     select: 'title author createdAt',
@@ -130,26 +101,25 @@ export const ProtectedGetAllLike = async (req, res, next) => {
                 })
                 .lean().exec();
         } else {
-            allLikes = await BlogLike.find({
-                authorId: user._id
-            }).populate('authorId', 'name email').populate('blogId', 'author title').lean().exec();
+            allLikes = await BlogLike.find({ userId: user._id })
+                .populate('userId', 'name email')
+                .populate('blogId', 'author title')
+                .lean().exec();
         }
         res.status(200).json({
             success: true,
             message: "Likes retrieved successfully",
             like: allLikes
         });
-    } catch (error) {
+    } catch (error: any) {
         console.error('ProtectedGetAllLike error:', error.message);
         next(handleError(500, error.message));
     }
 }
 
-export const DeleteLike = async (req, res, next) => {
+export const DeleteLike = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const {
-            likeId
-        } = req.params;
+        const { likeId } = req.params;
         if (!likeId) {
             return next(handleError(404, 'Like not found'));
         }
