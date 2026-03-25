@@ -8,10 +8,6 @@
     "build": "tsc",
     "dev": "tsx watch index.ts"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.828.0",
     "@google/genai": "^1.7.0",
@@ -25,21 +21,20 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.15.1",
     "multer": "^2.0.1",
-    "nodemon": "^3.1.10",
     "uuid": "^11.1.0",
+
+    "typescript": "^6.0.2",
+
     "@types/node": "^25.5.0",
-    "typescript": "^6.0.2"
+    "@types/express": "^5.0.6",
+    "@types/cors": "^2.8.19",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.1.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/mongoose": "^5.11.96"
   },
   "devDependencies": {
-    "@types/bcryptjs": "^2.4.6",
-    "@types/cookie-parser": "^1.4.10",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
-    "@types/jsonwebtoken": "^9.0.10",
-    "@types/mongoose": "^5.11.96",
-    "@types/multer": "^2.1.0",
-    "@types/node": "^25.5.0",
-    "tsx": "^4.21.0",
-    "typescript": "^6.0.2"
+    "tsx": "^4.21.0"
   }
 }
