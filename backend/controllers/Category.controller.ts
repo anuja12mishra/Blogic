@@ -43,8 +43,8 @@ export const DeleteCategory = async (req: Request, res: Response, next: NextFunc
         const name = existingCategory.name;
         const blogsInCategory = await Blog.find({ category: categoryId });
 
-        const deletionPromises = blogsInCategory.map(blog => 
-            deleteBlogWithRelatedData(blog._id as string)
+        const deletionPromises = blogsInCategory.map((blog: any) => 
+            deleteBlogWithRelatedData(blog._id.toString())
         );
 
         const deletionResults = await Promise.all(deletionPromises);

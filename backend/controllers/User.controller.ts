@@ -134,8 +134,8 @@ export const DeleteUser = async (req: Request, res: Response, next: NextFunction
         const userName = user.name;
         const userBlogs = await Blog.find({ author: userId });
 
-        const blogDeletionPromises = userBlogs.map(blog => 
-            deleteBlogWithRelatedData(blog._id as string)
+        const blogDeletionPromises = userBlogs.map((blog: any) => 
+            deleteBlogWithRelatedData(blog._id.toString())
         );
 
         await Promise.all(blogDeletionPromises);
