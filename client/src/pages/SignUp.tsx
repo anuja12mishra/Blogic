@@ -1,0 +1,153 @@
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import logo from '@/assets/logo.png';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Link, useNavigate } from 'react-router-dom';
+import { RouteSignIn } from '@/helpers/RouteName';
+import { getEnv } from '@/helpers/getEnv';
+import { showtoast } from '@/helpers/showtoast';
+import GoogleLogin from '@/components/GoogleLogin';
+import Loading from '@/components/Loading';
+
+const formSchema = z.object({
+    name: z.string().min(3, 'Name should have a minimum length of 3'),
+    email: z.string().email('Please enter a valid email address'),
+    password: z.string().min(4, 'Password must be at least 4 characters long'),
+    confirmpassword: z.string()
+}).refine((data) => data.password === data.confirmpassword, {
+    message: 'Passwords do not match',
+    path: ['confirmpassword'],
+});
+
+type SignUpFormValues = z.infer<typeof formSchema>;
+
+const Signup: React.FC = () => {
+    const navigate = useNavigate();
+    const [loading, setLoading] = React.useState(false);
+
+    const form = useForm<SignUpFormValues>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            email: '',
+            password: '',
+            name: '',
+            confirmpassword: ''
+        },
+    });
+
+    async function onSubmit(values: SignUpFormValues) {
+        setLoading(true);
+        try {
+            const res = await fetch(`${getEnv('VITE_API_URL')}/api/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(values)
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                const errorMessage = data.message || `Server error: ${res.status}`;
+                showtoast('error', errorMessage);
+                return;
+            }
+
+            showtoast('success', data.message || 'Registration successful!');
+            navigate(RouteSignIn);
+
+        } catch (err) {
+            showtoast('error', 'Network error: Unable to connect to server');
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    if (loading) return <Loading />;
+
+    return (
+        <div className="flex flex-col justify-center items-center min-h-screen p-6 maze-background relative">
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="w-[270px] sm:w-[350px] md:w-[450px] space-y-6 border-2 border-border rounded-lg p-6 bg-card relative z-50">
+                    <div className="flex justify-center mb-3">
+                        <img src={logo} alt="logo-image" width={65} className="bg-transparent drop-shadow-lg" />
+                    </div>
+                    <h1 className='text-2xl text-center py-1 border-b-2 border-border'>Create your Account</h1>
+                    <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Name</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="Enter your Name" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Email</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="Enter your email (Gmail only)" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="password"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Password</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="Enter your password" type="password" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="confirmpassword"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Confirm Password</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="Enter your password again" type="password" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <Button type="submit" className="w-full transition duration-300 cursor-pointer">
+                        Submit
+                    </Button>
+                    <div className='flex gap-2 justify-center'>
+                        <p className='text-xs text-center'>Already have an account ?</p>
+                        <Link className='font-bold text-xs text-blue-600' to={RouteSignIn}> Sign In</Link>
+                    </div>
+                    <div className="flex items-center gap-2 my-4">
+                        <hr className="flex-grow border-t border-border" />
+                        <p className="text-xs font-bold text-center">Or</p>
+                        <hr className="flex-grow border-t border-border" />
+                    </div>
+
+                    <div className='w-full p-0'>
+                        <GoogleLogin loading={loading} setLoading={setLoading} />
+                    </div>
+                </form>
+            </Form>
+        </div>
+    );
+};
+
+export default Signup;
