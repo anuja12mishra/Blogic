@@ -5,6 +5,7 @@ import {
 } from "@/components/ui/card"
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '@/store';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { z } from 'zod';
@@ -29,16 +30,18 @@ const formSchema = z.object({
     bio: z.string().min(5, "Bio must be at least 5 characters"),
 });
 
+type ProfileFormValues = z.infer<typeof formSchema>;
+
 
 function Profile() {
-    const [avatar, setAvatar] = useState();
-    const [file, setFile] = useState();
+    const [avatar, setAvatar] = useState<string | null>(null);
+    const [file, setFile] = useState<File | null>(null);
     const [submitting, setSubmiting] = useState(false);
-    const user = useSelector((state) => state.user);
+    const user = useSelector((state: RootState) => state.user);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const { data: userData, loading } = useFetch(
+    const { data: userData, loading } = useFetch<{user: any, success: boolean}>(
         `${getEnv('VITE_API_URL')}/api/user/user-details/${user?.user?._id}`,
         { method: 'GET', credentials: 'include' }
     );
@@ -60,7 +63,6 @@ function Profile() {
                 name: userData.user.name || '',
                 email: userData.user.email || '',
                 bio: userData.user.bio || '',
-                password: ''
             });
         }
     }, [userData]);
@@ -68,7 +70,10 @@ function Profile() {
     if (loading) return <Loading />;
 
 
-    const handleFileUpload = (files) => {
+    if (loading) return <Loading />;
+
+
+    const handleFileUpload = (files: File[]) => {
         const uploadedFile = files[0];
         const preview = URL.createObjectURL(uploadedFile);
         // console.log("handleFileUpload",uploadedFile);
@@ -77,11 +82,13 @@ function Profile() {
     }
 
 
-    async function onSubmit(values) {
+    async function onSubmit(values: ProfileFormValues) {
         setSubmiting(true)
         try {
-            const newFormData = new FormData;
-            newFormData.append('file', file);
+            const newFormData = new FormData();
+            if (file) {
+                newFormData.append('file', file);
+            }
             newFormData.append('user', JSON.stringify(values));
             const res = await fetch(`${getEnv('VITE_API_URL')}/api/user/user-update/${user?.user?._id}`, {
                 method: 'PUT',

@@ -17,13 +17,13 @@ import LikedByDropdown from '@/components/LikedByDropdown';
 import { RoutePublicProfile } from '@/helpers/RouteName';
 import { Link } from 'react-router-dom';
 import { showtoast } from '@/helpers/showtoast';
-import BlogSkeleton from '@/pages/Blog/loading/BlogSkeleton';
+import BlogSkeleton from './loading/BlogSkeleton';
 function SingleBlogDetails() {
     const { blog_id } = useParams();
-    const [shouldSkipViewIncrement, setShouldSkipViewIncrement] = useState(null);
+    const [shouldSkipViewIncrement, setShouldSkipViewIncrement] = useState<boolean | null>(null);
 
 
-    function handleShare(blog) {
+    function handleShare(blog: any) {
         const blogUrl = window.location.href;
         const customMessage = `Check out this blog: ${blog.title}\n${blogUrl}`;
         try {
@@ -67,10 +67,10 @@ function SingleBlogDetails() {
     }, [blog_id]);
 
     // Custom fetch hook that conditionally increments views
-    const { data: blogData, loading: blogLoading } = useFetch(
+    const { data: blogData, loading: blogLoading } = useFetch<{blog: any}>(
         shouldSkipViewIncrement !== null
             ? `${getEnv('VITE_API_URL')}/api/blog/get-a-blog/${blog_id}${shouldSkipViewIncrement ? '?skipViewIncrement=true' : ''}`
-            : null,
+            : "",
         { method: 'GET', credentials: 'include' },
         [blog_id, shouldSkipViewIncrement]
     );
@@ -182,7 +182,7 @@ function SingleBlogDetails() {
                                 Continue Reading
                             </h2>
                             <div className="space-y-6">
-                                <RelatedBlog props={{ category: blogData.blog?.category?._id, currentBlogSlug: blogData.blog?.slug }} />
+                                <RelatedBlog category={blogData.blog?.category?._id} currentBlogSlug={blogData.blog?.slug} />
                             </div>
                         </div>
                     </div>

@@ -19,18 +19,15 @@ interface RelatedBlogData {
 }
 
 interface RelatedBlogProps {
-    props: {
-        category: string;
-        currentBlogSlug: string;
-        props: string; // blogId for refetching dependency
-    };
+    category: string | undefined;
+    currentBlogSlug: string | undefined;
 }
 
-const RelatedBlog: React.FC<RelatedBlogProps> = ({ props }) => {
+const RelatedBlog: React.FC<RelatedBlogProps> = ({ category, currentBlogSlug }) => {
     const { data: relatedBlog, loading: relatedBlogLoading } = useFetch<RelatedBlogData>(
-        `${getEnv('VITE_API_URL')}/api/blog/get-blog-by-category/${props.category}/${props.currentBlogSlug}`,
+        `${getEnv('VITE_API_URL')}/api/blog/get-blog-by-category/${category}/${currentBlogSlug}`,
         { method: 'GET', credentials: 'include' },
-        [props.props]
+        [category, currentBlogSlug]
     );
 
     if (relatedBlogLoading) {
@@ -42,7 +39,7 @@ const RelatedBlog: React.FC<RelatedBlogProps> = ({ props }) => {
             {relatedBlog && relatedBlog.blog.length > 0 ? (
                 relatedBlog.blog.map((data) => {
                     return (
-                        <Link key={data._id} to={RouteSingleBlogDetails(props.category, data.slug, data._id)}>
+                        <Link key={data._id} to={RouteSingleBlogDetails(category || "", data.slug, data._id)}>
                             <div className='flex items-center gap-2 m-2 bg-muted w-full rounded-sm p-2'>
                                 <img className='w-16 h-16 object-cover rounded-sm' src={data.featuredImage} alt={data.title} />
                                 <div className='flex-row justify-between items-center'>

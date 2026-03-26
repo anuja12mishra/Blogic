@@ -10,7 +10,7 @@ CommentRoute.put('/like/:commentId', authenticate, LikeComment);
 CommentRoute.post('/add', authenticate, AddComment);
 CommentRoute.get('/protected-all-comments', authenticate, ProtectedGetAllComment);
 
-CommentRoute.get('/get-all-comment/:blogId', GetAllCommentByBlogId);
+CommentRoute.get('/get-all-comment/:blogId', authenticate, GetAllCommentByBlogId);
 CommentRoute.get('/comment-count/:blogId', CommentCount);
 CommentRoute.get('/all-comments', GetAllComment);
 

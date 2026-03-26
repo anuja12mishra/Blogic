@@ -21,23 +21,24 @@ import { FaRegEdit } from "react-icons/fa";
 import { RouteSingleBlogDetails } from '@/helpers/RouteName'
 import { handleCategoryDelete } from '@/helpers/handleCategoryDelete'
 import { useSelector } from 'react-redux'
+import { RootState } from '@/store'
 import moment from 'moment'
 
 function CommentDashboard() {
-  const user = useSelector((state) => state.user)
+  const user = useSelector((state: RootState) => state.user)
   const [refresh, setRefresh] = useState(false);
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editValue, setEditValue] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
 
   // Pass refresh as a dependency to trigger re-fetch
-  const { data: CommentData, loading, error } = useFetch(
+  const { data: CommentData, loading, error } = useFetch<{comment: any[]}>(
     `${getEnv('VITE_API_URL')}/api/comment/protected-all-comments`,
     { method: 'GET', credentials: 'include' },
     [refresh] 
   );
   //console.log('CommentData',CommentData)
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: string) => {
     if (!window.confirm('Are you sure you want to delete this comment?')) return;
     try {
       const deleteres = await handleCategoryDelete(
@@ -56,7 +57,7 @@ function CommentDashboard() {
     }
   };
 
-  const handleEdit = async (commentId) => {
+  const handleEdit = async (commentId: string) => {
     if (!editValue.trim()) return;
     setIsUpdating(true);
     try {
@@ -135,7 +136,7 @@ function CommentDashboard() {
             </TableHeader>
             <TableBody>
               {comments && comments.length > 0 ? (
-                comments.map((comment) => (
+                comments.map((comment: any) => (
                   <TableRow key={comment._id}>
                     <TableCell className="font-medium">
                       {comment.blogId?.title}

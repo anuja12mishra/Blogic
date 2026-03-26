@@ -16,26 +16,26 @@ import { useFetch } from '@/hooks/useFetch'
 import { showtoast } from '@/helpers/showtoast'
 import { getEnv } from '@/helpers/getEnv'
 import Loading from '@/components/Loading'
-import { MdDeleteOutline } from "react-icons/md";
+import { handleBlogDelete } from '@/helpers/handleBlogDelete'
+import { MdDeleteOutline, MdOutlineRemoveRedEye } from "react-icons/md";
 import { FaRegEdit } from "react-icons/fa";
-import { handleBlogDelete } from '@/helpers/hangleBlogDelete'
-import { MdOutlineRemoveRedEye } from "react-icons/md";
 import moment from 'moment'
 import { useSelector } from 'react-redux'
+import { RootState } from '@/store'
 
 function BlogDetails() {
-    const user = useSelector((state) => state.user)
+    const user = useSelector((state: RootState) => state.user)
     const [refresh, setRefresh] = useState(false);
 
     // Pass refresh as a dependency to trigger re-fetch
-    const { data: blogsData, loading, error } = useFetch(
+    const { data: blogsData, loading, error } = useFetch<{blog: any[]}>(
         `${getEnv('VITE_API_URL')}/api/blog/protect-get-all-blogs`,
         { method: 'GET', credentials: 'include' },
         [refresh]
     );
     console.log('blogsData', blogsData?.blog)
 
-    const handleDelete = async (id) => {
+    const handleDelete = async (id: string) => {
         try {
             const deleteres = await handleBlogDelete(
                 `${getEnv('VITE_API_URL')}/api/blog/delete/${id}`
@@ -103,8 +103,8 @@ function BlogDetails() {
                 <CardContent>
                     <Table>
                         <TableCaption>
-                            {blogsData?.blog?.length > 0
-                                ? `A list of ${blogsData?.blog?.length} blogs.`
+                            {blogsData && blogsData.blog && blogsData.blog.length > 0
+                                ? `A list of ${blogsData.blog.length} blogs.`
                                 : "No Blogs found."
                             }
                         </TableCaption>
@@ -121,7 +121,7 @@ function BlogDetails() {
                         </TableHeader>
                         <TableBody>
                             {
-                                blogs.map((data, index) => {
+                                blogs.map((data: any, index: number) => {
                                     return <TableRow key={index}>
                                         <TableCell>
                                             {data.author?.name}

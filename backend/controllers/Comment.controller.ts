@@ -30,9 +30,13 @@ export const AddComment = async (req: Request, res: Response, next: NextFunction
     }
 };
 
+
 export const GetAllCommentByBlogId = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { blogId } = req.params;
+        // Get logged-in user ID (if any) from authentication middleware
+        const currentUserId = (req as any).user?._id || null; // adjust field name as per your auth setup
+
         const comments: any[] = await Comment.find({ blogId: blogId })
             .populate('authorId', 'avatar name username')
             .sort({ createdAt: -1 })
@@ -41,8 +45,12 @@ export const GetAllCommentByBlogId = async (req: Request, res: Response, next: N
 
         const processedComments = comments.map(c => ({
             ...c,
-            likeCount: c.likes ? c.likes.length : 0
+            likeCount: c.likes ? c.likes.length : 0,
+            // Add 'liked' flag: true if current user's ID exists in the 'likes' array
+            liked: currentUserId ? c.likes?.includes(currentUserId.toString()) ?? false : false
         }));
+
+        console.log(processedComments);
 
         res.status(200).json({
             success: true,
@@ -54,6 +62,31 @@ export const GetAllCommentByBlogId = async (req: Request, res: Response, next: N
         next(handleError(500, error.message));
     }
 };
+
+// export const GetAllCommentByBlogId = async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//         const { blogId } = req.params;
+//         const comments: any[] = await Comment.find({ blogId: blogId })
+//             .populate('authorId', 'avatar name username')
+//             .sort({ createdAt: -1 })
+//             .lean()
+//             .exec();
+
+//         const processedComments = comments.map(c => ({
+//             ...c,
+//             likeCount: c.likes ? c.likes.length : 0
+//         }));
+
+//         res.status(200).json({
+//             success: true,
+//             message: "Comments retrieved successfully",
+//             comment: processedComments
+//         });
+//     } catch (error: any) {
+//         console.error(error.message);
+//         next(handleError(500, error.message));
+//     }
+// };
 
 export const LikeComment = async (req: Request, res: Response, next: NextFunction) => {
     try {

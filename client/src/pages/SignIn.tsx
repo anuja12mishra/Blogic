@@ -14,7 +14,7 @@ import { useDispatch } from 'react-redux';
 import { setUser } from '@/redux/user/user.slice';
 import GoogleLogin from '@/components/GoogleLogin';
 import Loading from '@/components/Loading';
-import { AppDispatch } from '@/redux/store';
+import { AppDispatch } from '@/store';
 
 const formSchema = z.object({
     email: z.string().email("Please enter a valid email address"),

@@ -57,6 +57,7 @@ interface CommentData {
     createdAt: string;
     updatedAt: string;
     replies?: CommentData[];
+    liked?: boolean;
 }
 
 const getTimeAgo = (timestamp: string) => {
@@ -100,7 +101,8 @@ const CommentItem: React.FC<CommentItemProps> = ({
     cancelEdit 
 }) => {
     const isAuthor = data.authorId?._id === authorId;
-    const hasLiked = data.likes?.includes(user?.user?._id);
+    // const hasLiked = data.likes?.includes(user?.user?._id);
+    const hasLiked = data.liked;
 
     return (
         <div className="flex gap-4 group">
