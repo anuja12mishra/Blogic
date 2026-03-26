@@ -24,13 +24,13 @@ function UsersDashboard() {
     const [refresh, setRefresh] = useState(false);
 
     // Pass refresh as a dependency to trigger re-fetch
-    const { data: UserData, loading, error } = useFetch(
+    const { data: UserData, loading, error } = useFetch<{user: any[]}>(
         `${getEnv('VITE_API_URL')}/api/user/get-all-users`,
         { method: 'GET', credentials: 'include' },
         [refresh]
     );
     // console.log('UserData',UserData)
-    const handleDelete = async (id) => {
+    const handleDelete = async (id: string) => {
         try {
             const deleteres = await handleCategoryDelete(
                 `${getEnv('VITE_API_URL')}/api/user/delete/${id}`
@@ -101,7 +101,7 @@ function UsersDashboard() {
                         </TableHeader>
                         <TableBody>
                             {users && users.length > 0 ? (
-                                users.map((user) => (
+                                users.map((user: any) => (
                                     <TableRow key={user._id}>
                                         <TableCell className="font-medium">
                                             {user.role}

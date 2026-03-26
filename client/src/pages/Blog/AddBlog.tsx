@@ -22,6 +22,7 @@ import { useFetch } from '@/hooks/useFetch';
 import Dropzone from 'react-dropzone';
 import Editor from '@/components/Editor';
 import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 import { FaInfoCircle, FaSpinner } from 'react-icons/fa';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -33,23 +34,25 @@ const formSchema = z.object({
     blogcontent: z.string().min(3, "Blog content must be at least 3 characters long"),
 });
 
+type AddBlogFormValues = z.infer<typeof formSchema>;
+
 function AddBlog() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isGenerating, setIsGenerating] = useState(false);
     const navigate = useNavigate();
     const [showGuide, setShowGuide] = useState(false);
-    const user = useSelector((state) => state.user);
-    const guideRef = useRef(null);
+    const user = useSelector((state: RootState) => state.user);
+    const guideRef = useRef<HTMLDivElement>(null);
 
     // AI content generation states
     const [generatedContent, setGeneratedContent] = useState('');
     const [shouldUpdateEditor, setShouldUpdateEditor] = useState(false);
 
-    const [avatar, setAvatar] = useState();
-    const [file, setFile] = useState();
+    const [avatar, setAvatar] = useState<string | null>(null);
+    const [file, setFile] = useState<File | null>(null);
 
     // Form setup
-    const form = useForm({
+    const form = useForm<AddBlogFormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             title: '',
@@ -62,7 +65,7 @@ function AddBlog() {
     // Auto-generate slug from title 
     const watchedTitle = form.watch('title');
 
-    const { data: categoriesdata, loading, error } = useFetch(
+    const { data: categoriesdata, loading, error } = useFetch<{categories: any[]}>(
         `${getEnv('VITE_API_URL')}/api/category/get-all-category`,
         { method: 'GET', credentials: 'include' },
     );
@@ -92,7 +95,7 @@ function AddBlog() {
                 body: JSON.stringify({
                     title: currentValues.title.trim(),
                     body: currentValues.blogcontent,
-                    category: categoriesdata.categories.find(cat => cat._id === currentValues.category)?.name,
+                    category: categoriesdata?.categories.find((cat: any) => cat._id === currentValues.category)?.name,
                 }),
             });
 
@@ -106,7 +109,7 @@ function AddBlog() {
 
             // Update the generated content and trigger editor update
             // data.content = JSON.parse(data.content);
-            const cleanContentAdvanced = (content) => {
+            const cleanContentAdvanced = (content: string) => {
                 if (!content || typeof content !== 'string') return '';
 
                 return content
@@ -143,8 +146,8 @@ function AddBlog() {
 
     // Handle click outside to close guide
     useEffect(() => {
-        function handleClickOutside(event) {
-            if (guideRef.current && !guideRef.current.contains(event.target)) {
+        function handleClickOutside(event: MouseEvent) {
+            if (guideRef.current && !guideRef.current.contains(event.target as Node)) {
                 setShowGuide(false);
             }
         }
@@ -172,7 +175,7 @@ function AddBlog() {
         }
     }, [watchedTitle, form]);
 
-    async function onSubmit(values) {
+    async function onSubmit(values: AddBlogFormValues) {
         if (isSubmitting) return;
 
         // Basic validation
@@ -231,9 +234,9 @@ function AddBlog() {
             // Optional: Navigate to blogs list or the new blog post
             navigate(RouteBlog);
 
-        } catch (err) {
+        } catch (err: any) {
             console.error('Request failed:', err);
-            if (err.name === 'TypeError' && err.message.includes('fetch')) {
+            if (err.name === 'TypeError' && err.message?.includes('fetch')) {
                 showtoast('error', 'Network error: Unable to connect to server');
             } else {
                 showtoast('error', 'An unexpected error occurred. Please try again.');
@@ -243,7 +246,7 @@ function AddBlog() {
         }
     }
 
-    const handleFileUpload = (files) => {
+    const handleFileUpload = (files: File[]) => {
         const uploadedFile = files[0];
         const preview = URL.createObjectURL(uploadedFile);
         setFile(uploadedFile);
@@ -263,13 +266,13 @@ function AddBlog() {
         }
     }
 
-    const handleInfoClick = (e) => {
+    const handleInfoClick = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
         setShowGuide(!showGuide);
     }
 
-    const onInvalid = (errors) => {
+    const onInvalid = (errors: any) => {
         if (errors.category) {
             showtoast('error', 'Please select a category');
             return;
@@ -339,8 +342,8 @@ function AddBlog() {
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent className='bg-background border-border shadow-2xl'>
-                                                        {categoriesdata && categoriesdata?.categories.length > 0 ?
-                                                            categoriesdata.categories.map((category) => (
+                                                        {categoriesdata && categoriesdata.categories && categoriesdata.categories.length > 0 ?
+                                                            categoriesdata.categories.map((category: any) => (
                                                                 <SelectItem key={category._id} value={category._id}>
                                                                     {category.name}
                                                                 </SelectItem>

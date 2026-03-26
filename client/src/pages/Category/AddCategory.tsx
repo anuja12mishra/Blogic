@@ -46,7 +46,7 @@ function AddCategory() {
         }
     }, [watchedName, form]);
 
-    async function onSubmit(values) {
+    async function onSubmit(values: {name: string, slug: string}) {
         if (isSubmitting) return; // Prevent double submission
 
         setIsSubmitting(true);

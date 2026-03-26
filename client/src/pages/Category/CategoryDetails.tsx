@@ -20,19 +20,20 @@ import { MdDeleteOutline } from "react-icons/md";
 import { FaRegEdit } from "react-icons/fa";
 import { handleCategoryDelete } from '@/helpers/handleCategoryDelete'
 import { useSelector } from 'react-redux'
+import { RootState } from '@/store'
 
 function CategoryDetails() {
-  const user = useSelector((state) => state.user)
+  const user = useSelector((state: RootState) => state.user)
   const [refresh, setRefresh] = useState(false);
 
   // Pass refresh as a dependency to trigger re-fetch
-  const { data: categoriesdata, loading, error } = useFetch(
+  const { data: categoriesdata, loading, error } = useFetch<{categories: any[]}>(
     `${getEnv('VITE_API_URL')}/api/category/get-all-category`,
     { method: 'GET', credentials: 'include' },
     [refresh] // Add refresh as dependency
   );
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: string) => {
     try {
       const deleteres = await handleCategoryDelete(
         `${getEnv('VITE_API_URL')}/api/category/delete/${id}`
@@ -115,7 +116,7 @@ function CategoryDetails() {
             </TableHeader>
             <TableBody>
               {categories.length > 0 ? (
-                categories.map((category) => (
+                categories.map((category: any) => (
                   <TableRow key={category._id}>
                     <TableCell className="font-medium">
                       {category.name}

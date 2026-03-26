@@ -19,7 +19,7 @@ import Loading from '@/components/Loading';
 function LikeDashboard() {
     const [refresh, setRefresh] = useState(false);
     
-    const { data: LikeData, loading, error } = useFetch(
+    const { data: LikeData, loading, error } = useFetch<{like: any[]}>(
         `${getEnv('VITE_API_URL')}/api/like/protected-get-likes`,
         { method: 'GET', credentials: 'include' },
         [refresh]
@@ -29,7 +29,7 @@ function LikeDashboard() {
 
     const likes = LikeData?.like || [];
 
-    const handleDelete = async (likeId) => {
+    const handleDelete = async (likeId: string) => {
         try {
             const response = await fetch(
                 `${getEnv('VITE_API_URL')}/api/like/delete-like/${likeId}`,
@@ -94,7 +94,7 @@ function LikeDashboard() {
                         </TableHeader>
                         <TableBody>
                             {likes && likes.length > 0 ? (
-                                likes.map((like) => (
+                                likes.map((like: any) => (
                                     <TableRow key={like._id}>
                                         <TableCell className="font-medium">
                                             {like.blogId?.title || 'No title'}

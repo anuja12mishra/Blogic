@@ -1,5 +1,5 @@
-export const handleCategoryDelete = async (endpoint) => {
-  const confirmDelete = confirm("Are you sure you want to delete this data?");
+export const handleBlogDelete = async (endpoint: string): Promise<any | false> => {
+  const confirmDelete = window.confirm("Are you sure you want to delete this data?");
   if (!confirmDelete) return false;
 
   try {
@@ -11,7 +11,7 @@ export const handleCategoryDelete = async (endpoint) => {
       }
     });
 
-    const data = await res.json();
+    const data = await res.json(); 
 
     if (res.ok) {
       return data;

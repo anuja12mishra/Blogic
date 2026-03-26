@@ -32,7 +32,7 @@ function EditCategory() {
     },
   });
 
-  const { data: categoryData, loading, error } = useFetch(
+  const { data: categoryData, loading, error } = useFetch<{category: any}>(
     `${getEnv('VITE_API_URL')}/api/category/get-a-category/${category_id}`,
     { method: 'GET', credentials: 'include' }
   );
@@ -62,7 +62,7 @@ function EditCategory() {
   }, [watchedName, form]);
 
 
-  async function onSubmit(values) {
+  async function onSubmit(values: {name: string, slug: string}) {
     if (isSubmitting) return; // Prevent double submission
 
     setIsSubmitting(true);

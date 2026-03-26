@@ -10,7 +10,7 @@ import { FaUserAlt, FaExternalLinkAlt } from 'react-icons/fa';
 
 const UserProfile = () => {
     const { username } = useParams();
-    const { data, loading, error } = useFetch(
+    const { data, loading, error } = useFetch<{user: any, blogs: any[], success: boolean}>(
         `${getEnv('VITE_API_URL')}/api/user/public-details/${username}`,
         { method: 'GET', credentials: 'include' },
         [username]
@@ -79,7 +79,7 @@ const UserProfile = () => {
 
                 {blogs && blogs.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {blogs.map((blog) => (
+                        {blogs.map((blog: any) => (
                             <BlogCard key={blog._id} props={{ blog: { ...blog, author: user } }} />
                         ))}
                     </div>

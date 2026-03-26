@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom'
 import { TbCategory } from "react-icons/tb";
 function BlogByCategory() {
     const { category } = useParams();
-    const { data: blogsData, loading, error } = useFetch(
+    const { data: blogsData, loading, error } = useFetch<{category: any, blog: any[]}>(
         `${getEnv('VITE_API_URL')}/api/blog/get-blog-by-category-only/${category}`,
         { method: 'GET', credentials: 'include' },
         [category]
@@ -35,7 +35,7 @@ function BlogByCategory() {
             <div className="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
                 {blogsData && blogsData.blog.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-                        {blogsData.blog.map((blog) => (
+                        {blogsData.blog.map((blog: any) => (
                             <BlogCard
                                 key={blog._id}
                                 props={{ blog }}

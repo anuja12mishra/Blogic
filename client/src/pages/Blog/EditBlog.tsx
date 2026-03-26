@@ -22,7 +22,8 @@ import { useFetch } from '@/hooks/useFetch';
 import Dropzone from 'react-dropzone';
 import Editor from '@/components/Editor';
 import { useSelector } from 'react-redux';
-import { decode } from 'entities'
+import { RootState } from '@/store';
+import { decode } from 'entities';
 import Loading from '@/components/Loading';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -35,17 +36,19 @@ const formSchema = z.object({
   blogcontent: z.string().min(10, "Blog content must be at least 10 characters long"),
 });
 
+type EditBlogFormValues = z.infer<typeof formSchema>;
+
 function EditBlog() {
   const { blog_id } = useParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state: RootState) => state.user);
 
-  const [avatar, setAvatar] = useState(null);
-  const [file, setFile] = useState(null);
+  const [avatar, setAvatar] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
 
   // Fetch categories for dropdown
-  const { data: categoriesData } = useFetch(
+  const { data: categoriesData } = useFetch<{categories: any[]}>(
     `${getEnv('VITE_API_URL')}/api/category/get-all-category`,
     { method: 'GET', credentials: 'include' }
   );
@@ -62,7 +65,7 @@ function EditBlog() {
   });
 
   // Fetch blog data to edit
-  const { data: blogData, loading: blogLoading } = useFetch(
+  const { data: blogData, loading: blogLoading } = useFetch<{blog: any}>(
     `${getEnv('VITE_API_URL')}/api/blog/get-a-blog/${blog_id}`,
     { method: 'GET', credentials: 'include' }
   );
@@ -98,7 +101,7 @@ function EditBlog() {
     return () => subscription.unsubscribe();
   }, [form]);
 
-  async function onSubmit(values) {
+  async function onSubmit(values: EditBlogFormValues) {
     if (isSubmitting) return;
 
     setIsSubmitting(true);
@@ -130,7 +133,7 @@ function EditBlog() {
       showtoast('success', data.message || 'Blog updated successfully!');
       navigate(RouteBlog);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Update failed:', error);
       showtoast('error', error.message || 'Failed to update blog');
     } finally {
@@ -138,7 +141,7 @@ function EditBlog() {
     }
   }
 
-  const handleFileUpload = (acceptedFiles) => {
+  const handleFileUpload = (acceptedFiles: File[]) => {
     const uploadedFile = acceptedFiles[0];
     if (!uploadedFile) return;
 
@@ -201,8 +204,8 @@ function EditBlog() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent className='bg-background border-border shadow-2xl'>
-                            {categoriesData?.categories?.length > 0 ? (
-                              categoriesData.categories.map((category) => (
+                            {categoriesData?.categories && categoriesData.categories.length > 0 ? (
+                              categoriesData.categories.map((category: any) => (
                                 <SelectItem key={category._id} value={category._id}>
                                   {category.name}
                                 </SelectItem>
@@ -329,7 +332,6 @@ function EditBlog() {
                         <Editor
                           onChange={field.onChange}
                           props={{ initialData: field.value }}
-                          disabled={isSubmitting}
                         />
                       </div>
                     </FormControl>
