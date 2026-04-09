@@ -310,23 +310,58 @@ export const GenerateContent = async (req: Request, res: Response, next: NextFun
         }
 
         const prompt = `Create a comprehensive, SEO-optimized blog post with the following specifications:
+        
         BLOG DETAILS:
         Title: "${title.trim()}"
-        Additional Context: ${body || 'None provided'}
-        ... (rest of the prompt) ...`;
+        Additional Context: "${body || 'None provided'}"
+        
+        FORMATTING REQUIREMENTS (CRITICAL):
+        You must output ONLY valid, semantic HTML. Do not include any Markdown, markdown code blocks (like \\\`\\\`\\\`html), or plain text outside the HTML structure. 
+        Your HTML will be directly rendered inside a Tiptap Rich Text Editor on the frontend.
+        
+        Please use the following HTML elements extensively to make the blog post visually appealing and easy to read:
+        - <h1> for the main title (use exactly once at the beginning).
+        - <h2>, <h3> for subheadings and section divisions.
+        - <p> for regular paragraphs with standard spacing.
+        - <strong>, <em>, <u> for emphasis where appropriate.
+        - <ul>, <ol>, <li> for lists.
+        - <blockquote> for highlighting important quotes, key takeaways, or tips.
+        - <pre><code>...</code></pre> for any code snippets.
+        
+        STRUCTURE:
+        1. Start with an engaging Introduction (use <h1> for the main title, followed by an introductory paragraph).
+        2. Break the main body into clear, logical sections with appropriate headings (<h2> or <h3>).
+        3. Include a "Key Takeaways" or "Conclusion" section at the end.
+        4. Integrate SEO best practices, using relevant keywords naturally throughout the text.
+        
+        Again, return ONLY pure HTML without any wrapper text or markdown formatting.`;
 
-        const content = await main(prompt);
+        const rawContent = await main(prompt);
 
-        if (!content || content.trim().length === 0) {
+        // console.log("Raw Gemini Output:", rawContent);
+
+        if (!rawContent || rawContent.trim().length === 0) {
             return res.status(500).json({
                 success: false,
                 message: 'Failed to generate content. Please try again.'
             });
         }
 
+        // Clean up potential markdown wrappers
+        let cleanedContent = rawContent.trim();
+        if (cleanedContent.startsWith('```html')) {
+            cleanedContent = cleanedContent.replace(/^```html\s*/i, '');
+        } else if (cleanedContent.startsWith('```')) {
+            cleanedContent = cleanedContent.replace(/^```\s*/, '');
+        }
+        
+        if (cleanedContent.endsWith('```')) {
+            cleanedContent = cleanedContent.replace(/\s*```$/, '');
+        }
+
         res.status(200).json({
             success: true,
-            content: content.trim(),
+            content: cleanedContent.trim(),
             message: 'Blog content generated successfully'
         });
 
