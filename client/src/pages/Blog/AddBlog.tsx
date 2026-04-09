@@ -78,15 +78,15 @@ function AddBlog() {
             return;
         }
 
-        if (!currentValues.category) {
-            showtoast('error', 'Category is required to generate blog content');
-            return;
-        }
+        // if (!currentValues.category) {
+        //     showtoast('error', 'Category is required to generate blog content');
+        //     return;
+        // }
 
         try {
             setIsGenerating(true);
 
-            const res = await fetch(`${getEnv('VITE_API_URL')}/api/blog/genrate-content`, {
+            const res = await fetch(`${getEnv('VITE_API_URL')}/api/blog/generate-content`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -132,7 +132,7 @@ function AddBlog() {
 
             showtoast('success', 'Blog content generated successfully!');
         } catch (err) {
-            console.error('Content generation failed:', err);
+            console.error('Content generation failed');
             showtoast('error', 'Failed to generate content. Please try again.');
         } finally {
             setIsGenerating(false);
