@@ -113,7 +113,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ userId }) => {
                                             <span className="text-muted-foreground/50 mr-2">0{index + 1}</span>
                                             {blog.title}
                                         </Link>
-                                        <span className="text-xs font-black text-primary bg-primary/10 px-2 py-0.5 rounded-full tabular-nums">
+                                        <span className="flex items-center justify-center text-xs font-black text-primary bg-primary/10 px-2 py-0.5 rounded-full tabular-nums">
                                             {blog.views} <span className="text-[10px] uppercase ml-1 opacity-70">reads</span>
                                         </span>
                                     </div>

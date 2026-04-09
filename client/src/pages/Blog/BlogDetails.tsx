@@ -132,7 +132,7 @@ function BlogDetails() {
                                         <TableCell>
                                             {data.title}
                                         </TableCell>
-                                         <TableCell className='flex justify-end'>
+                                         <TableCell >
                                             {data.views}
                                         </TableCell>
                                         <TableCell>
